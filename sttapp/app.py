@@ -1,13 +1,28 @@
+import os
+
 from flask import Flask
 
+from config import app_config
+from db import init_db
 
-app = Flask(__name__)
+
+def create_app(config_name='development'):
+
+    app = Flask(__name__)
+    app.config.from_object(app_config[config_name])
+    db = init_db(app)
+
+    return app
+
+
+app = create_app(config_name=os.getenv("FLASK_ENV"))
 
 
 @app.route('/')
 def index():
     return 'hello world'
 
-
-if __name__ == "__main__":
-    app.run(debug=True)
+@app.route('/users/')
+def users():
+    from users.models import User
+    return "Hello " + str(User.objects.first().id)
