@@ -2,8 +2,8 @@ import os
 
 from flask import Flask
 
-from config import app_config
-from db import init_db
+from sttapp.config import app_config
+from sttapp.db import init_db
 
 
 def create_app(config_name='development'):
@@ -22,7 +22,8 @@ app = create_app(config_name=os.getenv("FLASK_ENV"))
 def index():
     return 'hello world'
 
+
 @app.route('/users/')
 def users():
-    from users.models import User
+    from sttapp.users.models import User
     return "Hello " + str(User.objects.first().id)

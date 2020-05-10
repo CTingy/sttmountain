@@ -1,9 +1,6 @@
 import os
 
 
-config_path = os.path.abspath(os.path.dirname(__file__))
-
-
 class Config:
 
     # JWT_EXPIRATION_DELTA = timedelta(seconds=300)
