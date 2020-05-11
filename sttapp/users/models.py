@@ -1,6 +1,6 @@
 import datetime
 
-from sttapp.db import db
+from ..db import db
 
 
 class User(db.Document):
