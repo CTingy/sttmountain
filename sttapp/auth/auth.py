@@ -4,7 +4,7 @@ from flask import Blueprint, Response, request, render_template
 from flask_mongoengine.wtf import model_form
 
 
-bp = Blueprint('auth', __name__)
+bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 # RegisterForm = model_form(
