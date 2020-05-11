@@ -7,4 +7,4 @@ bp = Blueprint('user', __name__)
 
 @bp.route('/users/')
 def users():
-    return "Hello " + str(User.objects.first().id)
+    return "Hello users"

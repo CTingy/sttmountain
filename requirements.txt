@@ -2,3 +2,4 @@ flask
 ipython
 flask-shell-ipython
 flask-mongoengine
+flask-security
