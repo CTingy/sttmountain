@@ -1,0 +1,779 @@
+{% extends "base.html" %}
+
+<!-- Start Top Header Bar -->
+{% block top %}
+<section class="top-header">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 col-xs-12 col-sm-4">
+        <div class="contact-number">
+          <i class="tf-ion-social-facebook"></i>
+          <span>
+            <a href="https://www.facebook.com/sttmountain">NCKU Mountaineering Assn</a>
+          </span>
+        </div>
+      </div>
+      <div class="col-md-4 col-xs-12 col-sm-4">
+        <!-- Site Logo -->
+        <div class="logo text-center">
+          <a href="#">
+            <!-- replace logo here -->
+            <img src="images/logo.png" alt="">
+          </a>
+        </div>
+      </div>
+      <div class="col-md-4 col-xs-12 col-sm-4">
+        <!-- Cart -->
+        <ul class="top-menu text-right list-inline">
+          <li class="dropdown cart-nav dropdown-slide">
+          </li><!-- / Cart -->
+
+          <!-- Search -->
+          <li class="dropdown search dropdown-slide">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"><i
+                class="tf-ion-ios-search-strong"></i> 搜尋</a>
+            <ul class="dropdown-menu search-dropdown">
+              <li>
+                <form action="post"><input type="search" class="form-control" placeholder="Search..."></form>
+              </li>
+            </ul>
+          </li><!-- / Search -->
+
+          <!-- Languages -->
+          <li class="commonSelect">
+            <select class="form-control">
+              <option>EN</option>
+              <option>DE</option>
+              <option>FR</option>
+              <option>ES</option>
+            </select>
+          </li><!-- / Languages -->
+
+        </ul><!-- / .nav .navbar-nav .navbar-right -->
+      </div>
+    </div>
+  </div>
+</section><!-- End Top Header Bar -->
+{% endblock %}
+
+<!-- Main Menu Section -->
+{% block menu %}
+<section class="menu">
+  <nav class="navbar navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <h3 class="menu-title">選單</h3>
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+          aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+
+      </div><!-- / .navbar-header -->
+
+      <!-- Navbar Links -->
+      <div id="navbar" class="navbar-collapse collapse text-center">
+        <ul class="nav navbar-nav">
+
+          <!-- Home -->
+          <li class="dropdown ">
+            <a href="#">首頁</a>
+          </li><!-- / Home -->
+
+          <li class="dropdown ">
+            <a href="#">最新消息</a>
+          </li>
+
+          <li class="dropdown ">
+            <a href="#">文章</a>
+          </li>
+
+          <li class="dropdown ">
+            <a href="#">隊伍/紀錄</a>
+          </li>
+
+          <!-- Pages -->
+          <li class="dropdown full-width dropdown-slide">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="350"
+              role="button" aria-haspopup="true" aria-expanded="false">組織 <span
+                class="tf-ion-ios-arrow-down"></span></a>
+            <div class="dropdown-menu">
+              <div class="row">
+
+                <!-- Introduction -->
+                <div class="col-sm-3 col-xs-12">
+                  <ul>
+                    <li class="dropdown-header">工作組</li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="about.html">裝備組</a></li>
+                    <li><a href="faq.html">教學組</a></li>
+                    <li><a href="faq.html">山防組</a></li>
+                    <li><a href="faq.html">資料組</a></li>
+                    <li><a href="faq.html">醫藥箱組</a></li>
+                    <li><a href="404.html">岩推組</a></li>
+                    <li><a href="coming-soon.html">技術推廣組</a></li>
+                  </ul>
+                </div>
+
+                <!-- Contact -->
+                <div class="col-sm-3 col-xs-12">
+                  <ul>
+                    <li class="dropdown-header">法規/流程</li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="dashboard.html">行政組織法</a></li>
+                    <li><a href="order.html">山野活動分級與審核</a></li>
+                    <li><a href="order.html">裝備租借</a></li>
+                    <li><a href="profile-details.html">人員晉升</a></li>
+                    <li><a href="profile-details.html">開隊流程</a></li>
+                  </ul>
+                </div>
+
+                <!-- Utility -->
+                <div class="col-sm-3 col-xs-12">
+                  <ul>
+                    <li class="dropdown-header">嚮導隊</li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="login.html">野狼隊</a></li>
+                    <li><a href="signin.html">小熊隊</a></li>
+                    <li><a href="forget-password.html">北極星隊</a></li>
+                    <li><a href="forget-password.html">三三隊</a></li>
+                    <li><a href="forget-password.html">山羊隊</a></li>
+                  </ul>
+                </div>
+
+                <!-- Mega Menu -->
+                <div class="col-sm-3 col-xs-12">
+                  <a href="shop.html">
+                    <img class="img-responsive" src="images/shop/header-img.jpg" alt="menu image" />
+                  </a>
+                </div>
+              </div><!-- / .row -->
+            </div><!-- / .dropdown-menu -->
+          </li><!-- / Pages -->
+
+          <li class="dropdown dropdown-slide">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="350"
+              role="button" aria-haspopup="true" aria-expanded="false">組織2 <span
+                class="tf-ion-ios-arrow-down"></span></a>
+            <div class="dropdown-menu">
+              <div class="row">
+
+                <!-- Basic -->
+                <div class="col-lg-4 col-md-4 mb-sm-12">
+                  <ul>
+                    <li class="dropdown-header">工作組</li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="shop.html">裝備組</a></li>
+                    <li><a href="checkout.html">教學組</a></li>
+                    <li><a href="cart.html">資料組</a></li>
+                    <li><a href="pricing.html">山防組</a></li>
+                    <li><a href="confirmation.html">醫藥箱組</a></li>
+                    <li><a href="confirmation.html">攀岩推廣組</a></li>
+                    <li><a href="confirmation.html">技術推廣組</a></li>
+
+                  </ul>
+                </div>
+
+                <!-- Layout -->
+                <div class="col-lg-4 col-md-4 mb-sm-12">
+                  <ul>
+                    <li class="dropdown-header">法規/流程</li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="dashboard.html">行政組織法</a></li>
+                    <li><a href="order.html">山野活動分級與審核</a></li>
+                    <li><a href="order.html">裝備租借</a></li>
+                    <li><a href="profile-details.html">人員晉升</a></li>
+                    <li><a href="profile-details.html">開隊流程</a></li>
+                  </ul>
+                </div>
+
+                <div class="col-lg-4 col-md-4 mb-sm-12">
+                  <ul>
+                    <li class="dropdown-header">嚮導隊</li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="login.html">野狼隊</a></li>
+                    <li><a href="signin.html">小熊隊</a></li>
+                    <li><a href="forget-password.html">北極星隊</a></li>
+                    <li><a href="forget-password.html">三三隊</a></li>
+                    <li><a href="forget-password.html">山羊隊</a></li>
+                  </ul>
+                </div>
+
+              </div><!-- / .row -->
+            </div><!-- / .dropdown-menu -->
+          </li><!-- / Elements -->
+
+          <!-- Blog -->
+          <li class="dropdown dropdown-slide">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="350"
+              role="button" aria-haspopup="true" aria-expanded="false">關於我們 <span
+                class="tf-ion-ios-arrow-down"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="blog-left-sidebar.html">簡介</a></li>
+              <li><a href="blog-right-sidebar.html">記事</a></li>
+              <li><a href="blog-right-sidebar.html">例行活動</a></li>
+              <li><a href="blog-full-width.html">加入我們</a></li>
+              <li><a href="blog-grid.html">FAQ</a></li>
+            </ul>
+          </li><!-- / Blog -->
+
+
+        </ul><!-- / .nav .navbar-nav -->
+
+      </div>
+      <!--/.navbar-collapse -->
+    </div><!-- / .container -->
+  </nav>
+</section>
+{% endblock %}
+{% block content %}
+<section class="main-slider">
+  <div id="home_slider_wrapper" class="rev_slider_wrapper fullscreen-container">
+    <div id="home_slider" class="rev_slider fullscreenbanner tiny_bullet_slider" data-version="5.4.1">
+      <ul>
+        <!-- SLIDE  -->
+        <li data-index="rs-73" data-thumb="images/slider/slider-1.jpg" data-transition="fade" data-slotamount="default"
+          data-hideafterloop="0" data-hideslideonmobile="off" data-easein="default" data-easeout="default"
+          data-masterspeed="300" data-rotate="0" data-saveperformance="off" data-title="Slide" data-param1=""
+          data-param2="" data-param3="" data-param4="" data-param5="" data-param6="" data-param7="" data-param8=""
+          data-param9="" data-param10="" data-description="">
+          <!-- MAIN IMAGE -->
+          <img src="images/slider/slider-1.jpg" data-bgposition="cover" data-bgfit="cover" data-bgrepeat="no-repeat"
+            data-bgparallax="on" class="rev-slidebg" data-no-retina alt="Slider image" />
+          <!-- LAYERS -->
+
+          <!-- LAYER NR. 1 -->
+          <a href="shop.html" class="tp-caption rev-btn  tp-resizeme" data-x="['left','left','left','left']"
+            data-hoffset="['170','120','70','40']" data-y="['middle','middle','middle','middle']"
+            data-voffset="['150','150','150','110']" data-width="150px" data-height="50px" data-whitespace="normal"
+            data-type="button" data-responsive_offset="on"
+            data-frames='[{"delay":500,"speed":1000,"sfxcolor":"#ffff58","sfx_effect":"blockfromleft","frame":"0","from":"z:0;","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":500,"sfxcolor":"#ffffff","sfx_effect":"blocktoleft","frame":"999","to":"z:0;","ease":"Power4.easeOut"},{"frame":"hover","speed":"0","ease":"Linear.easeNone","to":"o:1;rX:0;rY:0;rZ:0;z:0;","style":"c:rgb(0,0,0);bg:rgb(255,255,255);"}]'
+            data-textAlign="['center','center','center','center']" data-paddingtop="[6,6,6,6]"
+            style="z-index: 5; font-size: 22px; line-height: 50px; font-weight: 400; color: rgba(255,255,255,1); letter-spacing: 2px;font-family:Roboto Condensed;border-color:rgb(255,255,255);border-style:solid;border-width:1px 1px 1px 1px;outline:none;box-shadow:none;cursor:pointer;text-align:center">Shop
+            Now</a>
+
+          <!-- LAYER NR. 3 -->
+          <div class="tp-caption   tp-resizeme" id="slide-73-layer-3" data-x="['left','left','left','left']"
+            data-hoffset="['150','100','50','20']" data-y="['middle','middle','middle','middle']"
+            data-voffset="['-177','-177','-177','-157']" data-width="none" data-height="none" data-whitespace="normal"
+            data-type="text" data-responsive_offset="on"
+            data-frames='[{"delay":300,"speed":750,"sfxcolor":"#ffff58","sfx_effect":"blockfromleft","frame":"0","from":"z:0;","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":500,"sfxcolor":"#ffffff","sfx_effect":"blocktoleft","frame":"999","to":"z:0;","ease":"Power4.easeOut"}]'
+            data-textAlign="['left','left','left','left']" data-paddingtop="[10,10,10,10]"
+            data-paddingright="[20,20,20,20]" data-paddingbottom="[10,10,10,10]" data-paddingleft="[20,20,20,20]"
+            style="z-index: 7; white-space: normal; font-size: 20px; line-height: 20px; font-weight: 400; color: #ffffff; letter-spacing: 10px;font-family:Roboto Condensed;">
+            PRODUCTS </div>
+
+          <!-- LAYER NR. 4 -->
+          <div class="tp-caption   tp-resizeme" id="slide-73-layer-2" data-x="['left','left','left','left']"
+            data-hoffset="['150','100','50','20']" data-y="['middle','middle','middle','middle']"
+            data-voffset="['-30','-30','-30','-30']" data-fontsize="['70','70','70','50']"
+            data-lineheight="['70','70','70','50']" data-width="['650','650','620','380']" data-height="none"
+            data-whitespace="normal" data-type="text" data-responsive_offset="on"
+            data-frames='[{"delay":200,"speed":750,"sfxcolor":"#ffff58","sfx_effect":"blockfromleft","frame":"0","from":"z:0;","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":500,"sfxcolor":"#ffffff","sfx_effect":"blocktoleft","frame":"999","to":"z:0;","ease":"Power4.easeOut"}]'
+            data-textAlign="['left','left','left','left']" data-paddingtop="[20,20,20,20]"
+            data-paddingright="[20,20,20,20]" data-paddingbottom="[30,30,30,30]" data-paddingleft="[20,20,20,20]"
+            style="z-index: 8; min-width: 650px; max-width: 650px; white-space: normal; font-size: 70px; line-height: 70px; font-weight: 400; color: #ffffff; letter-spacing: -2px;font-family:Playfair Display;">
+            The force of nature felt in waves crashing. </div>
+        </li>
+        <!-- SLIDE  -->
+        <li data-index="rs-74" data-transition="fade" data-slotamount="default" data-hideafterloop="0"
+          data-hideslideonmobile="off" data-easein="default" data-easeout="default" data-masterspeed="300"
+          data-thumb="images/slider/slider-3.jpg" data-rotate="0" data-saveperformance="off" data-title="Slide">
+          <!-- MAIN IMAGE -->
+          <img src="images/slider/slider-3.jpg" alt="" data-bgposition="cover" data-bgfit="cover"
+            data-bgrepeat="no-repeat" data-bgparallax="on" class="rev-slidebg" data-no-retina />
+          <!-- LAYERS -->
+
+
+
+          <!-- LAYER NR. 6 -->
+          <a href="shop.html" class="tp-caption rev-btn  tp-resizeme" data-x="['left','left','left','left']"
+            data-hoffset="['880','760','600','330']" data-y="['middle','middle','middle','middle']"
+            data-voffset="['120','250','150','110']" data-width="150px" data-height="50px" data-whitespace="normal"
+            data-type="button" data-responsive_offset="on"
+            data-frames='[{"delay":500,"speed":750,"sfxcolor":"#cbbacc","sfx_effect":"blockfromright","frame":"0","from":"z:0;","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":500,"sfxcolor":"#ffffff","sfx_effect":"blocktoright","frame":"999","to":"z:0;","ease":"Power4.easeOut"},{"frame":"hover","speed":"0","ease":"Linear.easeNone","to":"o:1;rX:0;rY:0;rZ:0;z:0;","style":"c:rgb(0,0,0);bg:rgb(255,255,255);"}]'
+            data-textAlign="['center','center','center','center']" data-paddingtop="[8,8,8,8]"
+            style="z-index: 6; white-space: normal; font-size: 22px; line-height: 50px; font-weight: 400; color: rgba(255,255,255,1); letter-spacing: 2px;font-family:Roboto Condensed;border-color:rgb(255,255,255);border-style:solid;border-width:1px 1px 1px 1px;outline:none;box-shadow:none;box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;cursor:pointer;">Shop
+            Now</a>
+
+          <!-- LAYER NR. 7 -->
+          <div class="tp-caption   tp-resizeme" id="slide-74-layer-3" data-x="['left','left','left','left']"
+            data-hoffset="['820','700','540','270']" data-y="['middle','middle','middle','middle']"
+            data-voffset="['-177','-177','-177','-157']" data-width="none" data-height="none" data-whitespace="normal"
+            data-type="text" data-responsive_offset="on"
+            data-frames='[{"delay":400,"speed":750,"sfxcolor":"#cbbacc","sfx_effect":"blockfromright","frame":"0","from":"z:0;","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":500,"sfxcolor":"#ffffff","sfx_effect":"blocktoright","frame":"999","to":"z:0;","ease":"Power4.easeOut"}]'
+            data-textAlign="['left','left','left','left']" data-paddingtop="[10,10,10,10]"
+            data-paddingright="[20,20,20,20]" data-paddingbottom="[10,10,10,10]" data-paddingleft="[20,20,20,20]"
+            style="z-index: 7; white-space: normal; font-size: 20px; line-height: 20px; font-weight: 400; color: #ffffff; letter-spacing: 10px;font-family:Roboto Condensed;">
+            PRODUCTS </div>
+
+          <!-- LAYER NR. 8 -->
+          <div class="tp-caption   tp-resizeme" id="slide-74-layer-2" data-x="['left','left','left','left']"
+            data-hoffset="['360','240','110','80']" data-y="['middle','middle','middle','middle']"
+            data-voffset="['-30','-30','-30','-30']" data-fontsize="['70','70','70','50']"
+            data-lineheight="['70','70','70','50']" data-width="['650','650','620','380']" data-height="none"
+            data-whitespace="normal" data-type="text" data-responsive_offset="on"
+            data-frames='[{"delay":300,"speed":750,"sfxcolor":"#cbbacc","sfx_effect":"blockfromright","frame":"0","from":"z:0;","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":500,"sfxcolor":"#ffffff","sfx_effect":"blocktoright","frame":"999","to":"z:0;","ease":"Power4.easeOut"}]'
+            data-textAlign="['right','right','right','right']" data-paddingtop="[20,20,20,20]"
+            data-paddingright="[20,20,20,20]" data-paddingbottom="[30,30,30,30]" data-paddingleft="[20,20,20,20]"
+            style="z-index: 8; min-width: 650px; max-width: 650px; white-space: normal; font-size: 70px; line-height: 70px; font-weight: 400; color: #ffffff; letter-spacing: -2px;font-family:Playfair Display;">
+            The beauty of nature is hidden in details.
+          </div>
+        </li>
+        <!-- SLIDE  -->
+        <li data-index="rs-75" data-transition="fade" data-slotamount="default" data-hideafterloop="0"
+          data-hideslideonmobile="off" data-easein="default" data-easeout="default" data-masterspeed="300"
+          data-thumb="images/slider/slider-2.jpg" data-rotate="0" data-saveperformance="off" data-title="Slide"
+          data-param1="" data-param2="" data-param3="" data-param4="" data-param5="" data-param6="" data-param7=""
+          data-param8="" data-param9="" data-param10="" data-description="">
+          <!-- MAIN IMAGE -->
+          <img src="images/slider/slider-2.jpg" data-bgposition="center center" data-bgfit="cover"
+            data-bgrepeat="no-repeat" data-bgparallax="on" class="rev-slidebg" data-no-retina alt="slider img" />
+          <!-- LAYERS -->
+
+
+          <!-- LAYER NR. 10 -->
+          <div class="tp-caption   tp-resizeme" id="slide-75-layer-2" data-x="['center','center','center','center']"
+            data-hoffset="['0','0','0','0']" data-y="['middle','middle','middle','middle']"
+            data-voffset="['-100','-100','-100','-90']" data-fontsize="['70','70','70','50']"
+            data-lineheight="['70','70','70','50']" data-width="['650','650','620','380']" data-height="none"
+            data-whitespace="normal" data-type="text" data-responsive_offset="on"
+            data-frames='[{"delay":200,"speed":750,"sfxcolor":"#058a9b","sfx_effect":"blockfromtop","frame":"0","from":"z:0;","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":500,"sfxcolor":"#ffffff","sfx_effect":"blocktotop","frame":"999","to":"z:0;","ease":"Power4.easeOut"}]'
+            data-textAlign="['center','center','center','center']" data-paddingtop="[20,20,20,20]"
+            data-paddingright="[20,20,20,20]" data-paddingbottom="[30,30,30,30]" data-paddingleft="[20,20,20,20]"
+            style="z-index: 6; min-width: 650px; max-width: 650px; white-space: normal; font-size: 70px; line-height: 70px; font-weight: 400; color: #ffffff; letter-spacing: -2px;font-family:Playfair Display;">
+            Lurking in the deep of the sea, waits a monster. </div>
+
+          <!-- LAYER NR. 11 -->
+          <div class="tp-caption   tp-resizeme" id="slide-75-layer-3" data-x="['center','center','center','center']"
+            data-hoffset="['0','0','0','0']" data-y="['middle','middle','middle','middle']"
+            data-voffset="['-247','-247','-247','-217']" data-width="none" data-height="none" data-whitespace="normal"
+            data-type="text" data-responsive_offset="on"
+            data-frames='[{"delay":300,"speed":750,"sfxcolor":"#058a9b","sfx_effect":"blockfromtop","frame":"0","from":"z:0;","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":500,"sfxcolor":"#ffffff","sfx_effect":"blocktotop","frame":"999","to":"z:0;","ease":"Power4.easeOut"}]'
+            data-textAlign="['left','left','left','left']" data-paddingtop="[10,10,10,10]"
+            data-paddingright="[20,20,20,20]" data-paddingbottom="[10,10,10,10]" data-paddingleft="[20,20,20,20]"
+            style="z-index: 7; white-space: normal; font-size: 20px; line-height: 20px; font-weight: 400; color: #ffffff; letter-spacing: 10px;font-family:Roboto Condensed;">
+            PRODUCTS </div>
+
+          <!-- LAYER NR. 12 -->
+          <div class="tp-caption rev-btn  tp-resizeme" data-x="['center','center','center','center']"
+            data-hoffset="['0','0','0','0']" data-y="['middle','middle','middle','middle']"
+            data-voffset="['80','80','80','50']" data-width="150px" data-height="50px" data-whitespace="normal"
+            data-type="button" data-responsive_offset="on"
+            data-frames='[{"delay":400,"speed":750,"sfxcolor":"#058a9b","sfx_effect":"blockfromtop","frame":"0","from":"z:0;","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":500,"sfxcolor":"#ffffff","sfx_effect":"blocktotop","frame":"999","to":"z:0;","ease":"Power4.easeOut"},{"frame":"hover","speed":"0","ease":"Linear.easeNone","to":"o:1;rX:0;rY:0;rZ:0;z:0;","style":"c:rgb(0,0,0);bg:rgb(255,255,255);"}]'
+            data-textAlign="['center','center','center','center']" data-paddingtop="[6,6,6,6]"
+            style="z-index: 8; white-space: normal; font-size: 22px; line-height: 50px; font-weight: 400; color: rgba(255,255,255,1); letter-spacing: 2px;font-family:Roboto Condensed;border-color:rgb(255,255,255);border-style:solid;border-width:1px 1px 1px 1px;outline:none;box-shadow:none;box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;cursor:pointer;text-align:center!important;">
+            Shop Now
+          </div>
+        </li>
+      </ul>
+      <div class="tp-bannertimer" style="height: 10px; background: rgba(0, 0, 0, 0.15);"></div>
+    </div>
+  </div><!-- END REVOLUTION SLIDER -->
+
+
+</section>
+
+<section class="product-category section">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="title text-center">
+          <h2>Product Category</h2>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="category-box">
+          <a href="">
+            <img src="images/shop/category/category-1.jpg" alt="" />
+            <div class="content">
+              <h3>Clothes Sales</h3>
+              <p>Shop New Season Clothing</p>
+            </div>
+          </a>
+        </div>
+        <div class="category-box">
+          <a href="">
+            <img src="images/shop/category/category-2.jpg" alt="" />
+            <div class="content">
+              <h3>Smart Casuals</h3>
+              <p>Get Wide Range Selection</p>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="category-box category-box-2">
+          <a href="">
+            <img src="images/shop/category/category-3.jpg" alt="" />
+            <div class="content">
+              <h3>Jewellery</h3>
+              <p>Special Design Comes First</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="products section bg-gray">
+  <div class="container">
+    <div class="row">
+      <div class="title text-center">
+        <h2>Trendy Products</h2>
+      </div>
+    </div>
+    <div class="row">
+
+      <div class="col-md-4">
+        <div class="product-item">
+          <div class="product-thumb">
+            <span class="bage">Sale</span>
+            <img class="img-responsive" src="images/shop/products/product-1.jpg" alt="product-img" />
+            <div class="preview-meta">
+              <ul>
+                <li>
+                  <span data-toggle="modal" data-target="#product-modal">
+                    <i class="tf-ion-ios-search-strong"></i>
+                  </span>
+                </li>
+                <li>
+                  <a href="#"><i class="tf-ion-ios-heart"></i></a>
+                </li>
+                <li>
+                  <a href=""><i class="tf-ion-android-cart"></i></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="product-content">
+            <h4><a href="product-single.html">Reef Boardsport</a></h4>
+            <p class="price">$200</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="product-item">
+          <div class="product-thumb">
+            <img class="img-responsive" src="images/shop/products/product-2.jpg" alt="product-img" />
+            <div class="preview-meta">
+              <ul>
+                <li>
+                  <span data-toggle="modal" data-target="#product-modal">
+                    <i class="tf-ion-ios-search-strong"></i>
+                  </span>
+                </li>
+                <li>
+                  <a href="#"><i class="tf-ion-ios-heart"></i></a>
+                </li>
+                <li>
+                  <a href=""><i class="tf-ion-android-cart"></i></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="product-content">
+            <h4><a href="product-single.html">Rainbow Shoes</a></h4>
+            <p class="price">$200</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="product-item">
+          <div class="product-thumb">
+            <img class="img-responsive" src="images/shop/products/product-3.jpg" alt="product-img" />
+            <div class="preview-meta">
+              <ul>
+                <li>
+                  <span data-toggle="modal" data-target="#product-modal">
+                    <i class="tf-ion-ios-search-strong"></i>
+                  </span>
+                </li>
+                <li>
+                  <a href="#"><i class="tf-ion-ios-heart"></i></a>
+                </li>
+                <li>
+                  <a href=""><i class="tf-ion-android-cart"></i></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="product-content">
+            <h4><a href="product-single.html">Strayhorn SP</a></h4>
+            <p class="price">$230</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="product-item">
+          <div class="product-thumb">
+            <img class="img-responsive" src="images/shop/products/product-4.jpg" alt="product-img" />
+            <div class="preview-meta">
+              <ul>
+                <li>
+                  <span data-toggle="modal" data-target="#product-modal">
+                    <i class="tf-ion-ios-search-strong"></i>
+                  </span>
+                </li>
+                <li>
+                  <a href="#"><i class="tf-ion-ios-heart"></i></a>
+                </li>
+                <li>
+                  <a href=""><i class="tf-ion-android-cart"></i></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="product-content">
+            <h4><a href="product-single.html">Bradley Mid</a></h4>
+            <p class="price">$200</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="product-item">
+          <div class="product-thumb">
+            <img class="img-responsive" src="images/shop/products/product-5.jpg" alt="product-img" />
+            <div class="preview-meta">
+              <ul>
+                <li>
+                  <span data-toggle="modal" data-target="#product-modal">
+                    <i class="tf-ion-ios-search-strong"></i>
+                  </span>
+                </li>
+                <li>
+                  <a href="#"><i class="tf-ion-ios-heart"></i></a>
+                </li>
+                <li>
+                  <a href=""><i class="tf-ion-android-cart"></i></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="product-content">
+            <h4><a href="product-single.html">Rainbow Shoes</a></h4>
+            <p class="price">$200</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="product-item">
+          <div class="product-thumb">
+            <img class="img-responsive" src="images/shop/products/product-6.jpg" alt="product-img" />
+            <div class="preview-meta">
+              <ul>
+                <li>
+                  <span data-toggle="modal" data-target="#product-modal">
+                    <i class="tf-ion-ios-search-strong"></i>
+                  </span>
+                </li>
+                <li>
+                  <a href="#"><i class="tf-ion-ios-heart"></i></a>
+                </li>
+                <li>
+                  <a href=""><i class="tf-ion-android-cart"></i></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="product-content">
+            <h4><a href="product-single.html">Rainbow Shoes</a></h4>
+            <p class="price">$200</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="product-item">
+          <div class="product-thumb">
+            <span class="bage">Sale</span>
+            <img class="img-responsive" src="images/shop/products/product-7.jpg" alt="product-img" />
+            <div class="preview-meta">
+              <ul>
+                <li>
+                  <span data-toggle="modal" data-target="#product-modal">
+                    <i class="tf-ion-ios-search-strong"></i>
+                  </span>
+                </li>
+                <li>
+                  <a href="#"><i class="tf-ion-ios-heart"></i></a>
+                </li>
+                <li>
+                  <a href=""><i class="tf-ion-android-cart"></i></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="product-content">
+            <h4><a href="product-single.html">Rainbow Shoes</a></h4>
+            <p class="price">$200</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="product-item">
+          <div class="product-thumb">
+            <img class="img-responsive" src="images/shop/products/product-8.jpg" alt="product-img" />
+            <div class="preview-meta">
+              <ul>
+                <li>
+                  <span data-toggle="modal" data-target="#product-modal">
+                    <i class="tf-ion-ios-search-strong"></i>
+                  </span>
+                </li>
+                <li>
+                  <a href="#"><i class="tf-ion-ios-heart"></i></a>
+                </li>
+                <li>
+                  <a href=""><i class="tf-ion-android-cart"></i></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="product-content">
+            <h4><a href="product-single.html">Rainbow Shoes</a></h4>
+            <p class="price">$200</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="product-item">
+          <div class="product-thumb">
+            <img class="img-responsive" src="images/shop/products/product-9.jpg" alt="product-img" />
+            <div class="preview-meta">
+              <ul>
+                <li>
+                  <span data-toggle="modal" data-target="#product-modal">
+                    <i class="tf-ion-ios-search-strong"></i>
+                  </span>
+                </li>
+                <li>
+                  <a href="#"><i class="tf-ion-ios-heart"></i></a>
+                </li>
+                <li>
+                  <a href=""><i class="tf-ion-android-cart"></i></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="product-content">
+            <h4><a href="product-single.html">Rainbow Shoes</a></h4>
+            <p class="price">$200</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal -->
+      <div class="modal product-modal fade" id="product-modal">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="tf-ion-close"></i>
+        </button>
+        <div class="modal-dialog " role="document">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-md-8 col-sm-6 col-xs-12">
+                  <div class="modal-image">
+                    <img class="img-responsive" src="images/shop/products/modal-product.jpg" alt="product-img" />
+                  </div>
+                </div>
+                <div class="col-md-4 col-sm-6 col-xs-12">
+                  <div class="product-short-details">
+                    <h2 class="product-title">GM Pendant, Basalt Grey</h2>
+                    <p class="product-price">$200</p>
+                    <p class="product-short-description">
+                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem iusto nihil cum. Illo laborum
+                      numquam rem aut officia dicta cumque.
+                    </p>
+                    <a href="cart.html" class="btn btn-main">Add To Cart</a>
+                    <a href="product-single.html" class="btn btn-transparent">View Product Details</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /.modal -->
+
+    </div>
+  </div>
+</section>
+
+
+<!--
+Start Call To Action
+==================================== -->
+<section class="call-to-action bg-gray section">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <div class="title">
+          <h2>SUBSCRIBE TO NEWSLETTER</h2>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugiat, <br> facilis numquam impedit ut sequi.
+            Minus facilis vitae excepturi sit laboriosam.</p>
+        </div>
+        <div class="col-lg-6 col-md-offset-3">
+          <div class="input-group subscription-form">
+            <input type="text" class="form-control" placeholder="Enter Your Email Address">
+            <span class="input-group-btn">
+              <button class="btn btn-main" type="button">Subscribe Now!</button>
+            </span>
+          </div><!-- /input-group -->
+        </div><!-- /.col-lg-6 -->
+
+      </div>
+    </div> <!-- End row -->
+  </div> <!-- End container -->
+</section> <!-- End section -->
+
+{% endblock %}
+
+{% block footer %}
+<footer class="footer section text-center">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <ul class="social-media">
+          <li>
+            <a href="">
+              <i class="tf-ion-social-facebook"></i>
+            </a>
+          </li>
+          <li>
+            <a href="">
+              <i class="tf-ion-social-instagram"></i>
+            </a>
+          </li>
+          <li>
+            <a href="">
+              <i class="tf-ion-social-twitter"></i>
+            </a>
+          </li>
+          <li>
+            <a href="">
+              <i class="tf-ion-social-pinterest"></i>
+            </a>
+          </li>
+        </ul>
+        <ul class="footer-menu">
+          <li>
+            <a href="">CONTACT</a>
+          </li>
+          <li>
+            <a href="">SHIPPING</a>
+          </li>
+          <li>
+            <a href="">TERMS OF SERVICE</a>
+          </li>
+          <li>
+            <a href="">PRIVACY POLICY</a>
+          </li>
+        </ul>
+        <p class="copyright-text">Powered by Bootstrap</p>
+      </div>
+    </div>
+  </div>
+</footer>
+{% endblock %}

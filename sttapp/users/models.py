@@ -35,7 +35,7 @@ class User(db.Document):
 
     username = db.StringField(required=True)  # 網站顯示的綽號
     # email = db.EmailField(require=True, unique=True)  # 登入帳號
-    password_hash = db.StringField(require=True, min_length=8)
+    password_hash = db.StringField(require=True, min_length=6)
     cellphone_number = db.StringField()
 
     # 學校資料

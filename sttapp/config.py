@@ -6,7 +6,7 @@ class Config:
     # JWT_EXPIRATION_DELTA = timedelta(seconds=300)
     # JWT_AUTH_URL_RULE = '/auth/login'
     # JWT_AUTH_HEADER_PREFIX = os.environ.get('JWT_AUTH_HEADER_PREFIX', 'FLASK')
-    # SECRET_KEY = os.environ.get('SECRET_KEY', 'flask123')
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'flask123')
 
     # mongodb config
     MONGODB_SETTINGS =  {
@@ -16,6 +16,10 @@ class Config:
         'username': os.getenv("DB_USERNAME"),
         'password': os.getenv("DB_PASSWORD")
     }
+
+    # template root dir
+    # APP_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    # TEMPLATE_PATH = os.path.join(APP_PATH, 'templates/')
 
 
 class TestingConfig(Config):
@@ -27,7 +31,7 @@ class DevelopmentConfig(Config):
 
 
 class ProductionConfig(Config):
-    pass
+    DEBUG = False
 
 
 app_config = {

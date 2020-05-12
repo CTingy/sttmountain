@@ -1,27 +1,15 @@
-from ..users.models import User
-
 from flask import Blueprint, Response, request, render_template
-from flask_mongoengine.wtf import model_form
+
+from ..users.models import User
+from .froms import SignupForm
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
-# RegisterForm = model_form(
-#     User, field_args={
-#         'title': {'textarea': True}
-#     }
-# )
-
-
-RegisterForm = model_form(User)
-
-
-@bp.route('/signup/')
+@bp.route('/signup/', methods=["GET", "POST"])
 def auth_register():
-    form = RegisterForm
-    if request.method == 'POST' and form.validate():
-        # do something
-        print("hey POST!")
-        # redirect('/')
-    return render_template('signup.html', form=form)
+    form = SignupForm()
+    if form.validate_on_submit():
+        return redirect('/')
+    return render_template('auth/signup.html', form=form)
