@@ -17,10 +17,6 @@ class Config:
         'password': os.getenv("DB_PASSWORD")
     }
 
-    # template root dir
-    # APP_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    # TEMPLATE_PATH = os.path.join(APP_PATH, 'templates/')
-
 
 class TestingConfig(Config):
     pass
