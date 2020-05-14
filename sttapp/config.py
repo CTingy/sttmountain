@@ -17,7 +17,7 @@ class Config:
         'password': os.getenv("DB_PASSWORD")
     }
 
-    APPLICATION_ROOT = os.path.dirname(os.path.abspath(__file__))
+    # APPLICATION_ROOT = os.path.dirname(os.path.abspath(__file__))
     # SERVER_NAME = '127.0.0.1:5000'
 
 

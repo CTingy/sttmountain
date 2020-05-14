@@ -16,7 +16,6 @@ def create_app(config_name='development'):
     )
     app.config.from_object(app_config[config_name])
     db = init_db(app)
-
     register_bps(app)
 
     return app

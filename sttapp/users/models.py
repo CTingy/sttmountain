@@ -2,7 +2,7 @@ import datetime
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from ..db import db
+from sttapp.db import db
 from .enums import Group, Position, SttDepartment
 
 

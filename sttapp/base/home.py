@@ -1,4 +1,4 @@
-from flask import Blueprint, Response, request, render_template
+from flask import flash, Blueprint, Response, request, render_template
 
 
 bp = Blueprint('home', __name__)
@@ -6,6 +6,7 @@ bp = Blueprint('home', __name__)
 
 @bp.route('/')
 def index():
+    flash("lalala", "success")
     return render_template('index.html')
 
 #   <!-- <form method="POST" action="/">

@@ -1,0 +1,37 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+
+{% for category, message in messages %}
+{% if category == 'danger' %}
+<div class="alert alert-danger alert-common alert-dismissible" role="alert">
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+			aria-hidden="true">&times;</span></button>
+	<i class="tf-ion-close-circled"></i>
+	{{ message }}
+</div>
+{% elif category == 'success' %}
+<div class="alert alert-success alert-common alert-dismissible " role="alert">
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+			aria-hidden="true">&times;</span></button>
+	<i class="tf-ion-thumbsup"></i>
+	{{ message }}
+</div>
+{% elif category == 'info' %}
+<div class="alert alert-info alert-common alert-dismissible" role="alert">
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+			aria-hidden="true">&times;</span></button>
+	<i class="tf-ion-android-checkbox-outline"></i>
+	{{ message }}
+</div>
+{% else %}
+<div class="alert alert-warning alert-common alert-dismissible" role="alert">
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+			aria-hidden="true">&times;</span></button>
+	<i class="tf-ion-alert-circled"></i>
+	{{ message }}
+</div>
+{% endif %}
+{% endfor %}
+
+{% endif %}
+{% endwith %}
