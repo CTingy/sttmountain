@@ -6,15 +6,11 @@ from sttapp.db import db
 from .enums import Group, Position, SttDepartment
 
 
-class Member(db.Document):
-    """出隊用資料，不一定要先有網站帳號，與user為一對一關係
-    """
-    # 基本資料
-    name = db.StringField(require=True)
-    birthday = db.DateTimeField(require=True)
-    security_number = db.StringField(require=True)
+class MemberInfo(db.EmbeddedDocument):
+
+    # 進階資料
+    security_number = db.StringField(require=True, unique=True)
     gender = db.StringField(require=True)
-    cellphone_number = db.StringField(require=True)
     drug_allergy = db.StringField(require=True, default="NA")
 
     # 學校資訊
@@ -35,17 +31,21 @@ class User(db.Document):
 
     username = db.StringField(required=True)  # 網站顯示的綽號
     # email = db.EmailField(required=True, unique=True)  # 登入帳號
-    email = db.EmailField(required=True)  # 登入帳號
-    signup_at = db.DateTimeField(default=datetime.datetime.utcnow)
-    updated_at = db.DateTimeField()
+    email = db.EmailField(required=True)
+    signup_at = db.DateTimeField()
+    last_login_at = db.DateTimeField()
 
-    meta = {'allow_inheritance': True}
+    meta = {'abstract': True,}
 
 
 class SttUser(User):
 
-    password_hash = db.StringField(require=True, min_length=6)
+    # 基本資料
+    name = db.StringField()  # 真實姓名
+    password_hash = db.StringField(require=True)
+    birthday = db.DateTimeField()
     cellphone_number = db.StringField()
+    introduction = db.StringField()
 
     # 學校資料
     department = db.StringField()  # 系所，例如：物理、水利
@@ -55,12 +55,18 @@ class SttUser(User):
     group = db.StringField(choices=Group.get_choices())  # 嚮導隊
     stt_departments = db.ListField(choices=SttDepartment.get_choices())  # 工作組，例如：岩推、總務、教學
     position = db.StringField(choices=Position.get_choices())  # 新生、隊員、幹部等
-    member = db.ReferenceField(Member)
+    member_info = db.EmbeddedDocumentField(MemberInfo)
     # experiences_list = 
-    
-    # 系統相關
-    # entry_email = db.EmailField()  # 邀請信信箱
-    last_login_at = db.DateTimeField()
+
+    # 邀請信相關
+    invitation_sent_at = db.DateTimeField()
+    invitation_sent_by = db.ReferenceField('self')
+    invitation_email = db.EmailField()  # 邀請信信箱
+
+    created_by = db.ReferenceField('self')
+
+    # 系統紀錄
+    updated_at = db.DateTimeField()
 
     @property
     def password(self):
