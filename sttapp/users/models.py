@@ -34,6 +34,15 @@ class Member(db.Document):
 class User(db.Document):
 
     username = db.StringField(required=True)  # 網站顯示的綽號
+    # email = db.StringField(required=True, unique=True)
+    signup_at = db.DateTimeField(default=datetime.datetime.utcnow)
+    updated_at = db.DateTimeField()
+
+    meta = {'allow_inheritance': True}
+
+
+class SttUser(User):
+
     # email = db.EmailField(require=True, unique=True)  # 登入帳號
     password_hash = db.StringField(require=True, min_length=6)
     cellphone_number = db.StringField()
@@ -52,8 +61,6 @@ class User(db.Document):
     # 系統相關
     # entry_email = db.EmailField()  # 邀請信信箱
     last_login_at = db.DateTimeField()
-    signup_at = db.DateTimeField(default=datetime.datetime.utcnow)
-    updated_at = db.DateTimeField()
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

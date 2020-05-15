@@ -25,6 +25,7 @@
           </a>
           <form class="text-left clearfix" action="" method="post">
             <h4 class="text-center">註冊新帳號</h4>
+            <p class="text-center">*為必填</p>
             {% include 'alerts.html' %}
             {{ form.hidden_tag() }}
             {{ form.csrf_token }}
