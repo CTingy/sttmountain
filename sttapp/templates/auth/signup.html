@@ -2,14 +2,15 @@
 
 {% macro render_field(field) %}
 <div class="form-group">
-  {{ field.label }} {{ field(**kwargs) }} {{ field.label.name }}
+  <!-- <input type="email" class="form-control" placeholder="Email"> -->
+  {{ field.label }}
   {% if field.errors %}
-  <ul class="warning">
-    {% for error in field.errors %}
-    <li>{{ error }}</li>
-    {% endfor %}
-  </ul>
+  {% for error in field.errors %}
+  <span>：{{ error }}</span>
+  {% endfor %}
   {% endif %}
+  <br>
+  {{ field(class_='form-control') }}
 </div>
 {% endmacro %}
 
@@ -25,8 +26,8 @@
           <form class="text-left clearfix" action="" method="post">
             <h4 class="text-center">註冊新帳號</h4>
             {% include 'alerts.html' %}
-            {{ form.csrf_token }}
             {{ form.hidden_tag() }}
+            {{ form.csrf_token }}
             {{ render_field(form.username) }}
             {{ render_field(form.password) }}
             {{ render_field(form.confirm) }}
