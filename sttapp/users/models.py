@@ -34,7 +34,8 @@ class Member(db.Document):
 class User(db.Document):
 
     username = db.StringField(required=True)  # 網站顯示的綽號
-    # email = db.StringField(required=True, unique=True)
+    # email = db.EmailField(required=True, unique=True)  # 登入帳號
+    email = db.EmailField(required=True)  # 登入帳號
     signup_at = db.DateTimeField(default=datetime.datetime.utcnow)
     updated_at = db.DateTimeField()
 
@@ -43,7 +44,6 @@ class User(db.Document):
 
 class SttUser(User):
 
-    # email = db.EmailField(require=True, unique=True)  # 登入帳號
     password_hash = db.StringField(require=True, min_length=6)
     cellphone_number = db.StringField()
 
@@ -62,8 +62,17 @@ class SttUser(User):
     # entry_email = db.EmailField()  # 邀請信信箱
     last_login_at = db.DateTimeField()
 
-    def set_password(self, password):
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+class GuestUser(User):
+    pass

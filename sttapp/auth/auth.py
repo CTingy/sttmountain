@@ -10,10 +10,13 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 @bp.route('/signup/', methods=["GET", "POST"])
 def auth_register():
     form = SignupForm(request.form)
-    if form.validate_on_submit():
-        # user = SttUser(
-
-        # )
+    if form.validate_on_submit():       
+        user = SttUser(
+            username = form.username.data,
+            email='aaa@myhome.com',
+        )
+        user.password = form.password.data
+        user.save() 
         flash('恭喜註冊成功！歡迎光臨成大山協網站～～～', 'success')
         return redirect('/')
     return render_template('auth/signup.html', form=form)
