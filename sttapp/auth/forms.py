@@ -4,6 +4,11 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms import validators
 
 
+class InvitationForm(FlaskForm):
+
+    email = EmailField('Email', validators=[validators.DataRequired()])
+
+
 class SignupForm(FlaskForm):
     username = StringField(
         "*綽號(用於網站顯示名稱，中英文皆可)", 
