@@ -1,10 +1,12 @@
 import datetime
 
 from flask import flash, Blueprint, request, url_for, render_template, redirect
+from mongoengine.queryset.visitor import Q
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity, decode_token
 )
+from jwt.exceptions import ExpiredSignatureError
 
 from sttapp.users.models import SttUser
 from sttapp.base.enums import FlashCategory
@@ -21,6 +23,10 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 def invite():
     form = InvitationForm(request.form)
     if form.validate_on_submit():
+
+        if SttUser.objects(email=form.email.data):
+            flash("該信箱已經被人註冊過了喔~請使用其他信箱申請新的註冊連結", FlashCategory.warn)
+            return redirect(url_for('auth.invite'))
         
         invite_token = create_access_token(
             identity=form.email.data,
@@ -45,18 +51,33 @@ def invite():
 
 @bp.route('/signup/<string:invite_token>', methods=["GET", "POST"])
 def signup(invite_token):
-    email = decode_token(invite_token)['identity']
+
+    try:
+        email = decode_token(invite_token)['identity']
+    except ExpiredSignatureError:
+        flash("該連結已經過期~請申請新的註冊連結", FlashCategory.error)
+        return redirect("/")
+    except Exception:
+        flash("該連結為無效連結~請重新申請", FlashCategory.error)
+        return redirect("/")
+    
     form = SignupForm(request.form)
+    
+    # 避免同一token被重複註冊的情況
+    if SttUser.objects(invitation_token=invite_token):
+        flash("該連結已經被註冊過了喔~請申請新的註冊連結", FlashCategory.warn)
+        return redirect("/")
+
     if request.method == "POST":
-        if  form.validate_on_submit():       
+        if form.validate_on_submit():
             user = SttUser(
                 username = form.username.data,
-                # email=form.email.data,
-                email=email
+                email = email,
+                invitation_token = invite_token,
             )
             user.password = form.password.data
-            user.signup_at = datetime.datetime.utcnow()
-            user.save() 
+            user.signup_at = user.created_at = datetime.datetime.utcnow()
+            user.save()
             flash('恭喜註冊成功！歡迎光臨成大山協網站，請登入~~~', FlashCategory.success)
             return redirect('/')
         else:

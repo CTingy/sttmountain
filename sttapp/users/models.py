@@ -30,8 +30,7 @@ class MemberInfo(db.EmbeddedDocument):
 class User(db.Document):
 
     username = db.StringField(required=True)  # 網站顯示的綽號
-    # email = db.EmailField(required=True, unique=True)  # 登入帳號
-    email = db.EmailField(required=True)
+    email = db.EmailField(required=True, unique=True)  # 登入帳號
     signup_at = db.DateTimeField()
     last_login_at = db.DateTimeField()
 
@@ -56,17 +55,13 @@ class SttUser(User):
     stt_departments = db.ListField(choices=SttDepartment.get_choices())  # 工作組，例如：岩推、總務、教學
     position = db.StringField(choices=Position.get_choices())  # 新生、隊員、幹部等
     member_info = db.EmbeddedDocumentField(MemberInfo)
-    # experiences_list = 
-
-    # 邀請信相關
-    invitation_sent_at = db.DateTimeField()
-    invitation_sent_by = db.ReferenceField('self')
-    invitation_email = db.EmailField()  # 邀請信信箱
-
-    created_by = db.ReferenceField('self')
+    # experiences_list =    
 
     # 系統紀錄
+    created_by = db.ReferenceField('self')
+    created_at = db.DateTimeField()
     updated_at = db.DateTimeField()
+    invitation_token = db.StringField()  # 邀請信信箱 & 邀請信寄出時間
 
     @property
     def password(self):

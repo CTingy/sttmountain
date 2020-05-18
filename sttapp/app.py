@@ -22,6 +22,5 @@ def create_app(config_name='development'):
     jwt = JWTManager(app)
     
     register_bps(app)
-    
 
     return app

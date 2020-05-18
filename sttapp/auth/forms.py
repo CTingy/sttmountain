@@ -17,7 +17,7 @@ class SignupForm(FlaskForm):
             validators.Length(max=10, message="太長了呦，最多10個字")
         ]
     )
-    # email = EmailField('Email', validators=[validators.DataRequired()])
+
     password = PasswordField("*密碼(長度6至20)", validators=[
         validators.DataRequired(), 
         validators.Length(min=6, max=20, message="長度6至20")])
@@ -25,9 +25,8 @@ class SignupForm(FlaskForm):
         validators.DataRequired(),
         validators.EqualTo("password", "密碼輸入不一致")
     ])
-    # email = EmailField(validators=[validators.DataRequired()])
-
-    def validate_email(self, field):
-        if UserReister.query.filter_by(email=field.data).first():
-            raise ValidationError('Email already register by somebody')
-
+    
+    # email = EmailField('Email', validators=[validators.DataRequired()])
+    # def validate_email(self, field):
+    #     if UserReister.query.filter_by(email=field.data).first():
+    #         raise ValidationError('Email already register by somebody')

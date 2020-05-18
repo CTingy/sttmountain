@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% macro render_field(field) %}
-<div class="form-group">
+<div class="form-group col-md-6 col-sm-6 col-xs-12">
   <!-- <input type="email" class="form-control" placeholder="Email"> -->
   {{ field.label }}
   {% if field.errors %}
@@ -18,7 +18,7 @@
 <section class="signin-page account">
   <div class="container">
     <div class="row">
-      <div class="col-md-6 col-md-offset-3">
+      <div class="col-md-8 col-md-offset-2">
         <div class="block text-center">
           <a class="logo" href="/">
             <img src={{ url_for("static", filename="images/logo.png") }} alt="">
@@ -32,13 +32,11 @@
             {{ render_field(form.username) }}
             {{ render_field(form.password) }}
             {{ render_field(form.confirm) }}
-            <div class="text-center">
+            <div class="text-center col-md-12">
+              <br>
               <button type="submit" class="btn btn-main text-center">送出</button>
             </div>
           </form>
-          <p class="mt-20">已經有帳號了？<a href={{ url_for("static", filename="login.html") }}> 登入</a>
-          </p>
-          <p><a href={{ url_for("static", filename="forget-password.html") }}> 忘記密碼</a></p>
         </div>
       </div>
     </div>
