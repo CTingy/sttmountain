@@ -9,9 +9,9 @@ from .enums import Group, Position, SttDepartment
 class MemberInfo(db.EmbeddedDocument):
 
     # 進階資料
-    security_number = db.StringField(require=True, unique=True)
-    gender = db.StringField(require=True)
-    drug_allergy = db.StringField(require=True, default="NA")
+    security_number = db.StringField()
+    gender = db.StringField()
+    drug_allergy = db.StringField()
 
     # 學校資訊
     student_id = db.StringField()
@@ -22,9 +22,9 @@ class MemberInfo(db.EmbeddedDocument):
     highest_level_experience = db.StringField()  # 手動輸入出隊資歷，ex: 哈崙鐵道
 
     # 緊急聯絡人
-    emargency_contact = db.StringField(require=True)
-    emargency_contact_phone = db.StringField(require=True)
-    emargency_contact_relationship = db.StringField(require=True)
+    emargency_contact = db.StringField()
+    emargency_contact_phone = db.StringField()
+    emargency_contact_relationship = db.StringField()
 
 
 class User(db.Document):

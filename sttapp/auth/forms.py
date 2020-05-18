@@ -25,6 +25,7 @@ class SignupForm(FlaskForm):
         validators.DataRequired(),
         validators.EqualTo("password", "密碼輸入不一致")
     ])
+    # email = EmailField(validators=[validators.DataRequired()])
 
     def validate_email(self, field):
         if UserReister.query.filter_by(email=field.data).first():

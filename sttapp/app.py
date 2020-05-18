@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from flask_jwt_extended import JWTManager
 
 from .config import app_config
 from .db import init_db
@@ -18,7 +19,9 @@ def create_app(config_name='development'):
     app.config.from_object(app_config[config_name])
     db = init_db(app)
     mail = init_mail(app)
+    jwt = JWTManager(app)
     
     register_bps(app)
+    
 
     return app

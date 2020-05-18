@@ -14,9 +14,9 @@ def send_async_email(app, msg):
             raise Exception("[MAIL SERVER] not working")
 
 
-def send_mail(subject, sender, recipients, html_body):
+def send_mail(subject, recipients, html_body):
     app = current_app._get_current_object()
-    msg = Message(subject, sender=sender, recipients=recipients)
+    msg = Message(subject, recipients=recipients)
     msg.html = html_body
     thr = Thread(target=send_async_email, args=(app, msg))
     thr.start()
