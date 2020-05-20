@@ -29,8 +29,8 @@ class MemberInfo(db.EmbeddedDocument):
 
 class User(db.Document):
 
-    username = db.StringField(required=True)  # 網站顯示的綽號
-    email = db.EmailField(required=True, unique=True)  # 登入帳號
+    username = db.StringField()  # 網站顯示的綽號
+    email = db.EmailField()  # 登入帳號
     signup_at = db.DateTimeField()
     last_login_at = db.DateTimeField()
 
@@ -41,7 +41,7 @@ class SttUser(User):
 
     # 基本資料
     name = db.StringField()  # 真實姓名
-    password_hash = db.StringField(require=True)
+    password_hash = db.StringField()
     birthday = db.DateTimeField()
     cellphone_number = db.StringField()
     introduction = db.StringField()
@@ -62,6 +62,7 @@ class SttUser(User):
     created_at = db.DateTimeField()
     updated_at = db.DateTimeField()
     invitation_token = db.StringField()  # 邀請信信箱 & 邀請信寄出時間
+    invitation_email = db.EmailField()
 
     @property
     def password(self):

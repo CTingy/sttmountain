@@ -23,10 +23,6 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 def invite():
     form = InvitationForm(request.form)
     if form.validate_on_submit():
-
-        if SttUser.objects(email=form.email.data):
-            flash("該信箱已經被人註冊過了喔~請使用其他信箱申請新的註冊連結", FlashCategory.warn)
-            return redirect(url_for('auth.invite'))
         
         invite_token = create_access_token(
             identity=form.email.data,
@@ -72,7 +68,7 @@ def signup(invite_token):
         if form.validate_on_submit():
             user = SttUser(
                 username = form.username.data,
-                email = email,
+                invitation_email = email,
                 invitation_token = invite_token,
             )
             user.password = form.password.data
