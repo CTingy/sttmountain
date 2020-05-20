@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from flask import flash, Blueprint, request, url_for, render_template, redirect
 from mongoengine.queryset.visitor import Q
@@ -8,11 +9,13 @@ from flask_jwt_extended import (
 )
 from jwt.exceptions import ExpiredSignatureError
 
-from sttapp.users.models import SttUser
+from sttapp.users.models import SttUser, InvitationInfo
 from sttapp.base.enums import FlashCategory
 from .forms import SignupForm, InvitationForm
 from .enums import INVITATION_EXPIRE_DAYS
 from .services.mail import send_mail
+
+import iso8601
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -24,17 +27,25 @@ def invite():
     form = InvitationForm(request.form)
     if form.validate_on_submit():
         
-        invite_token = create_access_token(
-            identity=form.email.data,
+        invitation_token = create_access_token(
+            identity=json.dumps({
+                'email': form.email.data,
+                # 'user_id': str(user.id),
+                'invited_at': datetime.datetime.utcnow().isoformat()
+            }),
             expires_delta=datetime.timedelta(days=INVITATION_EXPIRE_DAYS)
         )
+        
+        if len(invitation_token) >= 1500:
+            flash("邀請註冊連結生成發生問題，請洽管理員", FlashCategory.error)
+            return redirect(url_for('auth.invite'))
 
         send_mail(
             subject="邀請您註冊成大山協網站帳號",
             recipients=[form.email.data, ],
             html_body=render_template(
                 "auth/invitation_email.html",
-                url=request.host_url + url_for("auth.signup", invite_token=invite_token),
+                url=request.host_url + url_for("auth.signup", invitation_token=invitation_token),
                 days=INVITATION_EXPIRE_DAYS)
         )
         flash(
@@ -45,11 +56,11 @@ def invite():
     return render_template('auth/invitation_form.html', form=form)
 
 
-@bp.route('/signup/<string:invite_token>', methods=["GET", "POST"])
-def signup(invite_token):
+@bp.route('/signup/<string:invitation_token>', methods=["GET", "POST"])
+def signup(invitation_token):
 
     try:
-        email = decode_token(invite_token)['identity']
+        invitation_info_dict = json.loads(decode_token(invitation_token)['identity'])
     except ExpiredSignatureError:
         flash("該連結已經過期~請申請新的註冊連結", FlashCategory.error)
         return redirect("/")
@@ -60,17 +71,20 @@ def signup(invite_token):
     form = SignupForm(request.form)
     
     # 避免同一token被重複註冊的情況
-    if SttUser.objects(invitation_token=invite_token):
+    if SttUser.objects(invitation_info__token=invitation_token):
         flash("該連結已經被註冊過了喔~請申請新的註冊連結", FlashCategory.warn)
         return redirect("/")
 
     if request.method == "POST":
         if form.validate_on_submit():
-            user = SttUser(
-                username = form.username.data,
-                invitation_email = email,
-                invitation_token = invite_token,
+            user = SttUser()
+            user.invitation_info = InvitationInfo(
+                email=invitation_info_dict['email'],
+                invited_at=iso8601.parse_date(invitation_info_dict['invited_at']),
+                # invited_by=invitation_info_dict['user_id'],
+                token=invitation_token
             )
+            user.username = form.username.data
             user.password = form.password.data
             user.signup_at = user.created_at = datetime.datetime.utcnow()
             user.save()

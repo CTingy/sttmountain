@@ -12,6 +12,7 @@ class MemberInfo(db.EmbeddedDocument):
     security_number = db.StringField()
     gender = db.StringField()
     drug_allergy = db.StringField()
+    home_address = db.StringField()
 
     # 學校資訊
     student_id = db.StringField()
@@ -25,6 +26,14 @@ class MemberInfo(db.EmbeddedDocument):
     emargency_contact = db.StringField()
     emargency_contact_phone = db.StringField()
     emargency_contact_relationship = db.StringField()
+
+
+class InvitationInfo(db.EmbeddedDocument):
+
+    invited_by = db.ReferenceField('SttUser')
+    invited_at = db.DateTimeField()
+    email = db.EmailField()
+    token = db.StringField()
 
 
 class User(db.Document):
@@ -55,14 +64,11 @@ class SttUser(User):
     stt_departments = db.ListField(choices=SttDepartment.get_choices())  # 工作組，例如：岩推、總務、教學
     position = db.StringField(choices=Position.get_choices())  # 新生、隊員、幹部等
     member_info = db.EmbeddedDocumentField(MemberInfo)
-    # experiences_list =    
+    # experiences_list = 
 
     # 系統紀錄
-    created_by = db.ReferenceField('self')
-    created_at = db.DateTimeField()
     updated_at = db.DateTimeField()
-    invitation_token = db.StringField()  # 邀請信信箱 & 邀請信寄出時間
-    invitation_email = db.EmailField()
+    invitation_info = db.EmbeddedDocumentField(InvitationInfo)
 
     @property
     def password(self):
@@ -78,3 +84,25 @@ class SttUser(User):
 
 class GuestUser(User):
     pass
+
+
+class TempUser(db.Document):
+    """給領隊暫時建出隊資料用的，使用者一旦註冊了SttUser，就使用姓名與手機搜尋此物件
+    將此物件資料匯入SttUser後，刪除此物件
+    """
+
+    # 基本資料
+    name = db.StringField()  # 真實姓名
+    email = db.EmailField()
+
+    birthday = db.DateTimeField()
+    cellphone_number = db.StringField()
+
+    member_info = db.EmbeddedDocumentField(MemberInfo)
+
+    # 系統紀錄
+    created_by = db.ReferenceField('SttUser')
+    created_at = db.DateTimeField(default=datetime.datetime.utcnow)
+    updated_by = db.ReferenceField('SttUser')
+    updated_at = db.DateTimeField()
+    # experiences_list = 
