@@ -21,10 +21,21 @@
       <div class="col-md-4 col-xs-12 col-sm-4">
         <!-- Cart -->
         <ul class="top-menu text-right list-inline">
+
+          <!-- invitation -->
+          <li class="dropdown dropdown-slide">
+            <a href={{ url_for('auth.invite') }}><i class="tf-ion-wineglass"></i>&nbsp邀請註冊</a>
+          </li>
+
+          <!-- Login/Logout -->
+          <li class="dropdown dropdown-slide">
+            <a href="#"><i class="tf-ion-social-octocat"></i>&nbsp登入</a>
+          </li>
+
           <!-- Search -->
           <li class="dropdown search dropdown-slide">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"><i
-                class="tf-ion-ios-search-strong"></i> 搜尋</a>
+                class="tf-ion-ios-search-strong"></i>&nbsp搜尋</a>
             <ul class="dropdown-menu search-dropdown">
               <li>
                 <form action="post"><input type="search" class="form-control" placeholder="Search..."></form>
@@ -32,14 +43,29 @@
             </ul>
           </li><!-- / Search -->
 
-          <!-- invitation -->
-          <li class="dropdown dropdown-slide">
-            <a href={{ url_for('auth.invite') }}><i class="tf-ion-android-hand"></i> 邀請註冊</a>
-          </li>
-
           <!-- Login/Logout -->
           <li class="dropdown dropdown-slide">
-            <a href="#"><i class="tf-ion-android-person"></i> 登入</a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="350"
+              role="button" aria-haspopup="true" aria-expanded="false">
+              <i class="tf-ion-ios-paw"></i>&nbsp名稱 <span class="tf-ion-ios-arrow-down"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="blog-left-sidebar.html">
+                  <h5><i class="tf-ion-happy-outline"></i>&nbsp&nbsp我的頁面</h5>
+                </a></li>
+              <li><a href="blog-left-sidebar.html">
+                  <h5><i class="tf-ion-paper-airplane"></i>&nbsp&nbsp出隊紀錄</h5>
+                </a></li>
+              <li><a href="blog-left-sidebar.html">
+                  <h5><i class="tf-ion-earth"></i>&nbsp&nbsp個人資料</h5>
+                </a></li>
+              <li><a href="blog-left-sidebar.html">
+                  <h5><i class="tf-ion-paintbrush"></i>&nbsp&nbsp帳號管理</h5>
+                </a></li>
+              <li><a href="blog-left-sidebar.html">
+                  <h5><i class="tf-ion-log-out"></i>&nbsp&nbsp登出</h5>
+                </a></li>
+            </ul>
           </li>
         </ul><!-- / .nav .navbar-nav .navbar-right -->
       </div>
