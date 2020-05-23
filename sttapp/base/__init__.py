@@ -1,1 +1,1 @@
-from .home import bp
+from .views import bp

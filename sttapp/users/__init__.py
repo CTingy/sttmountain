@@ -1,1 +1,1 @@
-from .users import bp
+from .views import bp
