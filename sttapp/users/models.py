@@ -3,7 +3,7 @@ import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from sttapp.db import db
-from .enums import Group, Position, SttDepartment
+from .enums import Group, Position, Level
 
 
 class MemberInfo(db.EmbeddedDocument):
@@ -19,8 +19,8 @@ class MemberInfo(db.EmbeddedDocument):
     department_and_grade = db.StringField()  # ex: 水利四 / ob / 物理所 / 校外
 
     # 最高資歷
-    highest_level = db.StringField()  # 級數（A, B, C, D）
-    highest_level_experience = db.StringField()  # 手動輸入出隊資歷，ex: 哈崙鐵道
+    highest_difficulty = db.StringField()  # 級數（A, B, C, D）
+    highest_difficulty_experience = db.StringField()  # 手動輸入出隊資歷，ex: 哈崙鐵道
 
     # 緊急聯絡人
     emargency_contact = db.StringField()
@@ -61,8 +61,8 @@ class SttUser(User):
 
     # 社團相關資料
     group = db.StringField(choices=Group.get_choices())  # 嚮導隊
-    stt_departments = db.ListField(choices=SttDepartment.get_choices())  # 工作組，例如：岩推、總務、教學
-    position = db.StringField(choices=Position.get_choices())  # 新生、隊員、幹部等
+    position = db.ListField(choices=Position.get_choices())  # 工作組，例如：岩推、總務、教學
+    level = db.StringField(choices=Level.get_choices())  # 新生、隊員、幹部等
     member_info = db.EmbeddedDocumentField(MemberInfo)
     # experiences_list = 
 

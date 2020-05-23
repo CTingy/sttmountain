@@ -18,13 +18,13 @@ class Group(Choice):
      goat = '山羊'
 
 
-class Position(Choice):
+class Level(Choice):
      fresh = '新生'
      junior = '隊員'
      senior = '幹部'
 
 
-class SttDepartment(Choice):
+class Position(Choice):
      president = '社長'
      education = '教學組'
      outfit = '裝備組'
