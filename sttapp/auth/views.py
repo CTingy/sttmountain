@@ -4,14 +4,14 @@ import json
 from flask import flash, Blueprint, request, url_for, render_template, redirect
 from mongoengine.queryset.visitor import Q
 from flask_jwt_extended import (
-    JWTManager, jwt_required, create_access_token,
-    get_jwt_identity, decode_token
+    jwt_required, create_access_token,
+    get_jwt_identity, decode_token, create_refresh_token
 )
 from jwt.exceptions import ExpiredSignatureError
 
 from sttapp.users.models import SttUser, InvitationInfo
 from sttapp.base.enums import FlashCategory
-from .forms import SignupForm, InvitationForm
+from .forms import SignupForm, InvitationForm, LoginForm
 from .enums import INVITATION_EXPIRE_DAYS
 from .services.mail import send_mail
 
@@ -84,6 +84,7 @@ def signup(invitation_token):
                 # invited_by=invitation_info_dict['user_id'],
                 token=invitation_token
             )
+            user.email = invitation_info_dict['email']
             user.username = form.username.data
             user.password = form.password.data
             user.signup_at = user.created_at = datetime.datetime.utcnow()
@@ -93,3 +94,15 @@ def signup(invitation_token):
         else:
             flash('格式錯誤', FlashCategory.error)
     return render_template('auth/signup.html', form=form)
+
+
+@bp.route('/login/', methods=["GET", "POST"])
+def login():
+    form = LoginForm(request.form)
+    if request.method == "POST":
+        if form.validate_on_submit():
+            flash('登入成功！', FlashCategory.success)
+            return redirect('/')
+        else:
+            flash('登入失敗', FlashCategory.error)
+    return render_template('auth/login.html', form=form)

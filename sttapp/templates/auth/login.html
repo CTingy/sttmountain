@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% macro render_field(field) %}
+<div class="form-group">
+  <!-- <input type="email" class="form-control" placeholder="Email"> -->
+  {{ field.label }}
+  {% if field.errors %}
+  {% for error in field.errors %}
+  <span>：{{ error }}</span>
+  {% endfor %}
+  {% endif %}
+  <br>
+  {{ field(class_='form-control') }}
+</div>
+{% endmacro %}
+
+{% block content %}
+<section class="signin-page account">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div class="block text-center">
+          <a class="logo" href="/">
+            <img src={{ url_for("static", filename="images/logo.png") }} alt="">
+          </a>
+          <form class="text-left clearfix" action="" method="post">
+            <h4 class="text-center">登入</h4>
+            {% include 'alerts.html' %}
+            {{ form.hidden_tag() }}
+            {{ form.csrf_token }}
+            {{ render_field(form.email) }}
+            {{ render_field(form.password) }}
+            <div class="text-center col-md-12">
+              <br>
+              <button type="submit" class="btn btn-main text-center">送出</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
