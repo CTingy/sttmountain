@@ -1,8 +1,10 @@
 import datetime
 
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
 from sttapp.db import db
+from sttapp.login import login_manager
 from .enums import Group, Position, Level
 
 
@@ -36,7 +38,7 @@ class InvitationInfo(db.EmbeddedDocument):
     token = db.StringField()
 
 
-class User(db.Document):
+class User(UserMixin, db.Document):
 
     username = db.StringField()  # 網站顯示的綽號
     email = db.EmailField()  # 登入帳號
@@ -106,3 +108,8 @@ class TempUser(db.Document):
     updated_by = db.ReferenceField('SttUser')
     updated_at = db.DateTimeField()
     # experiences_list = 
+
+
+@login_manager.user_loader  
+def load_user(user_id):  
+    return SttUser.objects.get(id=user_id)

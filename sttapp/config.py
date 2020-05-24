@@ -16,6 +16,7 @@ class Config:
     }
 
     MAIL_DEFAULT_SENDER = 'sttmountain@mail.ncku.edu.tw'
+    SESSION_PROTECTION = 'strong'
 
     # APPLICATION_ROOT = os.path.dirname(os.path.abspath(__file__))
     # SERVER_NAME = '127.0.0.1:5000'

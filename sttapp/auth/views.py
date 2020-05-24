@@ -4,6 +4,7 @@ import json
 from flask import flash, Blueprint, request, url_for, render_template, redirect, current_app
 from itsdangerous import TimedJSONWebSignatureSerializer
 from itsdangerous import SignatureExpired, BadSignature
+from flask_login import login_user, current_user, login_required, logout_user
 
 from mongoengine.queryset.visitor import Q
 
@@ -20,7 +21,7 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 @bp.route('/invite/', methods=["GET", "POST"])
-# @login_required
+@login_required
 def invite():
     form = InvitationForm(request.form)
     if form.validate_on_submit():
@@ -101,8 +102,22 @@ def login():
     form = LoginForm(request.form)
     if request.method == "POST":
         if form.validate_on_submit():
-            flash('登入成功！', FlashCategory.success)
-            return redirect('/')
+            login_user(form.user_in_db, remember=True)
+            
+            next_ = request.args.get('next')
+            # if not is_safe_url(next_):
+            #     return redirect('/')
+            
+            flash('登入成功！歡迎光臨 {}'.format(current_user.username), FlashCategory.success)
+            return redirect(next_ or '/')
         else:
             flash('登入失敗', FlashCategory.error)
     return render_template('auth/login.html', form=form)
+
+
+@bp.route('/logout/')
+@login_required
+def logout():
+    logout_user()
+    flash('已登出帳號', FlashCategory.success)
+    return redirect("/")
