@@ -1,19 +1,17 @@
 import datetime
 import json
 
-from flask import flash, Blueprint, request, url_for, render_template, redirect
+from flask import flash, Blueprint, request, url_for, render_template, redirect, current_app
+from itsdangerous import TimedJSONWebSignatureSerializer
+from itsdangerous import SignatureExpired, BadSignature
+
 from mongoengine.queryset.visitor import Q
-from flask_jwt_extended import (
-    jwt_required, create_access_token,
-    get_jwt_identity, decode_token, create_refresh_token
-)
-from jwt.exceptions import ExpiredSignatureError
 
 from sttapp.users.models import SttUser, InvitationInfo
 from sttapp.base.enums import FlashCategory
 from .forms import SignupForm, InvitationForm, LoginForm
-from .enums import INVITATION_EXPIRE_DAYS
 from .services.mail import send_mail
+from .enums import INVITATION_EXPIRE_DAYS
 
 import iso8601
 
@@ -22,21 +20,22 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 @bp.route('/invite/', methods=["GET", "POST"])
-# @jwt_required
+# @login_required
 def invite():
     form = InvitationForm(request.form)
     if form.validate_on_submit():
-        
-        invitation_token = create_access_token(
-            identity=json.dumps({
-                'email': form.email.data,
-                # 'user_id': str(user.id),
-                'invited_at': datetime.datetime.utcnow().isoformat()
-            }),
-            expires_delta=datetime.timedelta(days=INVITATION_EXPIRE_DAYS)
+
+        s = TimedJSONWebSignatureSerializer(
+            current_app.config['SECRET_KEY'], expires_in=INVITATION_EXPIRE_DAYS*3600*24
         )
+
+        invitation_token = s.dumps({
+            'email': form.email.data,
+            # 'user_id': str(user.id), 
+            'invited_at': datetime.datetime.utcnow().isoformat(),
+        })
         
-        if len(invitation_token) >= 1500:
+        if len(invitation_token) >= 1700:
             flash("邀請註冊連結生成發生問題，請洽管理員", FlashCategory.error)
             return redirect(url_for('auth.invite'))
 
@@ -59,15 +58,16 @@ def invite():
 @bp.route('/signup/<string:invitation_token>', methods=["GET", "POST"])
 def signup(invitation_token):
 
+    s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'])
     try:
-        invitation_info_dict = json.loads(decode_token(invitation_token)['identity'])
-    except ExpiredSignatureError:
+        invitation_info_dict = s.loads(invitation_token)
+    except SignatureExpired:
         flash("該連結已經過期~請申請新的註冊連結", FlashCategory.error)
         return redirect("/")
-    except Exception:
+    except BadSignature:
         flash("該連結為無效連結~請重新申請", FlashCategory.error)
         return redirect("/")
-    
+
     form = SignupForm(request.form)
     
     # 避免同一token被重複註冊的情況

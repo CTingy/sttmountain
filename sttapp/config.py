@@ -4,10 +4,6 @@ import datetime
 
 class Config:
 
-    # JWT_EXPIRATION_DELTA = datetime.timedelta(seconds=300)
-    # JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(minutes=15)
-    # JWT_AUTH_URL_RULE = '/auth/login/'
-    # JWT_AUTH_HEADER_PREFIX = os.environ.get('JWT_AUTH_HEADER_PREFIX', 'STTMT')
     SECRET_KEY = os.environ.get('SECRET_KEY', 'flask123')
 
     # mongodb config
