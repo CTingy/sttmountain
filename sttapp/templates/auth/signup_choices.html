@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="signin-page account">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div class="block text-center">
+          <a class="logo" href="/">
+            <img src={{ url_for("static", filename="images/logo.png") }} alt="">
+          </a>
+          <br><br>
+          <h4 class="text-center">請選擇註冊方式</h4>
+          <br>
+          <div class="product-content">
+            <div class="form-group">
+              <a href="{{ url }}">
+                <button class="btn btn-main text-center">使用信箱註冊</button>
+              </a>
+            </div>
+            <div class="form-group">
+              <a href="#">
+                <button class="btn btn-main">使用facebook註冊</button>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+</section>
+{% endblock %}

@@ -111,5 +111,5 @@ class TempUser(db.Document):
 
 
 @login_manager.user_loader  
-def load_user(user_id):  
+def load_user(user_id):
     return SttUser.objects.get(id=user_id)

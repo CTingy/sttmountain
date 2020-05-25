@@ -19,9 +19,9 @@ class Group(Choice):
 
 
 class Level(Choice):
-     fresh = '新生'
-     junior = '隊員'
-     senior = '幹部'
+     newbie = '新生'
+     medium = '隊員'
+     cadre = '幹部'
 
 
 class Position(Choice):

@@ -26,6 +26,11 @@
           <form class="text-left clearfix" action="" method="post">
             <h4 class="text-center">註冊新帳號</h4>
             <p class="text-center">*為必填</p>
+            <div class="form-group col-md-6 col-sm-6 col-xs-12">
+              <label for="email">email</label>
+              <br>
+              <input id="email" class="form-control" type="text" name="email" value="{{ email }}" readonly>
+            </div>
             {% include 'alerts.html' %}
             {{ form.hidden_tag() }}
             {{ form.csrf_token }}

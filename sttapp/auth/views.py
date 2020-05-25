@@ -21,7 +21,7 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 @bp.route('/invite/', methods=["GET", "POST"])
-@login_required
+# @login_required
 def invite():
     form = InvitationForm(request.form)
     if form.validate_on_submit():
@@ -45,7 +45,7 @@ def invite():
             recipients=[form.email.data, ],
             html_body=render_template(
                 "auth/invitation_email.html",
-                url=request.host_url + url_for("auth.signup", invitation_token=invitation_token),
+                url=request.host_url + url_for("auth.signup_choices", invitation_token=invitation_token),
                 days=INVITATION_EXPIRE_DAYS)
         )
         flash(
@@ -56,25 +56,45 @@ def invite():
     return render_template('auth/invitation_form.html', form=form)
 
 
-@bp.route('/signup/<string:invitation_token>', methods=["GET", "POST"])
-def signup(invitation_token):
+def validate_token(token):
 
     s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'])
     try:
-        invitation_info_dict = s.loads(invitation_token)
+        invitation_info_dict = s.loads(token)
     except SignatureExpired:
         flash("該連結已經過期~請申請新的註冊連結", FlashCategory.error)
-        return redirect("/")
+        return None
     except BadSignature:
         flash("該連結為無效連結~請重新申請", FlashCategory.error)
-        return redirect("/")
+        return None
 
-    form = SignupForm(request.form)
-    
     # 避免同一token被重複註冊的情況
-    if SttUser.objects(invitation_info__token=invitation_token):
+    if SttUser.objects(invitation_info__token=token):
         flash("該連結已經被註冊過了喔~請申請新的註冊連結", FlashCategory.warn)
+        return None
+    return invitation_info_dict
+
+
+@bp.route('/signup_choices/<string:invitation_token>')
+def signup_choices(invitation_token):
+
+    invitation_info_dict = validate_token(invitation_token)
+    if not invitation_info_dict:
         return redirect("/")
+    return render_template(
+        'auth/signup_choices.html', 
+        url=url_for("auth.signup", invitation_token=invitation_token)
+    )
+
+
+@bp.route('/signup/<string:invitation_token>', methods=["GET", "POST"])
+def signup(invitation_token):
+
+    invitation_info_dict = validate_token(invitation_token)
+    if not invitation_info_dict:
+        return redirect("/")
+    
+    form = SignupForm(request.form)
 
     if request.method == "POST":
         if form.validate_on_submit():
@@ -90,11 +110,12 @@ def signup(invitation_token):
             user.password = form.password.data
             user.signup_at = user.created_at = datetime.datetime.utcnow()
             user.save()
-            flash('恭喜註冊成功！歡迎光臨成大山協網站，請登入~~~', FlashCategory.success)
+            flash('註冊成功！歡迎光臨~~~已登入', FlashCategory.success)
+            login_user(user, remember=True)
             return redirect('/')
         else:
             flash('格式錯誤', FlashCategory.error)
-    return render_template('auth/signup.html', form=form)
+    return render_template('auth/signup.html', form=form, email=invitation_info_dict['email'])
 
 
 @bp.route('/login/', methods=["GET", "POST"])

@@ -163,6 +163,10 @@
             </ul>
           </li><!-- / Blog -->
 
+          {% if current_user.is_authenticated %}
+          <li class="dropdown ">
+            <a href="#">我要開隊</a>
+          </li>
           <!-- Blog -->
           <li class="dropdown dropdown-slide">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="350"
@@ -177,7 +181,7 @@
               <li><a href="profile-details.html">歷屆山難</a></li>
             </ul>
           </li><!-- / Blog -->
-
+          {% endif %}
 
         </ul><!-- / .nav .navbar-nav -->
 

@@ -22,7 +22,6 @@ class SignupForm(FlaskForm):
             validators.Length(max=10, message="太長了呦，最多10個字")
         ]
     )
-
     password = PasswordField("*密碼(長度6至20)", validators=[
         validators.DataRequired(), 
         validators.Length(min=6, max=20, message="長度6至20")])
