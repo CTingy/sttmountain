@@ -151,7 +151,6 @@ def post_signup(user_id):
 def signup():
 
     invitation_info_dict = validate_token(session.get('invitation_token'))
-    session.pop("invitation_token", None)
 
     if not invitation_info_dict:
         return redirect("/")
@@ -160,18 +159,22 @@ def signup():
 
     if request.method == "POST":
         if form.validate_on_submit():
-            user = SttUser()
-            user.invitation_info = InvitationInfo(
+            user = SttUser(
+                username=form.username.data,
                 email=invitation_info_dict['email'],
-                invited_at=iso8601.parse_date(invitation_info_dict['invited_at']),
-                invited_by=invitation_info_dict['user_id'],
-                token=invitation_token
+                created_at=datetime.datetime.utcnow(),
+                invitation_info=InvitationInfo(
+                    email=invitation_info_dict['email'],
+                    token=session["invitation_token"],
+                    invited_at=iso8601.parse_date(invitation_info_dict['invited_at']),
+                    invited_by=invitation_info_dict['user_id']
+                )
             )
-            user.email = invitation_info_dict['email']
-            user.username = form.username.data
             user.password = form.password.data
-            user.created_at = datetime.datetime.utcnow()
             user.save()
+
+            session.pop("invitation_token", None)
+            
             flash('註冊成功！歡迎光臨~~~已登入', FlashCategory.success)
             login_user(user, remember=True, 
                 duration=datetime.timedelta(days=Expiration.remember_cookie_duration_days))
@@ -188,12 +191,9 @@ def login():
         if form.validate_on_submit():
             user = form.user_in_db
             
-            # SttUser.objects(id=user.id).update_one(last_login_at=datetime.datetime.utcnow())
-            user.last_login_at = datetime.datetime.utcnow()
-            user.save()
-
             login_user(user, remember=True, 
                 duration=datetime.timedelta(days=Expiration.remember_cookie_duration_days))
+            SttUser.objects(id=user.id).update_one(last_login_at=datetime.datetime.utcnow())
 
             next_ = request.args.get('next')
             # if not is_safe_url(next_):
