@@ -21,6 +21,13 @@ class Config:
     # APPLICATION_ROOT = os.path.dirname(os.path.abspath(__file__))
     # SERVER_NAME = '127.0.0.1:5000'
 
+    # crediential form Google
+    GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
+    GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
+    GOOGLE_DISCOVERY_URL = (
+        "https://accounts.google.com/.well-known/openid-configuration"
+    )
+
 
 class TestingConfig(Config):
     pass
@@ -28,10 +35,10 @@ class TestingConfig(Config):
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    MAIL_SERVER ='smtp.mailtrap.io'
+    MAIL_SERVER = 'smtp.mailtrap.io'
     MAIL_PORT = 2525
-    MAIL_USERNAME = '92e17ad0041d38'
-    MAIL_PASSWORD = '1032dff33158b0'
+    MAIL_USERNAME = os.environ.get('DEV_MAIL_USERNAME', None)
+    MAIL_PASSWORD = os.environ.get('DEV_MAIL_PASSWORD', None)
     MAIL_USE_TLS = True
     MAIL_USE_SSL = False
 

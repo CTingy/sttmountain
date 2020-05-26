@@ -1,18 +1,16 @@
 import datetime
-import json
 
 from flask import flash, Blueprint, request, url_for, render_template, redirect, current_app
 from itsdangerous import TimedJSONWebSignatureSerializer
 from itsdangerous import SignatureExpired, BadSignature
 from flask_login import login_user, current_user, login_required, logout_user
-
-from mongoengine.queryset.visitor import Q
+# from mongoengine.queryset.visitor import Q
 
 from sttapp.users.models import SttUser, InvitationInfo
 from sttapp.base.enums import FlashCategory
 from .forms import SignupForm, InvitationForm, LoginForm
 from .services.mail import send_mail
-from .enums import INVITATION_EXPIRE_DAYS
+from .enums import Expiration
 
 import iso8601
 
@@ -27,7 +25,7 @@ def invite():
     if form.validate_on_submit():
 
         s = TimedJSONWebSignatureSerializer(
-            current_app.config['SECRET_KEY'], expires_in=INVITATION_EXPIRE_DAYS*3600*24
+            current_app.config['SECRET_KEY'], expires_in=Expiration.invitation_expire_days*3600*24
         )
 
         invitation_token = s.dumps({
@@ -46,10 +44,10 @@ def invite():
             html_body=render_template(
                 "auth/invitation_email.html",
                 url=request.host_url + url_for("auth.signup_choices", invitation_token=invitation_token),
-                days=INVITATION_EXPIRE_DAYS)
+                days=Expiration.invitation_expire_days)
         )
         flash(
-            '已寄出邀請信，請於{}天內申請帳號'.format(INVITATION_EXPIRE_DAYS), 
+            '已寄出邀請信，請於{}天內申請帳號'.format(Expiration.invitation_expire_days), 
             FlashCategory.info
         )
         return redirect(url_for('auth.invite'))
@@ -111,7 +109,8 @@ def signup(invitation_token):
             user.signup_at = user.created_at = datetime.datetime.utcnow()
             user.save()
             flash('註冊成功！歡迎光臨~~~已登入', FlashCategory.success)
-            login_user(user, remember=True)
+            login_user(user, remember=True, 
+                duration=datetime.timedelta(days=Expiration.remember_cookie_duration_days))
             return redirect('/')
         else:
             flash('格式錯誤', FlashCategory.error)
@@ -123,7 +122,8 @@ def login():
     form = LoginForm(request.form)
     if request.method == "POST":
         if form.validate_on_submit():
-            login_user(form.user_in_db, remember=True)
+            login_user(form.user_in_db, remember=True, 
+                duration=datetime.timedelta(days=Expiration.remember_cookie_duration_days))
             
             next_ = request.args.get('next')
             # if not is_safe_url(next_):
