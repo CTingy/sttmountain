@@ -10,6 +10,7 @@ from sttapp.users.models import SttUser, InvitationInfo
 from sttapp.base.enums import FlashCategory
 from .forms import SignupForm, InvitationForm, LoginForm
 from .services.mail import send_mail
+from .services.google import get_request_uri, callback
 from .enums import Expiration
 
 import iso8601
@@ -88,10 +89,36 @@ def signup_choices(invitation_token):
     return render_template('auth/signup_choices.html')
 
 
+@bp.route('/google_signup/')
+def google_signup():
+
+    return redirect(get_request_uri(current_app, request.base_url))
+    # print('~~~!!!!', get_request_uri(current_app, request.base_url))
+    # return redirect("/")
+
+
+@bp.route('/google_signup/callback/')
+def google_callback():
+    
+    code = request.args.get("code")
+
+    res = callback(app=current_app, code=code, url=request.url, base_url=request.base_url)
+    if res:
+        flash(res, FlashCategory.success)
+        flash("若您為在校生，請盡速至個人頁面填寫出隊相關資訊，以便領隊使用開隊功能", FlashCategory.warn)
+    else:
+        flash("hohoho", FlashCategory.error)
+    # 這邊把拿到的資訊拿來 create user物件(已拿到必填資料：使用者名稱＆信箱了)
+    # del invitation email session
+    return redirect("/")
+
+
 @bp.route('/signup/', methods=["GET", "POST"])
 def signup():
 
     invitation_info_dict = validate_token(session.get('invitation_token'))
+    session.pop("invitation_token", None)
+
     if not invitation_info_dict:
         return redirect("/")
     
@@ -132,11 +159,16 @@ def login():
             # if not is_safe_url(next_):
             #     return redirect('/')
             
-            flash('登入成功！歡迎光臨 {}'.format(current_user.username), FlashCategory.success)
+            flash('登入成功！歡迎光臨 {}'.format(current_user.username), FlashCategory.info)
             return redirect(next_ or '/')
         else:
             flash('登入失敗', FlashCategory.error)
     return render_template('auth/login.html', form=form)
+
+
+@bp.route('/google_login/')
+def google_login():
+    pass
 
 
 @bp.route('/logout/')
