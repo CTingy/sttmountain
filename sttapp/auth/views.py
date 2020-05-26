@@ -8,10 +8,11 @@ from flask_login import login_user, current_user, login_required, logout_user
 
 from sttapp.users.models import SttUser, InvitationInfo
 from sttapp.base.enums import FlashCategory
+from sttapp.base.utils import get_obj_or_404
 from .forms import SignupForm, InvitationForm, LoginForm
 from .services.mail import send_mail
 from .services.google import get_request_uri, callback
-from .enums import Expiration
+from .enums import Expiration, SocialLogin
 
 import iso8601
 
@@ -20,7 +21,7 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 @bp.route('/invite/', methods=["GET", "POST"])
-# @login_required
+@login_required
 def invite():
     form = InvitationForm(request.form)
     if form.validate_on_submit():
@@ -31,7 +32,7 @@ def invite():
 
         invitation_token = s.dumps({
             'email': form.email.data,
-            # 'user_id': str(user.id), 
+            'user_id': str(current_user.id), 
             'invited_at': datetime.datetime.utcnow().isoformat(),
         })
         
@@ -78,7 +79,7 @@ def validate_token(token):
     return invitation_info_dict
 
 
-@bp.route('/signup_choices/<string:invitation_token>')
+@bp.route('/signup_choices/<string:invitation_token>/')
 def signup_choices(invitation_token):
 
     session['invitation_token'] = invitation_token
@@ -102,15 +103,48 @@ def google_callback():
     
     code = request.args.get("code")
 
-    res = callback(app=current_app, code=code, url=request.url, base_url=request.base_url)
-    if res:
-        flash(res, FlashCategory.success)
-        flash("若您為在校生，請盡速至個人頁面填寫出隊相關資訊，以便領隊使用開隊功能", FlashCategory.warn)
-    else:
-        flash("hohoho", FlashCategory.error)
-    # 這邊把拿到的資訊拿來 create user物件(已拿到必填資料：使用者名稱＆信箱了)
+    google_user_data = callback(
+        app=current_app, code=code, url=request.url, base_url=request.base_url)
+    
+    if not google_user_data:
+        flash("您的google帳戶為失效狀態，請使用其他方式註冊", FlashCategory.error)
+        return redirect(url_for("auth.signup_choices", invitation_token=session.get('invitation_token')))
+
     # del invitation email session
-    return redirect("/")
+    invitation_info_dict = validate_token(session.get('invitation_token'))
+    if not invitation_info_dict:
+        return redirect("/")
+
+    user = SttUser(
+        username=google_user_data.get("users_name"),
+        email=google_user_data.get("users_email"),
+        social_login_with=SocialLogin.google,
+        social_login_id=str(google_user_data.get("unique_id")),
+        # profile_img=google_user_data.get("picture"),
+        created_at=datetime.datetime.utcnow(),
+        invitation_info=InvitationInfo(
+            email=invitation_info_dict['email'],
+            token=session["invitation_token"],
+            invited_at=iso8601.parse_date(invitation_info_dict['invited_at']),
+            invited_by=invitation_info_dict['user_id']
+        )
+    )
+    try:
+        user.save()
+    except Exception as e:
+        flash(e, FlashCategory.error)
+        return redirect("/")
+    else:
+        session.pop("invitation_token", None)
+        return redirect(url_for("auth.post_signup", user_id=user.id))
+
+
+@bp.route('/post_signup/<string:user_id>/',methods=["GET", "POST"])
+def post_signup(user_id):
+    
+    user = get_obj_or_404(SttUser, id=user_id)
+    flash("you are {}, {}, {}".format(user_id, user.username, user.email), FlashCategory.info)
+    return redirect(url_for("auth.login"))
 
 
 @bp.route('/signup/', methods=["GET", "POST"])
@@ -130,13 +164,13 @@ def signup():
             user.invitation_info = InvitationInfo(
                 email=invitation_info_dict['email'],
                 invited_at=iso8601.parse_date(invitation_info_dict['invited_at']),
-                # invited_by=invitation_info_dict['user_id'],
+                invited_by=invitation_info_dict['user_id'],
                 token=invitation_token
             )
             user.email = invitation_info_dict['email']
             user.username = form.username.data
             user.password = form.password.data
-            user.signup_at = user.created_at = datetime.datetime.utcnow()
+            user.created_at = datetime.datetime.utcnow()
             user.save()
             flash('註冊成功！歡迎光臨~~~已登入', FlashCategory.success)
             login_user(user, remember=True, 
@@ -152,9 +186,15 @@ def login():
     form = LoginForm(request.form)
     if request.method == "POST":
         if form.validate_on_submit():
-            login_user(form.user_in_db, remember=True, 
-                duration=datetime.timedelta(days=Expiration.remember_cookie_duration_days))
+            user = form.user_in_db
             
+            # SttUser.objects(id=user.id).update_one(last_login_at=datetime.datetime.utcnow())
+            user.last_login_at = datetime.datetime.utcnow()
+            user.save()
+
+            login_user(user, remember=True, 
+                duration=datetime.timedelta(days=Expiration.remember_cookie_duration_days))
+
             next_ = request.args.get('next')
             # if not is_safe_url(next_):
             #     return redirect('/')

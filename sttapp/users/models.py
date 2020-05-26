@@ -42,8 +42,11 @@ class User(UserMixin, db.Document):
 
     username = db.StringField()  # 網站顯示的綽號
     email = db.EmailField()  # 登入帳號
-    signup_at = db.DateTimeField()
+    created_at = db.DateTimeField()
     last_login_at = db.DateTimeField()
+    social_login_with = db.StringField()
+    social_login_id = db.StringField()
+    profile_img = db.URLField()
 
     meta = {'abstract': True,}
 
