@@ -1,6 +1,6 @@
 import datetime
 
-from flask import flash, Blueprint, request, url_for, render_template, redirect, current_app
+from flask import flash, Blueprint, session, request, url_for, render_template, redirect, current_app
 from itsdangerous import TimedJSONWebSignatureSerializer
 from itsdangerous import SignatureExpired, BadSignature
 from flask_login import login_user, current_user, login_required, logout_user
@@ -56,6 +56,10 @@ def invite():
 
 def validate_token(token):
 
+    if not token:
+        flash("連結載入失敗，請重新點擊邀請信中的連結", FlashCategory.error)
+        return None
+
     s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'])
     try:
         invitation_info_dict = s.loads(token)
@@ -76,19 +80,18 @@ def validate_token(token):
 @bp.route('/signup_choices/<string:invitation_token>')
 def signup_choices(invitation_token):
 
+    session['invitation_token'] = invitation_token
+
     invitation_info_dict = validate_token(invitation_token)
     if not invitation_info_dict:
         return redirect("/")
-    return render_template(
-        'auth/signup_choices.html', 
-        url=url_for("auth.signup", invitation_token=invitation_token)
-    )
+    return render_template('auth/signup_choices.html')
 
 
-@bp.route('/signup/<string:invitation_token>', methods=["GET", "POST"])
-def signup(invitation_token):
+@bp.route('/signup/', methods=["GET", "POST"])
+def signup():
 
-    invitation_info_dict = validate_token(invitation_token)
+    invitation_info_dict = validate_token(session.get('invitation_token'))
     if not invitation_info_dict:
         return redirect("/")
     
