@@ -1,16 +1,20 @@
 {% extends "base.html" %}
 
-{% macro render_field(field) %}
-<div class="form-group col-md-6 col-sm-6 col-xs-12">
+{% macro render_field(field, width=6, placeholder="") %}
+<div class="form-group col-md-{{ width }} col-sm-{{ width }} col-xs-12">
   <!-- <input type="email" class="form-control" placeholder="Email"> -->
   {{ field.label }}
   {% if field.errors %}
   {% for error in field.errors %}
-  <span>：{{ error }}</span>
+  <span class="text-danger">{{ error }}</span>
   {% endfor %}
   {% endif %}
   <br>
+  {% if placeholder %}
+  {{ field(class_='form-control', placeholder=placeholder) }}
+  {% else %}
   {{ field(class_='form-control') }}
+  {% endif %}
 </div>
 {% endmacro %}
 
@@ -21,22 +25,38 @@
       <div class="col-md-8 col-md-offset-2">
         <div class="block text-center">
           <a class="logo" href="/">
-            <img src={{ url_for("static", filename="images/logo.png") }} alt="">
+            <img src={{ url_for("static", filename="images/stt_logo.png") }} alt="">
           </a>
           <form class="text-left clearfix" action="" method="post">
             <h4 class="text-center">註冊新帳號</h4>
-            <p class="text-center">*為必填</p>
-            <div class="form-group col-md-6 col-sm-6 col-xs-12">
-              <label for="email(註冊後可更改)">email</label>
+            <br>
+            <p class="text-center">
+              隱藏資料為：<b>真實姓名、生日、手機</b>，這些資料僅顯示於個人頁面，不會顯示於網站，
+              <br>將用於OB聯絡網或啟動山防時使用，若不介意請積極填寫，謝謝！</p>
+            <hr>
+            <p class="text-center">* 為必填。</p>
+            <br>
+            {% include 'alerts.html' %}
+            {{ form.csrf_token }}
+            <div class="form-group col-md-12 col-sm-12 col-xs-12">
+              <label for="email">email（登入用帳號，註冊後可更改）</label>
               <br>
               <input id="email" class="form-control" type="text" name="email" value="{{ email }}" readonly>
             </div>
-            {% include 'alerts.html' %}
-            {{ form.hidden_tag() }}
-            {{ form.csrf_token }}
-            {{ render_field(form.username) }}
-            {{ render_field(form.password) }}
-            {{ render_field(form.confirm) }}
+            {{ render_field(form.username, 6, "登入後顯示名稱，例如：豆子") }}
+            {{ render_field(form.name) }}
+            {{ render_field(form.birthday, 6, "格式為：YYYY/MM/DD") }}
+            {{ render_field(form.cellphone_number, 6, "格式為：09XXXXXXXX") }}
+            {{ render_field(form.department, 6, "例如：物理、水利、中文") }}
+            {{ render_field(form.graduation_year, 6, "例如：110、64、96") }}
+            {{ render_field(form.group, 4) }}
+            {{ render_field(form.position, 4) }}
+            {{ render_field(form.level, 4) }}
+            <div class="form-group col-md-12 col-sm-12 col-xs-12">
+              <hr>
+            </div>
+            {{ render_field(form.password, 12) }}
+            {{ render_field(form.confirm, 12) }}
             <div class="text-center col-md-12">
               <br>
               <button type="submit" class="btn btn-main text-center">送出</button>

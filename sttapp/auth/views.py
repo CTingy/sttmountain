@@ -11,7 +11,7 @@ from flask_login import login_user, current_user, login_required, logout_user
 from sttapp.users.models import SttUser, InvitationInfo
 from sttapp.base.enums import FlashCategory
 from sttapp.base.utils import get_obj_or_404
-from .forms import SignupForm, InvitationForm, LoginForm
+from .forms import SttSignupForm, InvitationForm, LoginForm
 from .services.mail import send_mail
 from .services.google import get_request_uri, callback
 from .enums import Expiration, SocialLogin
@@ -95,8 +95,6 @@ def signup_choices(invitation_token):
 def google_signup():
 
     return redirect(get_request_uri(current_app, request))
-    # print('~~~!!!!', get_request_uri(current_app, request.base_url))
-    # return redirect("/")
 
 
 @bp.route('/google_signup/callback/')
@@ -149,7 +147,7 @@ def post_signup():
     
     user = get_obj_or_404(SttUser, id=current_user.id)
     flash("you are {}, {}, {}".format(current_user.id, user.username, user.email), FlashCategory.info)
-    return redirect(url_for("auth.login"))
+    return render_template("auth/post_signup.html")
 
 
 @bp.route('/signup/', methods=["GET", "POST"])
@@ -160,12 +158,20 @@ def signup():
     if not invitation_info_dict:
         return redirect("/")
     
-    form = SignupForm(request.form)
+    form = SttSignupForm(request.form)
 
     if request.method == "POST":
         if form.validate_on_submit():
             user = SttUser(
                 username=form.username.data,
+                name=form.name.data or None,
+                birthday=form.birthday_dt or None,
+                cellphone_number=form.cellphone_number.data or None,
+                department=form.department.data or None,
+                graduation_year=form.graduation_year.data or None,
+                group=form.group.data,
+                position=form.position.data,
+                level=form.level.data,
                 email=invitation_info_dict['email'],
                 created_at=datetime.datetime.utcnow(),
                 invitation_info=InvitationInfo(

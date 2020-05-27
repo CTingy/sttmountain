@@ -66,7 +66,7 @@ class SttUser(User):
 
     # 社團相關資料
     group = db.StringField(choices=Group.get_choices())  # 嚮導隊
-    position = db.ListField(choices=Position.get_choices())  # 工作組，例如：岩推、總務、教學
+    position = db.StringField(choices=Position.get_choices())  # 工作組，例如：岩推、總務、教學
     level = db.StringField(choices=Level.get_choices())  # 新生、隊員、幹部等
     member_info = db.EmbeddedDocumentField(MemberInfo)
     # experiences_list = 
