@@ -4,5 +4,10 @@ class Expiration:
     remember_cookie_duration_days = 30
 
 class SocialLogin:
-     google = "Google"
-     fb = "Facebook"
+    google = "Google"
+    fb = "Facebook"
+
+
+class SocialAction:
+    login = "login"
+    signup= "signup"

@@ -28,6 +28,7 @@
             <img src={{ url_for("static", filename="images/stt_logo.png") }} alt="">
           </a>
           <form class="text-left clearfix" action="" method="post">
+            {% include 'alerts.html' %}
             <h4 class="text-center">填寫進階資料</h4>
             <br>
             <p class="text-center">
@@ -36,7 +37,6 @@
             <hr>
             <p class="text-center">* 為必填。</p>
             <br>
-            {% include 'alerts.html' %}
             {{ form.csrf_token }}
             {{ render_field(form.username, 6, "登入後顯示名稱，例如：豆子") }}
             {{ render_field(form.name) }}

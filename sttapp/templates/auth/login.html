@@ -24,7 +24,7 @@
             <img src={{ url_for("static", filename="images/logo.png") }} alt="">
           </a>
           <form class="text-left clearfix" action="" method="post">
-            <h4 class="text-center">登入</h4>
+            <h4 class="text-center">信箱登入</h4>
             {% include 'alerts.html' %}
             {{ form.hidden_tag() }}
             {{ form.csrf_token }}
@@ -35,6 +35,16 @@
               <button type="submit" class="btn btn-main text-center">送出</button>
             </div>
           </form>
+          <hr>
+          <br>
+          <p class="text-center">使用其他方式登入</p>
+          <a href="#">
+            <button class="btn btn-primary btn-lg disabled" aria-disabled="true"><i
+                class="tf-ion-social-facebook"></i>&nbsp&nbspFacebook</button>
+          </a>
+          <a href="{{ url_for("auth.google_login") }}">
+            <button class="btn btn-danger btn-lg"><i class="tf-ion-social-google"></i>&nbsp&nbspGoogle</button>
+          </a>
         </div>
       </div>
     </div>

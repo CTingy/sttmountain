@@ -1,6 +1,11 @@
 import json
+import datetime
+from flask import url_for
 from oauthlib.oauth2 import WebApplicationClient
+from sttapp.users.models import SttUser, InvitationInfo
+from sttapp.auth.enums import SocialLogin
 import requests
+import iso8601
 
 
 def get_google_provider_cfg(app):
@@ -19,7 +24,7 @@ def get_request_uri(app, request):
     # scopes that let you retrieve user's profile from Google
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
-        redirect_uri=request.base_url + "callback/",
+        redirect_uri=request.host_url.rstrip("/") + url_for("auth.google_callback"),
         scope=["openid", "email", "profile"],
     )
     return request_uri
@@ -72,4 +77,33 @@ def callback(app, request):
         }
     else:
         return None
-    
+
+
+def google_signup_action(google_user_data, invitation_info_dict):
+    user = SttUser(
+        username=google_user_data.get("users_name"),
+        email=google_user_data.get("users_email"),
+        social_login_with=SocialLogin.google,
+        social_login_id=str(google_user_data.get("unique_id")),
+        # profile_img=google_user_data.get("picture"),
+        created_at=datetime.datetime.utcnow(),
+        invitation_info=InvitationInfo(
+            email=invitation_info_dict['email'],
+            token=invitation_info_dict['token'],
+            invited_at=iso8601.parse_date(invitation_info_dict['invited_at']),
+            invited_by=invitation_info_dict['user_id']
+        )
+    )
+    user.save()
+    return user
+
+
+def google_login_action(google_user_data):
+
+    user = SttUser.objects.get(social_login_id=str(google_user_data.get("unique_id")), 
+                               social_login_with=SocialLogin.google)
+    # 檢查是否更換信箱
+    if user.email != google_user_data.get("users_email"):
+        SttUser.objects(id=user.id).update_one(email=google_user_data.get("users_email"))
+
+    return user
