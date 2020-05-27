@@ -41,7 +41,7 @@ class InvitationInfo(db.EmbeddedDocument):
 class User(UserMixin, db.Document):
 
     username = db.StringField()  # 網站顯示的綽號
-    email = db.EmailField()  # 登入帳號
+    email = db.EmailField(unique=True)  # 登入帳號
     created_at = db.DateTimeField()
     last_login_at = db.DateTimeField()
     social_login_with = db.StringField()
@@ -115,4 +115,7 @@ class TempUser(db.Document):
 
 @login_manager.user_loader  
 def load_user(user_id):
-    return SttUser.objects.get(id=user_id)
+    try:
+        return SttUser.objects.get(id=user_id)
+    except SttUser.DoesNotExist:
+        return None

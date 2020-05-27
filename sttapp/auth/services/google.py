@@ -7,7 +7,7 @@ def get_google_provider_cfg(app):
     return requests.get(app.config["GOOGLE_DISCOVERY_URL"]).json()
 
 
-def get_request_uri(app, base_url):
+def get_request_uri(app, request):
     # OAuth2 client setup
     client = WebApplicationClient(app.config["GOOGLE_CLIENT_ID"])
     
@@ -19,15 +19,15 @@ def get_request_uri(app, base_url):
     # scopes that let you retrieve user's profile from Google
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
-        redirect_uri=base_url + "callback/",
+        redirect_uri=request.base_url + "callback/",
         scope=["openid", "email", "profile"],
     )
     return request_uri
 
 
-def callback(app, code, url, base_url):
+def callback(app, request):
     # Get authorization code Google sent back to you
-    
+    code = request.args.get("code")
     client = WebApplicationClient(app.config["GOOGLE_CLIENT_ID"])
 
     # Find out what URL to hit to get tokens that allow you to ask for
@@ -38,8 +38,8 @@ def callback(app, code, url, base_url):
     # Prepare and send request to get tokens! Yay tokens!
     token_url, headers, body = client.prepare_token_request(
         token_endpoint,
-        authorization_response=url,
-        redirect_url=base_url,
+        authorization_response=request.url,
+        redirect_url=request.base_url,
         code=code,
     )
     token_response = requests.post(

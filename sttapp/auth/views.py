@@ -3,6 +3,8 @@ import datetime
 from flask import flash, Blueprint, session, request, url_for, render_template, redirect, current_app
 from itsdangerous import TimedJSONWebSignatureSerializer
 from itsdangerous import SignatureExpired, BadSignature
+
+from mongoengine.errors import NotUniqueError
 from flask_login import login_user, current_user, login_required, logout_user
 # from mongoengine.queryset.visitor import Q
 
@@ -82,30 +84,26 @@ def validate_token(token):
 @bp.route('/signup_choices/<string:invitation_token>/')
 def signup_choices(invitation_token):
 
-    session['invitation_token'] = invitation_token
-
     invitation_info_dict = validate_token(invitation_token)
     if not invitation_info_dict:
         return redirect("/")
+    session['invitation_token'] = invitation_token
     return render_template('auth/signup_choices.html')
 
 
 @bp.route('/google_signup/')
 def google_signup():
 
-    return redirect(get_request_uri(current_app, request.base_url))
+    return redirect(get_request_uri(current_app, request))
     # print('~~~!!!!', get_request_uri(current_app, request.base_url))
     # return redirect("/")
 
 
 @bp.route('/google_signup/callback/')
 def google_callback():
-    
-    code = request.args.get("code")
 
-    google_user_data = callback(
-        app=current_app, code=code, url=request.url, base_url=request.base_url)
-    
+    google_user_data = callback(current_app, request)
+
     if not google_user_data:
         flash("您的google帳戶為失效狀態，請使用其他方式註冊", FlashCategory.error)
         return redirect(url_for("auth.signup_choices", invitation_token=session.get('invitation_token')))
@@ -129,21 +127,28 @@ def google_callback():
             invited_by=invitation_info_dict['user_id']
         )
     )
+    session.pop("invitation_token", None)
     try:
         user.save()
+    except NotUniqueError:
+        flash("您使用的google帳號的信箱已經被註冊過了，請使用google登入", FlashCategory.warn)
+        return redirect(url_for("auth.login"))
     except Exception as e:
-        flash(e, FlashCategory.error)
+        flash("發生不明問題QQ, 請聯絡管理員", FlashCategory.error)
         return redirect("/")
     else:
-        session.pop("invitation_token", None)
-        return redirect(url_for("auth.post_signup", user_id=user.id))
+        login_user(user, remember=True, 
+            duration=datetime.timedelta(days=Expiration.remember_cookie_duration_days))
+        SttUser.objects(id=user.id).update_one(last_login_at=datetime.datetime.utcnow())
+        return redirect(url_for("auth.post_signup"))
 
 
-@bp.route('/post_signup/<string:user_id>/',methods=["GET", "POST"])
-def post_signup(user_id):
+@bp.route('/post_signup/',methods=["GET", "POST"])
+@login_required
+def post_signup():
     
-    user = get_obj_or_404(SttUser, id=user_id)
-    flash("you are {}, {}, {}".format(user_id, user.username, user.email), FlashCategory.info)
+    user = get_obj_or_404(SttUser, id=current_user.id)
+    flash("you are {}, {}, {}".format(current_user.id, user.username, user.email), FlashCategory.info)
     return redirect(url_for("auth.login"))
 
 
@@ -175,9 +180,11 @@ def signup():
 
             session.pop("invitation_token", None)
             
-            flash('註冊成功！歡迎光臨~~~已登入', FlashCategory.success)
+            flash('註冊成功！歡迎光臨~~~', FlashCategory.success)
+            flash('重要提醒：若您為在校生，請盡速填寫出隊資訊以利領隊開隊', FlashCategory.info)
             login_user(user, remember=True, 
                 duration=datetime.timedelta(days=Expiration.remember_cookie_duration_days))
+            SttUser.objects(id=user.id).update_one(last_login_at=datetime.datetime.utcnow())
             return redirect('/')
         else:
             flash('格式錯誤', FlashCategory.error)

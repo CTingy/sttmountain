@@ -4,10 +4,10 @@
 <section class="signin-page account">
   <div class="container">
     <div class="row">
-      <div class="col-md-6 col-md-offset-3">
+      <div class="col-md-4 col-md-offset-4">
         <div class="block text-center">
           <a class="logo" href="/">
-            <img src={{ url_for("static", filename="images/logo.png") }} alt="">
+            <img src={{ url_for("static", filename="images/stt_logo.png") }} alt="">
           </a>
           <br><br>
           <h4 class="text-center">請選擇註冊方式</h4>
@@ -15,17 +15,20 @@
           <div class="product-content">
             <div class="form-group">
               <a href="{{ url_for("auth.signup") }}">
-                <button class="btn btn-success btn-lg btn-block">使用邀請信信箱註冊</button>
+                <button class="btn btn-success btn-lg btn-block"><i
+                    class="tf-ion-android-mail"></i>&nbsp&nbsp使用邀請信信箱註冊</button>
               </a>
             </div>
             <div class="form-group">
               <a href="#">
-                <button class="btn btn-primary btn-lg btn-block disabled" aria-disabled="true">使用Facebook帳號註冊</button>
+                <button class="btn btn-primary btn-lg btn-block disabled" aria-disabled="true"><i
+                    class="tf-ion-social-facebook"></i>&nbsp&nbsp使用Facebook帳號註冊</button>
               </a>
             </div>
             <div class="form-group">
               <a href="{{ url_for("auth.google_signup") }}">
-                <button class="btn btn-danger btn-lg btn-block">使用Google帳號註冊</button>
+                <button class="btn btn-danger btn-lg btn-block"><i
+                    class="tf-ion-social-google"></i>&nbsp&nbsp使用Google帳號註冊</button>
               </a>
             </div>
           </div>
