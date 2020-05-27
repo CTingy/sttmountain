@@ -11,7 +11,7 @@ from flask_login import login_user, current_user, login_required, logout_user
 from sttapp.users.models import SttUser, InvitationInfo
 from sttapp.base.enums import FlashCategory
 from sttapp.base.utils import get_obj_or_404
-from .forms import SttSignupForm, InvitationForm, LoginForm
+from .forms import SttSignupForm, InvitationForm, LoginForm, PostSignupForm
 from .services.mail import send_mail
 from .services.google import get_request_uri, callback
 from .enums import Expiration, SocialLogin
@@ -91,9 +91,8 @@ def signup_choices(invitation_token):
     return render_template('auth/signup_choices.html')
 
 
-@bp.route('/google_signup/')
-def google_signup():
-
+@bp.route('/google_signup/') 
+def google_signup(): 
     return redirect(get_request_uri(current_app, request))
 
 
@@ -138,16 +137,37 @@ def google_callback():
         login_user(user, remember=True, 
             duration=datetime.timedelta(days=Expiration.remember_cookie_duration_days))
         SttUser.objects(id=user.id).update_one(last_login_at=datetime.datetime.utcnow())
+        flash("最後一步！填寫詳細資料後就完成囉！", FlashCategory.info)
         return redirect(url_for("auth.post_signup"))
 
 
 @bp.route('/post_signup/',methods=["GET", "POST"])
 @login_required
 def post_signup():
-    
-    user = get_obj_or_404(SttUser, id=current_user.id)
-    flash("you are {}, {}, {}".format(current_user.id, user.username, user.email), FlashCategory.info)
-    return render_template("auth/post_signup.html")
+
+    form = PostSignupForm(request.form)
+
+    if request.method == "POST":
+        if form.validate_on_submit():
+            current_user.update(
+                id=current_user.id,
+                username=form.username.data,
+                name=form.name.data or None,
+                birthday=form.birthday_dt or None,
+                cellphone_number=form.cellphone_number.data or None,
+                department=form.department.data or None,
+                graduation_year=form.graduation_year.data or None,
+                group=form.group.data,
+                position=form.position.data,
+                level=form.level.data,
+                updated_at=datetime.datetime.utcnow()
+            )
+            flash("恭喜註冊完成，已登入", FlashCategory.success)
+            flash('重要提醒：若您為在校生，請盡速填寫出隊資訊以利領隊開隊', FlashCategory.warn)
+            return redirect("/")
+        else:
+            flash('格式錯誤', FlashCategory.error)
+    return render_template("auth/post_signup.html", form=form)
 
 
 @bp.route('/signup/', methods=["GET", "POST"])
@@ -174,6 +194,7 @@ def signup():
                 level=form.level.data,
                 email=invitation_info_dict['email'],
                 created_at=datetime.datetime.utcnow(),
+                updated_at=datetime.datetime.utcnow(),
                 invitation_info=InvitationInfo(
                     email=invitation_info_dict['email'],
                     token=session["invitation_token"],
@@ -186,8 +207,8 @@ def signup():
 
             session.pop("invitation_token", None)
             
-            flash('註冊成功！歡迎光臨~~~', FlashCategory.success)
-            flash('重要提醒：若您為在校生，請盡速填寫出隊資訊以利領隊開隊', FlashCategory.info)
+            flash("恭喜註冊完成，已登入", FlashCategory.success)
+            flash('重要提醒：若您為在校生，請盡速填寫出隊資訊以利領隊開隊', FlashCategory.warn)
             login_user(user, remember=True, 
                 duration=datetime.timedelta(days=Expiration.remember_cookie_duration_days))
             SttUser.objects(id=user.id).update_one(last_login_at=datetime.datetime.utcnow())
@@ -212,7 +233,7 @@ def login():
             # if not is_safe_url(next_):
             #     return redirect('/')
             
-            flash('登入成功！歡迎光臨 {}'.format(current_user.username), FlashCategory.info)
+            flash('登入成功！歡迎光臨 {}'.format(current_user.username), FlashCategory.success)
             return redirect(next_ or '/')
         else:
             flash('登入失敗', FlashCategory.error)

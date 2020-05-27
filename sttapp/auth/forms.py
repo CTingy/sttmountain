@@ -88,6 +88,10 @@ class SttSignupForm(SignupForm):
     ])
 
 
+class PostSignupForm(SignupForm):
+    pass
+
+
 class LoginForm(FlaskForm):
 
     email = EmailField('Email', validators=[validators.DataRequired()])
