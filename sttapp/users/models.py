@@ -15,6 +15,7 @@ class MemberInfo(db.EmbeddedDocument):
     gender = db.StringField()
     drug_allergy = db.StringField()
     home_address = db.StringField()
+    blood_type = db.StringField()
 
     # 學校資訊
     student_id = db.StringField()
