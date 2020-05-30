@@ -8,9 +8,12 @@ from sttapp.db import db
 
 class Itinerary(db.EmbeddedDocument):
 
+    day_number = db.IntField()
     content = db.StringField()
     water_info = db.StringField()
     communication_info = db.StringField()
+
+    meta = {'ordering': ['-day_number']}
 
 
 class Proposal(db.Document):
@@ -21,7 +24,7 @@ class Proposal(db.Document):
     end_date = db.DateTimeField()
     leader = db.ReferenceField('sttapp.users.models.SttUser')
     guide = db.ReferenceField('sttapp.users.models.SttUser')
-    itinerary = db.EmbeddedDocumentListField(Itinerary)
+    itinerary_list = db.EmbeddedDocumentListField(Itinerary)
     supporter = db.ReferenceField('sttapp.users.models.SttUser')
     return_plan = db.StringField()
     buffer_days = db.IntField(default=1)

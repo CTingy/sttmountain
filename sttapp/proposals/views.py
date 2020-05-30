@@ -6,7 +6,7 @@ from flask_login import login_user, current_user, login_required
 
 from sttapp.base.enums import FlashCategory
 from .forms import ProposalForm
-from .models import Proposal
+from .models import Proposal, Itinerary
 
 
 import iso8601
@@ -34,6 +34,10 @@ def create():
                 gathering_time=form.gathering_at_dt,
                 created_by=current_user.id
             )
+            duration = (form.end_date_dt-form.start_date_dt).days
+            proposal.itinerary_list = [
+                Itinerary(day_number=i) for i in range(duration+1)
+            ]
             proposal.save()
             return redirect(url_for("proposal.update_itinerary", prop_id=proposal.id))
         else:
@@ -51,5 +55,35 @@ def update():
 @bp.route('/update_itinerary/<string:prop_id>', methods=["GET", "POST"])
 @login_required
 def update_itinerary(prop_id):
-    flash("update itinerary, from id {}".format(prop_id), FlashCategory.success)
-    return redirect("/")
+
+    prop = Proposal.objects.get_or_404(id=prop_id)
+
+    if request.method == "POST":
+        updated_list = []
+        for itinerary in prop.itinerary_list:
+            print(
+                itinerary.day_number,
+                request.form.get("content{}".format(itinerary.day_number)),
+                request.form.get("water_info{}".format(itinerary.day_number)),
+                request.form.get(
+                    "communication_info{}".format(itinerary.day_number))
+            )
+            itinerary.content = request.form.get(
+                "content{}".format(itinerary.day_number)
+            )
+            itinerary.water_info = request.form.get(
+                "water_info{}".format(itinerary.day_number)
+            )
+            itinerary.communication_info = request.form.get(
+                "communication_info{}".format(itinerary.day_number)
+            )
+            updated_list.append(itinerary)
+
+        flash("行程更新成功", FlashCategory.success)
+        Proposal.objects(id=prop_id).update_one(
+            updated_at=datetime.datetime.utcnow(),
+            itinerary_list=updated_list
+        )
+        return redirect("/")
+
+    return render_template("proposals/itinerary.html", itinerary_list=prop.itinerary_list)

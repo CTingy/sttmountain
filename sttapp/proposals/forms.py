@@ -8,7 +8,7 @@ from .models import Proposal
 class ProposalForm(FlaskForm):
     title = StringField("隊伍名稱", validators=[validators.DataRequired()])
     start_date = StringField(
-        "上山日期(YYYY/MM/DD)", validators=[validators.DataRequired()])
+        "出發日期(含交通天)(YYYY/MM/DD)", validators=[validators.DataRequired()])
     end_date = StringField(
         "下山日期(YYYY/MM/DD)", validators=[validators.DataRequired()])
     leader = StringField("領隊")
