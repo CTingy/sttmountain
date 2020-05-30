@@ -26,7 +26,7 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 @login_required
 def invite():
     form = InvitationForm(request.form)
-    if form.validate_on_submit():
+    if request.method == "POST" and form.validate_on_submit():
 
         s = TimedJSONWebSignatureSerializer(
             current_app.config['SECRET_KEY'], expires_in=Expiration.invitation_expire_days*3600*24
@@ -34,10 +34,10 @@ def invite():
 
         invitation_token = s.dumps({
             'email': form.email.data,
-            'user_id': str(current_user.id), 
+            'user_id': str(current_user.id),
             'invited_at': datetime.datetime.utcnow().isoformat(),
         })
-        
+
         if len(invitation_token) >= 1700:
             flash("邀請註冊連結生成發生問題，請洽管理員", FlashCategory.error)
             return redirect(url_for('auth.invite'))
@@ -47,11 +47,12 @@ def invite():
             recipients=[form.email.data, ],
             html_body=render_template(
                 "auth/invitation_email.html",
-                url=request.host_url.rstrip("/") + url_for("auth.signup_choices", invitation_token=invitation_token),
+                url=request.host_url.rstrip(
+                    "/") + url_for("auth.signup_choices", invitation_token=invitation_token),
                 days=Expiration.invitation_expire_days)
         )
         flash(
-            '已寄出邀請信，請於{}天內申請帳號'.format(Expiration.invitation_expire_days), 
+            '已寄出邀請信，請於{}天內申請帳號'.format(Expiration.invitation_expire_days),
             FlashCategory.info
         )
         return redirect(url_for('auth.invite'))
@@ -92,7 +93,7 @@ def signup_choices(invitation_token):
     return render_template('auth/signup_choices.html')
 
 
-@bp.route('/google_signup/') 
+@bp.route('/google_signup/')
 def google_signup():
 
     session["social_action"] = SocialAction.signup
@@ -119,7 +120,7 @@ def google_callback():
             return redirect("/")
 
         try:
-            user = google_signup_action(google_user_data, invitation_info_dict)        
+            user = google_signup_action(google_user_data, invitation_info_dict)
         except NotUniqueError:
             flash("您使用的google帳號的信箱已經被註冊過了，請使用google登入", FlashCategory.info)
             return redirect(url_for("auth.login"))
@@ -127,8 +128,10 @@ def google_callback():
             flash("最後一步！再填寫詳細資料後就完成囉！", FlashCategory.info)
 
             # login user
-            login_user(user, remember=True, duration=datetime.timedelta(days=Expiration.remember_cookie_duration_days))
-            SttUser.objects(id=user.id).update_one(last_login_at=datetime.datetime.utcnow())
+            login_user(user, remember=True, duration=datetime.timedelta(
+                days=Expiration.remember_cookie_duration_days))
+            SttUser.objects(id=user.id).update_one(
+                last_login_at=datetime.datetime.utcnow())
             return redirect(url_for("auth.post_signup"))
 
     elif social_action == SocialAction.login:
@@ -137,11 +140,13 @@ def google_callback():
             user = google_login_action(google_user_data)
         except SttUser.DoesNotExist:
             flash("您尚未註冊，無法登入喔，請向山協隊員申請註冊連結", FlashCategory.warn)
-            return redirect("/")         
+            return redirect("/")
 
-        login_user(user, remember=True, duration=datetime.timedelta(days=Expiration.remember_cookie_duration_days))
-        SttUser.objects(id=user.id).update_one(last_login_at=datetime.datetime.utcnow())
-        
+        login_user(user, remember=True, duration=datetime.timedelta(
+            days=Expiration.remember_cookie_duration_days))
+        SttUser.objects(id=user.id).update_one(
+            last_login_at=datetime.datetime.utcnow())
+
         next_ = request.args.get('next')
         # if not is_safe_url(next_):
         # return redirect('/')
@@ -153,7 +158,7 @@ def google_callback():
         return redirect("/")
 
 
-@bp.route('/post_signup/',methods=["GET", "POST"])
+@bp.route('/post_signup/', methods=["GET", "POST"])
 @login_required
 def post_signup():
 
@@ -189,7 +194,7 @@ def signup():
 
     if not invitation_info_dict:
         return redirect("/")
-    
+
     form = SttSignupForm(request.form)
 
     if request.method == "POST":
@@ -210,7 +215,8 @@ def signup():
                 invitation_info=InvitationInfo(
                     email=invitation_info_dict['email'],
                     token=invitation_info_dict['token'],
-                    invited_at=iso8601.parse_date(invitation_info_dict['invited_at']),
+                    invited_at=iso8601.parse_date(
+                        invitation_info_dict['invited_at']),
                     invited_by=invitation_info_dict['user_id']
                 )
             )
@@ -218,19 +224,20 @@ def signup():
             user.save()
 
             session.pop("invitation_token", None)
-            
+
             flash("恭喜註冊完成，已登入", FlashCategory.success)
             flash('重要提醒：若您為在校生，請盡速填寫出隊資訊以利領隊開隊', FlashCategory.warn)
-            login_user(user, remember=True, 
-                duration=datetime.timedelta(days=Expiration.remember_cookie_duration_days))
-            SttUser.objects(id=user.id).update_one(last_login_at=datetime.datetime.utcnow())
+            login_user(user, remember=True,
+                       duration=datetime.timedelta(days=Expiration.remember_cookie_duration_days))
+            SttUser.objects(id=user.id).update_one(
+                last_login_at=datetime.datetime.utcnow())
             return redirect('/')
         else:
             flash('格式錯誤', FlashCategory.error)
     return render_template('auth/signup.html', form=form, email=invitation_info_dict['email'])
 
 
-@bp.route('/google_login/') 
+@bp.route('/google_login/')
 def google_login():
 
     session["social_action"] = SocialAction.login
@@ -243,15 +250,16 @@ def login():
     if request.method == "POST":
         if form.validate_on_submit():
             user = form.user_in_db
-            
-            login_user(user, remember=True, 
-                duration=datetime.timedelta(days=Expiration.remember_cookie_duration_days))
-            SttUser.objects(id=user.id).update_one(last_login_at=datetime.datetime.utcnow())
+
+            login_user(user, remember=True,
+                       duration=datetime.timedelta(days=Expiration.remember_cookie_duration_days))
+            SttUser.objects(id=user.id).update_one(
+                last_login_at=datetime.datetime.utcnow())
 
             next_ = request.args.get('next')
             # if not is_safe_url(next_):
             #     return redirect('/')
-            
+
             flash('登入成功！歡迎光臨', FlashCategory.success)
             return redirect(next_ or '/')
         else:

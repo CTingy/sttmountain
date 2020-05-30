@@ -30,6 +30,10 @@
             <a href="#">隊伍/紀錄</a>
           </li>
 
+          <li class="dropdown ">
+            <a href="#">討論區</a>
+          </li>
+
           <!-- Pages -->
           <li class="dropdown full-width dropdown-slide">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="350"
@@ -86,68 +90,6 @@
             </div><!-- / .dropdown-menu -->
           </li><!-- / Pages -->
 
-          <!-- <li class="dropdown dropdown-slide"> -->
-          <li class="dropdown full-width dropdown-slide">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="350"
-              role="button" aria-haspopup="true" aria-expanded="false">討論區 <span
-                class="tf-ion-ios-arrow-down"></span></a>
-            <div class="dropdown-menu">
-              <div class="row">
-
-                <!-- Basic -->
-                <div class="col-sm-2 col-xs-6">
-                  <ul>
-                    <li class="dropdown-header">技術</li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="shop.html">裝備</a></li>
-                    <li><a href="checkout.html">溯溪</a></li>
-                    <li><a href="cart.html">攀岩</a></li>
-                    <li><a href="pricing.html">探勘</a></li>
-                  </ul>
-                </div>
-
-                <div class="col-sm-2 col-xs-6">
-                  <ul>
-                    <li class="dropdown-header">技術</li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="shop.html">裝備</a></li>
-                    <li><a href="checkout.html">溯溪</a></li>
-                    <li><a href="cart.html">攀岩</a></li>
-                    <li><a href="pricing.html">探勘</a></li>
-                  </ul>
-                </div>
-
-                <!-- Layout -->
-                <div class="col-sm-2 col-xs-6">
-                  <ul>
-                    <li class="dropdown-header">知識</li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="pricing.html">體訓</a></li>
-                    <li><a href="pricing.html">菜單</a></li>
-                    <li><a href="pricing.html">醫藥/急救</a></li>
-                  </ul>
-                </div>
-                <div class="col-sm-2 col-xs-6">
-                  <ul>
-                    <li class="dropdown-header">其他</li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="login.html">心情</a></li>
-                    <li><a href="signin.html">生態/動植物</a></li>
-                  </ul>
-                </div>
-                <div class="col-sm-2 col-xs-6">
-                  <ul>
-                    <li class="dropdown-header">其他</li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="login.html">心情</a></li>
-                    <li><a href="signin.html">生態/動植物</a></li>
-                  </ul>
-                </div>
-
-              </div><!-- / .row -->
-            </div><!-- / .dropdown-menu -->
-          </li><!-- / Elements -->
-
           <!-- Blog -->
           <li class="dropdown dropdown-slide">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="350"
@@ -164,9 +106,6 @@
           </li><!-- / Blog -->
 
           {% if current_user.is_authenticated %}
-          <li class="dropdown ">
-            <a href="#">我要開隊</a>
-          </li>
           <!-- Blog -->
           <li class="dropdown dropdown-slide">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="350"

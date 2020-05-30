@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% macro render_field(field, width=6, placeholder="") %}
+<div class="form-group col-md-{{ width }} col-sm-{{ width }} col-xs-12">
+  <!-- <input type="email" class="form-control" placeholder="Email"> -->
+  {{ field.label }}
+  {% if field.errors %}
+  {% for error in field.errors %}
+  <span class="text-danger">{{ error }}</span>
+  {% endfor %}
+  {% endif %}
+  <br>
+  {% if placeholder %}
+  {{ field(class_='form-control', placeholder=placeholder) }}
+  {% else %}
+  {{ field(class_='form-control') }}
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% block content %}
+<section class="signin-page account">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <div class="block text-center">
+          <a class="logo" href="/">
+            <img src={{ url_for("static", filename="images/stt_logo.png") }} alt="">
+          </a>
+          <form class="text-left clearfix" action="" method="post">
+            {% include 'alerts.html' %}
+            <h4 class="text-center">填寫隊伍資料</h4>
+            <br>
+            <p class="text-center">
+              必填為：<b>隊伍名稱、上山日期、下山日期</b>，表格內容均可再更改
+              <br>
+              {{ form.csrf_token }}
+              {{ render_field(form.title) }}
+              {{ render_field(form.start_date) }}
+              {{ render_field(form.end_date) }}
+              {{ render_field(form.buffer_days, 6, "預設為1天") }}
+              {{ render_field(form.radio, 6, "例如：144.28/藍天藍") }}
+              {{ render_field(form.satellite_telephone, 6, "例如：6號機、+882314657982") }}
+              {{ render_field(form.gathering_point, 6, "例如：光口") }}
+              {{ render_field(form.gathering_time, 6, "例如：2020/04/15 08:05") }}
+            <div class="text-center col-md-12">
+              <br>
+              <button type="submit" class="btn btn-main text-center">送出</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
