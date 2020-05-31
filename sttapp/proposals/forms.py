@@ -9,8 +9,8 @@ class ProposalForm(FlaskForm):
     title = StringField("隊伍名稱", validators=[validators.DataRequired()])
     start_date = StringField(
         "出發日期(含交通天)(YYYY/MM/DD)", validators=[validators.DataRequired()])
-    end_date = StringField(
-        "下山日期(YYYY/MM/DD)", validators=[validators.DataRequired()])
+    days = IntegerField("預計天數", default=1, validators=[
+                        validators.DataRequired()])
     leader = StringField("領隊")
     guide = StringField("嚮導")
     supporter = StringField("留守")
@@ -51,13 +51,6 @@ class ProposalForm(FlaskForm):
 
     def validate_start_date(self, field):
         return self._validate_date(field)
-
-    def validate_end_date(self, field):
-        self._validate_date(field)
-        if self.end_date_dt < self.start_date_dt:
-            self.start_date_dt = None
-            raise ValidationError('下山時間不得早於上山時間')
-        return None
 
     def validate_gathering_at(self, field):
         if not field.data:

@@ -78,7 +78,8 @@
             </div>
 
             <div class="btn-group col-md-2" role="group" acion="">
-              <button type="button" class="btn btn-default"><a href=""><i class="tf-pencil2"
+              <button type="button" class="btn btn-default"><a
+                  href="{{ url_for('proposal.update', prop_id=prop.id) }}"><i class="tf-pencil2"
                     aria-hidden="true"></i></a></button>
               <button type="button" data-toggle="modal" data-target="#Modal" class="btn btn-default"><i
                   class="tf-ion-close" aria-hidden="true"></i></button>

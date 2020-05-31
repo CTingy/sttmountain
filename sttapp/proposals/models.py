@@ -22,6 +22,7 @@ class Proposal(db.Document):
     title = db.StringField()
     start_date = db.DateTimeField()
     end_date = db.DateTimeField()
+    days = db.IntField(default=1)
     leader = db.ReferenceField('sttapp.users.models.SttUser')
     guide = db.ReferenceField('sttapp.users.models.SttUser')
     itinerary_list = db.EmbeddedDocumentListField(Itinerary)

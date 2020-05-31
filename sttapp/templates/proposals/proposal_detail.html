@@ -29,7 +29,7 @@
           </a>
           <form class="text-left clearfix" action="" method="post">
             {% include 'alerts.html' %}
-            <h4 class="text-center">填寫隊伍資料</h4>
+            <h4 class="text-center">隊伍提案資料</h4>
             <br>
             <p class="text-center">
               必填為：<b>隊伍名稱、上山日期、下山日期</b>，表格內容均可再更改
@@ -37,7 +37,7 @@
               {{ form.csrf_token }}
               {{ render_field(form.title) }}
               {{ render_field(form.start_date) }}
-              {{ render_field(form.end_date) }}
+              {{ render_field(form.days) }}
               {{ render_field(form.buffer_days, 6, "預設為1天") }}
               {{ render_field(form.radio, 6, "例如：144.28/藍天藍") }}
               {{ render_field(form.satellite_telephone, 6, "例如：6號機、+882314657982") }}
