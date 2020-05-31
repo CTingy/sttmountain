@@ -9,13 +9,13 @@ class ProposalForm(FlaskForm):
     title = StringField("隊伍名稱", validators=[validators.DataRequired()])
     start_date = StringField(
         "出發日期(含交通天)(YYYY/MM/DD)", validators=[validators.DataRequired()])
-    days = IntegerField("預計天數", default=1, validators=[
-                        validators.DataRequired()])
+    days = IntegerField("預計天數", validators=[validators.DataRequired()])
     leader = StringField("領隊")
     guide = StringField("嚮導")
     supporter = StringField("留守")
     return_plan = StringField("撤退計畫")
-    buffer_days = IntegerField("預備天", default=1)
+    buffer_days = IntegerField("預備天", validators=[
+        validators.DataRequired()])
     approach_way = StringField("交通方式")
     radio = StringField("無線電頻率/台號")
     satellite_telephone = StringField("衛星電話")
@@ -25,7 +25,6 @@ class ProposalForm(FlaskForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.start_date_dt = None
-        self.end_date_dt = None
         self.gathering_at_dt = None
 
     def _validate_date(self, field, has_time=False):

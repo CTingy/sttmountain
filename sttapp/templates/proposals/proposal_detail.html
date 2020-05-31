@@ -32,13 +32,13 @@
             <h4 class="text-center">隊伍提案資料</h4>
             <br>
             <p class="text-center">
-              必填為：<b>隊伍名稱、上山日期、下山日期</b>，表格內容均可再更改
+              必填為：<b>隊伍名稱、上山日期、預計天數、預備天數</b>，表格內容均可再更改
               <br>
               {{ form.csrf_token }}
-              {{ render_field(form.title) }}
-              {{ render_field(form.start_date) }}
-              {{ render_field(form.days) }}
-              {{ render_field(form.buffer_days, 6, "預設為1天") }}
+              {{ render_field(form.title, 6, "必填欄位") }}
+              {{ render_field(form.start_date, 6, "必填欄位") }}
+              {{ render_field(form.days, 6, "必填欄位") }}
+              {{ render_field(form.buffer_days, 6, "必填欄位") }}
               {{ render_field(form.radio, 6, "例如：144.28/藍天藍") }}
               {{ render_field(form.satellite_telephone, 6, "例如：6號機、+882314657982") }}
               {{ render_field(form.gathering_point, 6, "例如：光口") }}

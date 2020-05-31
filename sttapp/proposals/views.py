@@ -28,14 +28,14 @@ def create():
     form = ProposalForm(request.form)
     if request.method == "POST":
         if form.validate_on_submit():
-            days = form.days.data
+            days = int(form.days.data)
             proposal = Proposal(
                 title=form.title.data,
                 start_date=form.start_date_dt,
-                days=form.days.data,
+                days=days,
                 end_date=form.start_date_dt + datetime.timedelta(days=days),
                 return_plan=form.return_plan.data,
-                buffer_days=form.buffer_days.data,
+                buffer_days=int(form.buffer_days.data),
                 approach_way=form.approach_way.data,
                 radio=form.radio.data,
                 satellite_telephone=form.satellite_telephone.data,
@@ -63,7 +63,7 @@ def update(prop_id):
         form = ProposalForm(
             title=prop.title,
             start_date=prop.start_date.strftime("%Y/%m/%d"),
-            end_date=prop.end_date.strftime("%Y/%m/%d"),
+            days=prop.days,
             leader=None,
             guide=None,
             supporter=None,
@@ -78,11 +78,23 @@ def update(prop_id):
     else:
         form = ProposalForm(request.form)
         if form.validate_on_submit():
+
+            # update itinerary count number
+            days = form.days.data
+            itinerary_list = prop.itinerary_list
+            if days > prop.days:
+                for i in range(prop.days+1, days+1):
+                    itinerary_list.append(Itinerary(day_number=i))
+
+            elif days < prop.days:
+                itinerary_list = itinerary_list[:days+1]
+
             proposal = Proposal(
                 id=prop.id,
                 title=form.title.data,
                 start_date=form.start_date_dt,
-                end_date=form.end_date_dt,
+                end_date=form.start_date_dt + datetime.timedelta(days=days),
+                days=days,
                 return_plan=form.return_plan.data,
                 buffer_days=form.buffer_days.data,
                 approach_way=form.approach_way.data,
@@ -90,11 +102,11 @@ def update(prop_id):
                 satellite_telephone=form.satellite_telephone.data,
                 gathering_point=form.gathering_point.data,
                 gathering_time=form.gathering_at_dt,
-                created_by=current_user.id
+                created_by=current_user.id,
+                itinerary_list=itinerary_list
             )
             proposal.save()
-            flash("更新成功！", FlashCategory.success)
-            return redirect(url_for('proposal.proposals'))
+            return redirect(url_for('proposal.update_itinerary', prop_id=prop_id))
         else:
             flash("欄位錯誤", FlashCategory.error)
             return redirect(url_for('proposal.update', prop_id=prop_id))
@@ -102,7 +114,7 @@ def update(prop_id):
     return render_template('proposals/proposal_detail.html', form=form)
 
 
-@bp.route('/update_itinerary/<string:prop_id>', methods=["GET", "POST"])
+@bp.route('/update_itinerary/<string:prop_id>/', methods=["GET", "POST"])
 @login_required
 def update_itinerary(prop_id):
 
@@ -111,13 +123,6 @@ def update_itinerary(prop_id):
     if request.method == "POST":
         updated_list = []
         for itinerary in prop.itinerary_list:
-            print(
-                itinerary.day_number,
-                request.form.get("content{}".format(itinerary.day_number)),
-                request.form.get("water_info{}".format(itinerary.day_number)),
-                request.form.get(
-                    "communication_info{}".format(itinerary.day_number))
-            )
             itinerary.content = request.form.get(
                 "content{}".format(itinerary.day_number)
             )
