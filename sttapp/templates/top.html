@@ -14,7 +14,7 @@
         <div class="logo text-center">
           <a href="#">
             <!-- replace logo here -->
-            <img src="images/logo.png" alt="">
+            <img src={{ url_for('static', filename='images/stt_logo.png') }} alt="">
           </a>
         </div>
       </div>
@@ -25,7 +25,7 @@
           {% if current_user.is_authenticated %}
           <!-- invitation -->
           <li class="dropdown dropdown-slide">
-            <a href={{ url_for('auth.invite') }}><i class="tf-ion-wineglass"></i>&nbsp邀請註冊</a>
+            <a href={{ url_for('auth.invite') }}><i class="tf-ion-wineglass"></i>&nbsp邀請</a>
           </li>
           <li class="dropdown dropdown-slide">
             <a href={{ url_for('proposal.create') }}><i class="tf-ion-flame"></i>&nbsp開隊</a>

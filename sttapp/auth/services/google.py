@@ -15,7 +15,7 @@ def get_google_provider_cfg(app):
 def get_request_uri(app, request):
     # OAuth2 client setup
     client = WebApplicationClient(app.config["GOOGLE_CLIENT_ID"])
-    
+
     # Find out what URL to hit for Google login
     google_provider_cfg = get_google_provider_cfg(app)
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
@@ -24,7 +24,8 @@ def get_request_uri(app, request):
     # scopes that let you retrieve user's profile from Google
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
-        redirect_uri=request.host_url.rstrip("/") + url_for("auth.google_callback"),
+        redirect_uri=request.host_url.rstrip(
+            "/") + url_for("auth.google_callback"),
         scope=["openid", "email", "profile"],
     )
     return request_uri
@@ -100,10 +101,11 @@ def google_signup_action(google_user_data, invitation_info_dict):
 
 def google_login_action(google_user_data):
 
-    user = SttUser.objects.get(social_login_id=str(google_user_data.get("unique_id")), 
+    user = SttUser.objects.get(social_login_id=str(google_user_data.get("unique_id")),
                                social_login_with=SocialLogin.google)
     # 檢查是否更換信箱
     if user.email != google_user_data.get("users_email"):
-        SttUser.objects(id=user.id).update_one(email=google_user_data.get("users_email"))
+        SttUser.objects(id=user.id).update_one(
+            email=google_user_data.get("users_email"))
 
     return user

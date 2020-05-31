@@ -15,6 +15,13 @@ import iso8601
 bp = Blueprint('proposal', __name__, url_prefix='/proposal')
 
 
+@bp.route('/proposals/', methods=["GET", "POST"])
+@login_required
+def proposals():
+
+    return render_template("proposals/proposals.html", proposals=Proposal.objects.all())
+
+
 @bp.route('/create/', methods=["GET", "POST"])
 @login_required
 def create():

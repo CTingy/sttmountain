@@ -49,3 +49,5 @@ class Proposal(db.Document):
 
     # insurance_start_at = db.DateTimeField()
     # insurance_start_at = db.DateTimeField()
+
+    meta = {'ordering': ['-start_date']}

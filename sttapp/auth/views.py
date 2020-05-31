@@ -10,7 +10,6 @@ from flask_login import login_user, current_user, login_required, logout_user
 
 from sttapp.users.models import SttUser, InvitationInfo
 from sttapp.base.enums import FlashCategory
-from sttapp.base.utils import get_obj_or_404
 from .forms import SttSignupForm, InvitationForm, LoginForm, PostSignupForm
 from .services.mail import send_mail
 from .services.google import get_request_uri, callback, google_signup_action, google_login_action
