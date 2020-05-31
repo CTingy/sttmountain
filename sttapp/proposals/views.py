@@ -55,7 +55,7 @@ def create():
 
 @bp.route('/update/<string:prop_id>', methods=["GET", "POST"])
 @login_required
-def update():
+def update(prop_id):
     pass
 
 
@@ -94,3 +94,15 @@ def update_itinerary(prop_id):
         return redirect("/")
 
     return render_template("proposals/itinerary.html", itinerary_list=prop.itinerary_list)
+
+
+@bp.route('/delete/<string:prop_id>', methods=["POST"])
+@login_required
+def delete(prop_id):
+    prop = Proposal.objects.get_or_404(id=prop_id)
+    if prop.created_by.id != current_user.id:
+        flash("只有張貼者能夠刪除隊伍提案", FlashCategory.error)
+        return redirect(url_for('proposal.proposals'))
+    prop.delete()
+    flash("已經為您刪除隊伍提案：{}".format(prop.title), FlashCategory.success)
+    return redirect(url_for("proposal.proposals"))

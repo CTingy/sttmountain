@@ -70,21 +70,50 @@
             <div class="col-md-10">
               <ul>
                 <li>
-                  <i class="tf-ion-ios-calendar"></i> 張貼時間： {{ prop.created_at }}
+                  <i class="tf-ion-ios-calendar"></i> 張貼時間： {{ prop.created_at.date() }}
                 </li>
                 <li>
                   <i class="tf-ion-android-person"></i> 張貼者： {{ prop.created_by.username }}
                 </li>
             </div>
-            <div class="btn-group col-md-2" role="group">
-              <button type="button" class="btn btn-default"><i class="tf-pencil2" aria-hidden="true"></i></button>
-              <button type="button" class="btn btn-default"><i class="tf-ion-close" aria-hidden="true"></i></button>
+
+            <div class="btn-group col-md-2" role="group" acion="">
+              <button type="button" class="btn btn-default"><a href=""><i class="tf-pencil2"
+                    aria-hidden="true"></i></a></button>
+              <button type="button" data-toggle="modal" data-target="#Modal" class="btn btn-default"><i
+                  class="tf-ion-close" aria-hidden="true"></i></button>
+              <!-- Modal -->
+              <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                      <h4>你確定要刪除出隊提案？刪除後將無法復原喔！</h4>
+                    </div>
+                    <div class="modal-footer">
+                      <form action="{{ url_for('proposal.delete', prop_id=prop.id)}}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-danger">確定刪除</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- end Modal -->
+
             </div>
+
             </ul>
           </div>
           <div class="post-content">
-            <p>時間： {{ prop.start_date }} ~ {{ prop.end_date }}</p>
-            <p>領隊：{{ prop.leader }}&nbsp&nbsp&nbsp&nbsp嚮導：{{ prop.guide }}</p>
+            <p>
+              時間：{{ prop.start_date.date() }}&nbsp～&nbsp{{ prop.end_date.date() }}
+              &nbsp&nbsp&nbsp&nbsp領隊：{{ prop.leader }}&nbsp&nbsp&nbsp&nbsp嚮導：{{ prop.guide }}
+            </p>
             <p>預定行程：</p>
             {% for i in prop.itinerary_list %}
             {% if i.content %}
