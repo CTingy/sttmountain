@@ -8,29 +8,6 @@ from sttapp.login import login_manager
 from .enums import Group, Position, Level
 
 
-class MemberInfo(db.EmbeddedDocument):
-
-    # 進階資料
-    security_number = db.StringField()
-    gender = db.StringField()
-    drug_allergy = db.StringField()
-    home_address = db.StringField()
-    blood_type = db.StringField()
-
-    # 學校資訊
-    student_id = db.StringField()
-    department_and_grade = db.StringField()  # ex: 水利四 / ob / 物理所 / 校外
-
-    # 最高資歷
-    highest_difficulty = db.StringField()  # 級數（A, B, C, D）
-    highest_difficulty_experience = db.StringField()  # 手動輸入出隊資歷，ex: 哈崙鐵道
-
-    # 緊急聯絡人
-    emargency_contact = db.StringField()
-    emargency_contact_phone = db.StringField()
-    emargency_contact_relationship = db.StringField()
-
-
 class InvitationInfo(db.EmbeddedDocument):
 
     invited_by = db.ReferenceField('SttUser')
@@ -49,7 +26,7 @@ class User(UserMixin, db.Document):
     social_login_id = db.StringField()
     profile_img = db.URLField()
 
-    meta = {'abstract': True,}
+    meta = {'abstract': True, }
 
 
 class SttUser(User):
@@ -67,10 +44,11 @@ class SttUser(User):
 
     # 社團相關資料
     group = db.StringField(choices=Group.get_choices())  # 嚮導隊
-    position = db.StringField(choices=Position.get_choices())  # 工作組，例如：岩推、總務、教學
+    position = db.StringField(choices=Position.get_choices())  # 工作組，總務、教學
     level = db.StringField(choices=Level.get_choices())  # 新生、隊員、幹部等
-    member_info = db.EmbeddedDocumentField(MemberInfo)
-    # experiences_list = 
+    member_info = db.ReferenceField('sttapp.proposals.models.Member')
+    # experiences_list =
+    # stt_experiences_list =
 
     # 系統紀錄
     updated_at = db.DateTimeField()
@@ -92,29 +70,7 @@ class GuestUser(User):
     pass
 
 
-class TempUser(db.Document):
-    """給領隊暫時建出隊資料用的，使用者一旦註冊了SttUser，就使用姓名與手機搜尋此物件
-    將此物件資料匯入SttUser後，刪除此物件
-    """
-
-    # 基本資料
-    name = db.StringField()  # 真實姓名
-    email = db.EmailField()
-
-    birthday = db.DateTimeField()
-    cellphone_number = db.StringField()
-
-    member_info = db.EmbeddedDocumentField(MemberInfo)
-
-    # 系統紀錄
-    created_by = db.ReferenceField('SttUser')
-    created_at = db.DateTimeField(default=datetime.datetime.utcnow)
-    updated_by = db.ReferenceField('SttUser')
-    updated_at = db.DateTimeField()
-    # experiences_list = 
-
-
-@login_manager.user_loader  
+@login_manager.user_loader
 def load_user(user_id):
     try:
         return SttUser.objects.get(id=user_id)
