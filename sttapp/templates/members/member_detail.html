@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% macro render_field(field) %}
+<div class="form-group">
+  <!-- <input type="email" class="form-control" placeholder="Email"> -->
+  {{ field.label }}
+  {% if field.errors %}
+  {% for error in field.errors %}
+  <span>：{{ error }}</span>
+  {% endfor %}
+  {% endif %}
+  <br>
+  {{ field(class_='form-control') }}
+</div>
+{% endmacro %}
+
+{% block content %}
+<section class="signin-page account">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <div class="block text-center">
+          <a class="logo" href="/">
+            <img src={{ url_for("static", filename="images/logo.png") }} alt="">
+          </a>
+          <form class="text-left clearfix" action="" method="post">
+            <h4 class="text-center">填入每日預計行程，若無交通天，D0不需要填</h4>
+            {% include 'alerts.html' %}
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <br>
+            <div class="form-group row">
+              <label class="col-sm-1 col-form-label">123 </label>
+              <div class="col-sm-11">
+                <input type="text" name="content{{ itinerary.day_number }}"
+                  value={% if itinerary.content %}"{{ itinerary.content }}"{% else %}""{% endif %} class="form-control"
+                  placeholder="">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-1 col-form-label">水源</label>
+              <div class="col-sm-5">
+                <input type="text" name="123" value="" class="form-control" placeholder="例：2568鞍部西下水源，不穩">
+              </div>
+              <label class="col-sm-1 col-form-label">通訊</label>
+              <div class="col-sm-5">
+                <input type="text" name="123" value="" class="form-control" placeholder="例：中華電信、衛星">
+              </div>
+            </div>
+            <hr>
+            <div class="text-center col-md-12">
+              <br>
+              <button type="submit" class="btn btn-main text-center">送出</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
