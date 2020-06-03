@@ -7,7 +7,7 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY', 'flask123')
 
     # mongodb config
-    MONGODB_SETTINGS =  {
+    MONGODB_SETTINGS = {
         'db': os.getenv("DB_NAME"),
         'host': '127.0.0.1',
         'port': 27017,
@@ -28,8 +28,12 @@ class Config:
         "https://accounts.google.com/.well-known/openid-configuration"
     )
 
+    STATIC_DIR = os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__))) + '/static'
+
 
 class TestingConfig(Config):
+
     pass
 
 
@@ -45,6 +49,7 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     DEBUG = False
+    STATIC_DIR = ""
 
 
 app_config = {
