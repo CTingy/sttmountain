@@ -33,25 +33,27 @@ def create():
                 title=form.title.data,
                 start_date=form.start_date_dt,
                 days=days,
-                end_date=form.start_date_dt + datetime.timedelta(days=days),
+                end_date=form.start_date_dt + datetime.timedelta(days=days-1),
                 return_plan=form.return_plan.data,
-                buffer_days=int(form.buffer_days.data),
+                buffer_days=int(
+                    form.buffer_days.data) if form.buffer_days.data else None,
                 approach_way=form.approach_way.data,
                 radio=form.radio.data,
                 satellite_telephone=form.satellite_telephone.data,
                 gathering_point=form.gathering_point.data,
-                gathering_time=form.gathering_at_dt,
+                gathering_time=form.gathering_time_dt,
                 created_by=current_user.id
             )
             proposal.itinerary_list = [
                 Itinerary(day_number=i) for i in range(0, days+1)
             ]
             proposal.save()
-            return redirect(url_for("proposal.update_itinerary", prop_id=proposal.id))
+            flash("基本資料完成，請確認以下資訊，再下一步編輯預計行程", FlashCategory.info)
+            return redirect(url_for("proposal.update", prop_id=proposal.id))
         else:
             flash("格式錯誤", FlashCategory.error)
 
-    return render_template("proposals/proposal_detail.html", form=form)
+    return render_template("proposals/proposal_detail.html", form=form, update_itinerary=False)
 
 
 @bp.route('/update/<string:prop_id>', methods=["GET", "POST"])
@@ -80,7 +82,7 @@ def update(prop_id):
         if form.validate_on_submit():
 
             # update itinerary count number
-            days = form.days.data
+            days = int(form.days.data)
             itinerary_list = prop.itinerary_list
             if days > prop.days:
                 for i in range(prop.days+1, days+1):
@@ -101,7 +103,7 @@ def update(prop_id):
                 radio=form.radio.data,
                 satellite_telephone=form.satellite_telephone.data,
                 gathering_point=form.gathering_point.data,
-                gathering_time=form.gathering_at_dt,
+                gathering_time=form.gathering_time_dt,
                 created_by=current_user.id,
                 itinerary_list=itinerary_list
             )
@@ -111,7 +113,7 @@ def update(prop_id):
             flash("欄位錯誤", FlashCategory.error)
             return redirect(url_for('proposal.update', prop_id=prop_id))
 
-    return render_template('proposals/proposal_detail.html', form=form)
+    return render_template('proposals/proposal_detail.html', form=form, update_itinerary=True)
 
 
 @bp.route('/update_itinerary/<string:prop_id>/', methods=["GET", "POST"])

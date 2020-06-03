@@ -70,7 +70,7 @@
             <div class="col-md-10">
               <ul>
                 <li>
-                  <i class="tf-ion-ios-calendar"></i> 張貼時間： {{ prop.created_at.date() }}
+                  <i class="tf-ion-ios-calendar"></i> 張貼時間： {{ prop.created_at.isoformat() }}
                 </li>
                 <li>
                   <i class="tf-ion-android-person"></i> 張貼者： {{ prop.created_by.username }}

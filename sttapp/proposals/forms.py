@@ -9,13 +9,12 @@ class ProposalForm(FlaskForm):
     title = StringField("隊伍名稱", validators=[validators.DataRequired()])
     start_date = StringField(
         "出發日期(含交通天)(YYYY/MM/DD)", validators=[validators.DataRequired()])
-    days = IntegerField("預計天數", validators=[validators.DataRequired()])
+    days = StringField("預計天數(含交通天)")
     leader = StringField("領隊")
     guide = StringField("嚮導")
     supporter = StringField("留守")
     return_plan = StringField("撤退計畫")
-    buffer_days = IntegerField("預備天", validators=[
-        validators.DataRequired()])
+    buffer_days = StringField("預備天")
     approach_way = StringField("交通方式")
     radio = StringField("無線電頻率/台號")
     satellite_telephone = StringField("衛星電話")
@@ -25,7 +24,7 @@ class ProposalForm(FlaskForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.start_date_dt = None
-        self.gathering_at_dt = None
+        self.gathering_time_dt = None
 
     def _validate_date(self, field, has_time=False):
 
@@ -37,26 +36,40 @@ class ProposalForm(FlaskForm):
 
         if has_time:
             dt_pattern += " %H:%M"
-            example += " 19:15"
+            dt_example += " 19:15"
 
         try:
             dt = datetime.datetime.strptime(field.data, dt_pattern)
         except ValueError:
-            raise ValidationError('格式錯誤，正確範例為{}'.format(example))
+            raise ValidationError('格式錯誤，正確範例為{}'.format(dt_example))
         # if dt < datetime.datetime.now():
         #     raise ValidationError('日期不合理')
 
         setattr(self, "{}_dt".format(field.id), dt)
 
+    def _validate_int(self, field):
+        try:
+            int(field.data)
+        except ValueError:
+            raise ValidationError("格式錯誤，請填入數字")
+
     def validate_start_date(self, field):
         return self._validate_date(field)
 
-    def validate_gathering_at(self, field):
+    def validate_days(self, field):
+        return self._validate_int(field)
+
+    def validate_buffer_days(self, field):
+        if not field.data:
+            return None
+        return self._validate_int(field)
+
+    def validate_gathering_time(self, field):
         if not field.data:
             return None
         self._validate_date(field, True)
-        if self.gathering_at_dt > self.start_date_dt:
-            self.gathering_at_dt = None
+        if self.gathering_time_dt.date() > self.start_date_dt.date():
+            self.gathering_time_dt = None
             raise ValidationError('集合時間不得晚於上山時間')
 
 

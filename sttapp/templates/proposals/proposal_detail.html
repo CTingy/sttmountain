@@ -32,20 +32,26 @@
             <h4 class="text-center">隊伍提案資料</h4>
             <br>
             <p class="text-center">
-              必填為：<b>隊伍名稱、上山日期、預計天數、預備天數</b>，表格內容均可再更改
+              必填為：<b>隊伍名稱、上山日期、預計天數</b>，表格內容均可再更改
               <br>
               {{ form.csrf_token }}
               {{ render_field(form.title, 6, "必填欄位") }}
               {{ render_field(form.start_date, 6, "必填欄位") }}
               {{ render_field(form.days, 6, "必填欄位") }}
-              {{ render_field(form.buffer_days, 6, "必填欄位") }}
+              {{ render_field(form.buffer_days) }}
               {{ render_field(form.radio, 6, "例如：144.28/藍天藍") }}
               {{ render_field(form.satellite_telephone, 6, "例如：6號機、+882314657982") }}
               {{ render_field(form.gathering_point, 6, "例如：光口") }}
               {{ render_field(form.gathering_time, 6, "例如：2020/04/15 08:05") }}
             <div class="text-center col-md-12">
               <br>
-              <button type="submit" class="btn btn-main text-center">送出</button>
+              <button type="submit" class="btn btn-main text-center">
+                {% if update_itinerary %}
+                下一步，編輯每日行程
+                {% else %}
+                送出
+                {% endif %}
+              </button>
             </div>
           </form>
         </div>
