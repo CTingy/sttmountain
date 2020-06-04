@@ -15,9 +15,9 @@ class Member(db.Document):
     gender = db.StringField()
 
     # 進階資料
-    email = db.EmailField()
+    # email = db.EmailField()
     drug_allergy = db.StringField(default="NKDA")
-    home_address = db.StringField()
+    # home_address = db.StringField()
     blood_type = db.StringField()
     level = db.StringField(choices=Level.get_choices())  # 新生、隊員、幹部等
 
@@ -32,7 +32,7 @@ class Member(db.Document):
     # 緊急聯絡人
     emargency_contact = db.StringField()
     emargency_contact_phone = db.StringField()
-    emargency_contact_relationship = db.StringField()
+    emargency_contact_relationship = db.StringField()  # ex: 父子、母子
 
     # 系統紀錄
     created_by = db.ReferenceField('sttapp.users.models.SttUser')

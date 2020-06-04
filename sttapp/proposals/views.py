@@ -15,7 +15,7 @@ import iso8601
 bp = Blueprint('proposal', __name__, url_prefix='/proposal')
 
 
-@bp.route('/proposals/', methods=["GET", "POST"])
+@bp.route('/proposals/')
 @login_required
 def proposals():
 
@@ -61,6 +61,7 @@ def create():
 def update(prop_id):
 
     prop = Proposal.objects.get_or_404(id=prop_id)
+
     if request.method == "GET":
         form = ProposalForm(
             title=prop.title,
@@ -79,6 +80,7 @@ def update(prop_id):
         )
     else:
         form = ProposalForm(request.form)
+
         if form.validate_on_submit():
 
             # update itinerary count number
