@@ -35,26 +35,29 @@
               必填為：<b>隊伍名稱、上山日期、預計天數</b>，表格內容均可再更改
               <br>
               {{ form.csrf_token }}
-              {{ render_field(form.title, 9, "必填欄位") }}
+              {{ render_field(form.title, 10, "必填欄位") }}
+              {{ render_field(form.event_type, 2) }}
+              {{ render_field(form.start_date, 6, "必填欄位") }}
               {{ render_field(form.days, 3, "必填欄位") }}
-              {{ render_field(form.start_date, 9, "必填欄位") }}
               {{ render_field(form.buffer_days, 3) }}
-            <div class="form-group col-md-6 col-sm-6 col-xs-12">
-              <label for="leader">*領隊</label>
+            <div class="form-group col-md-4 col-sm-4 col-xs-12">
+              <label for="leader">領隊</label>
               <br>
-              <input name="leader" type="text" class="searchMember form-control" id="search-member1"
+              <input name="leader" type="text" class="searchMember form-control" value="{{ leader }}"
                 placeholder="請輸入姓名" />
             </div>
-            <div class="form-group col-md-6 col-sm-6 col-xs-12">
+            <div class="form-group col-md-4 col-sm-4 col-xs-12">
               <label for="guide">嚮導</label>
               <br>
-              <input name="guide" type="text" class="searchMember form-control" id="search-member2"
+              <input name="guide" type="text" class="searchMember form-control" value="{{ guide }}"
                 placeholder="請輸入姓名" />
             </div>
+            {{ render_field(form.supporter, 4) }}
             <div class=" form-group col-md-12 col-sm-12 col-xs-12">
               <label for="attendees">成員</label>
               <br>
-              <input id="attendees" class="searchMultiMember form-control" type="text" name="attendees">
+              <input id="attendees" class="searchMultiMember form-control" type="text" name="attendees"
+                value="{{ attendees }}">
             </div>
             {{ render_field(form.radio, 6, "例如：144.28/藍天藍") }}
             {{ render_field(form.satellite_telephone, 6, "例如：6號機、+882314657982") }}

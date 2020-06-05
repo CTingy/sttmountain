@@ -9,7 +9,8 @@ class Member(db.Document):
 
     # 基本資料
     name = db.StringField()
-    security_number = db.StringField()
+    username = db.StringField()
+    security_number = db.StringField(unique=True)
     birthday = db.DateTimeField()
     cellphone_number = db.StringField()
     gender = db.StringField()
@@ -40,3 +41,14 @@ class Member(db.Document):
     updated_by = db.ReferenceField('sttapp.users.models.SttUser')
     updated_at = db.DateTimeField()
     # events_history =
+
+    @property
+    def display_name(self):
+        if self.username:
+            return username
+        else:
+            return self.name
+
+    @property
+    def selected_name(self):
+        return "{}|{}".format(self.name, self.security_number)

@@ -113,7 +113,14 @@
           <div class="post-content">
             <p>
               時間：{{ prop.start_date.date() }}&nbsp～&nbsp{{ prop.end_date.date() }}
-              &nbsp&nbsp&nbsp&nbsp領隊：{{ prop.leader }}&nbsp&nbsp&nbsp&nbsp嚮導：{{ prop.guide }}
+              &nbsp&nbsp&nbsp&nbsp
+              領隊：{{ prop.leader.display_name }}&nbsp&nbsp&nbsp&nbsp嚮導：{{ prop.guide.display_name }}
+            </p>
+            <p>
+              人員：
+              {% for a in prop.attendees %}
+              {{ a.display_name }},&nbsp
+              {% endfor %}
             </p>
             <p>預定行程：</p>
             {% for i in prop.itinerary_list %}

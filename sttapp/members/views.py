@@ -23,12 +23,5 @@ def search():
         return jsonify([])
 
     members = Member.objects.filter(name__contains=keyword)
-    name_list = []
-
-    for m in members:
-        name = m.name
-        if m.department_and_grade:
-            name += "|{}".format(m.department_and_grade)
-        name_list.append(name)
-
+    name_list = ["{}|{}".format(m.name, m.security_number) for m in members]
     return jsonify(name_list)

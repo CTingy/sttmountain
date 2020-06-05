@@ -24,7 +24,7 @@ class BaseEvent(db.Document):
     leader = db.ReferenceField('sttapp.members.models.Member')
     guide = db.ReferenceField('sttapp.members.models.Member')
     itinerary_list = db.EmbeddedDocumentListField(Itinerary)
-    supporter = db.ReferenceField('sttapp.members.models.Member')
+    supporter = db.StringField()
     return_plan = db.StringField()
     buffer_days = db.IntField(default=1)
     approach_way = db.StringField()
@@ -33,7 +33,7 @@ class BaseEvent(db.Document):
     gathering_point = db.StringField()
     gathering_time = db.DateTimeField()
 
-    members = db.ListField(db.ReferenceField('sttapp.members.models.Member'))
+    attendees = db.ListField(db.ReferenceField('sttapp.members.models.Member'))
 
     created_at = db.DateTimeField(default=datetime.datetime.utcnow)
     created_by = db.ReferenceField('sttapp.users.models.SttUser')

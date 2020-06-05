@@ -2,7 +2,9 @@ import datetime
 from flask_wtf import FlaskForm
 from wtforms import ValidationError, IntegerField, StringField, SelectField, PasswordField, validators
 
+from sttapp.members.models import Member
 from .models import Proposal
+from .enums import EventType
 
 
 class ProposalForm(FlaskForm):
@@ -10,11 +12,13 @@ class ProposalForm(FlaskForm):
     start_date = StringField(
         "出發日期(含交通天)(YYYY/MM/DD)", validators=[validators.DataRequired()])
     days = StringField("預計天數(含交通天)")
-    leader = StringField("領隊")
+    leader = StringField("領隊", validators=[validators.DataRequired()])
     guide = StringField("嚮導")
+    attendees = StringField("成員")
     supporter = StringField("留守")
+    event_type = SelectField("隊伍類型", choices=EventType.get_choices())
     return_plan = StringField("撤退計畫")
-    buffer_days = StringField("預備天")
+    buffer_days = StringField("預備天(預設1天)")
     approach_way = StringField("交通方式")
     radio = StringField("無線電頻率/台號")
     satellite_telephone = StringField("衛星電話")
@@ -25,7 +29,23 @@ class ProposalForm(FlaskForm):
         super().__init__(*args, **kwargs)
         self.start_date_dt = None
         self.gathering_time_dt = None
+        self.leader_id = None
+        self.guide_id = None
+        self.attendees_ids = None
 
+    def _get_member_id(self, data):    
+        try:
+            name = data.split("|")[0]
+            security_number = data.split("|")[1]
+        except Exception:
+            raise ValidationError("格式錯誤，應為：姓名|身份證字號")
+        
+        try:
+            member = Member.objects.get(security_number=security_number)
+        except Member.DoesNotExist:
+            raise ValidationError("{}不存在".format(name))
+        return member.id
+    
     def _validate_date(self, field, has_time=False):
 
         if not field.data:
@@ -51,13 +71,43 @@ class ProposalForm(FlaskForm):
         try:
             int(field.data)
         except ValueError:
-            raise ValidationError("格式錯誤，請填入數字")
+            raise ValidationError("格式錯誤，請填入數字")     
 
     def validate_start_date(self, field):
         return self._validate_date(field)
 
     def validate_days(self, field):
         return self._validate_int(field)
+
+    def validate_leader(self, field):
+        id_ = self._get_member_id(field.data)
+        self.leader_id = id_
+        return None
+
+    def validate_guide(self, field):
+        if not field.data:
+            return None
+        id_ = self._get_member_id(field.data)
+        self.guide_id = id_
+        return None
+
+    def validate_attendees(self, field):
+        if not field.data:
+            return None
+        data_list = field.data.split(', ')
+        ids = []
+        for data in data_list:
+            data = data.strip()
+            if not data:
+                continue
+            ids.append(self._get_member_id(data))
+        self.attendees_ids = ids
+        return None
+
+    def validate_event_type(self, field):
+        types = [i[0] for i in EventType.get_choices()]
+        if field.data not in types:
+            raise ValidationError("隊伍類型錯誤")
 
     def validate_buffer_days(self, field):
         if not field.data:

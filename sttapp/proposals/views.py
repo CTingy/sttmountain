@@ -16,7 +16,7 @@ bp = Blueprint('proposal', __name__, url_prefix='/proposal')
 
 
 @bp.route('/proposals/')
-@login_required
+# @login_required
 def proposals():
 
     return render_template("proposals/proposals.html", proposals=Proposal.objects.all())
@@ -42,7 +42,11 @@ def create():
                 satellite_telephone=form.satellite_telephone.data,
                 gathering_point=form.gathering_point.data,
                 gathering_time=form.gathering_time_dt,
-                created_by=current_user.id
+                created_by=current_user.id,
+                leader=form.leader_id,
+                guide=form.guide_id,
+                attendees=form.attendees_ids,
+                supporter=form.supporter.data
             )
             proposal.itinerary_list = [
                 Itinerary(day_number=i) for i in range(0, days+1)
@@ -67,9 +71,8 @@ def update(prop_id):
             title=prop.title,
             start_date=prop.start_date.strftime("%Y/%m/%d"),
             days=prop.days,
-            leader=None,
-            guide=None,
-            supporter=None,
+            supporter=prop.supporter,
+            event_type=prop.event_type,
             return_plan=prop.return_plan,
             buffer_days=prop.buffer_days,
             radio=prop.radio,
@@ -79,6 +82,7 @@ def update(prop_id):
                 "%Y/%m/%d %H/%M") if prop.gathering_time else ""
         )
     else:
+        print(prop.event_type, "~~~~~~~~")
         form = ProposalForm(request.form)
 
         if form.validate_on_submit():
@@ -99,6 +103,7 @@ def update(prop_id):
                 start_date=form.start_date_dt,
                 end_date=form.start_date_dt + datetime.timedelta(days=days),
                 days=days,
+                event_type=form.event_type.data,
                 return_plan=form.return_plan.data,
                 buffer_days=form.buffer_days.data,
                 approach_way=form.approach_way.data,
@@ -107,15 +112,26 @@ def update(prop_id):
                 gathering_point=form.gathering_point.data,
                 gathering_time=form.gathering_time_dt,
                 created_by=current_user.id,
-                itinerary_list=itinerary_list
+                itinerary_list=itinerary_list,
+                leader=form.leader_id,
+                guide=form.guide_id,
+                attendees=form.attendees_ids,
+                supporter=form.supporter.data
             )
             proposal.save()
             return redirect(url_for('proposal.update_itinerary', prop_id=prop_id))
         else:
             flash("欄位錯誤", FlashCategory.error)
             return redirect(url_for('proposal.update', prop_id=prop_id))
-
-    return render_template('proposals/proposal_detail.html', form=form, update_itinerary=True)
+    
+    attendees_list = [a.selected_name for a in prop.attendees]
+    return render_template(
+        'proposals/proposal_detail.html', 
+        form=form, 
+        attendees=", ".join(attendees_list),
+        update_itinerary=True, 
+        leader=prop.leader.selected_name if prop.leader else "", 
+        guide=prop.guide.selected_name if prop.guide else "")
 
 
 @bp.route('/update_itinerary/<string:prop_id>/', methods=["GET", "POST"])
