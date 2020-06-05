@@ -22,7 +22,7 @@ def search():
     if not keyword:
         return jsonify([])
 
-    members = Member.objects.filter(name__startswith=keyword)
+    members = Member.objects.filter(name__contains=keyword)
     name_list = []
 
     for m in members:

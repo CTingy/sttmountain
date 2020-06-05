@@ -34,34 +34,28 @@
             <p class="text-center">
               必填為：<b>隊伍名稱、上山日期、預計天數</b>，表格內容均可再更改
               <br>
+              {{ form.csrf_token }}
+              {{ render_field(form.title, 9, "必填欄位") }}
+              {{ render_field(form.days, 3, "必填欄位") }}
+              {{ render_field(form.start_date, 9, "必填欄位") }}
+              {{ render_field(form.buffer_days, 3) }}
             <div class="form-group col-md-6 col-sm-6 col-xs-12">
-              <label for="leader">領隊</label>
+              <label for="leader">*領隊</label>
               <br>
-              <input name="leader" type="text" class="awesomplete form-control" id="search-member1"
+              <input name="leader" type="text" class="searchMember form-control" id="search-member1"
                 placeholder="請輸入姓名" />
             </div>
             <div class="form-group col-md-6 col-sm-6 col-xs-12">
               <label for="guide">嚮導</label>
               <br>
-              <input name="guide" type="text" class="awesomplete form-control" id="search-member2"
+              <input name="guide" type="text" class="searchMember form-control" id="search-member2"
                 placeholder="請輸入姓名" />
             </div>
-            <div class=" form-group col-md-3 col-sm-3 col-xs-12">
-              <label for="members">成員搜尋</label>
+            <div class=" form-group col-md-12 col-sm-12 col-xs-12">
+              <label for="attendees">成員</label>
               <br>
-              <input id="search-member3" class="form-control search-member-list" type="text" name="members">
+              <input id="attendees" class="searchMultiMember form-control" type="text" name="attendees">
             </div>
-            <div class=" form-group col-md-9 col-sm-9 col-xs-12">
-              <label for="members">成員：</label>
-              <br>
-              <input id="attendees" class="form-control search-member-list" type="text" name="members">
-            </div>
-
-            {{ form.csrf_token }}
-            {{ render_field(form.title, 6, "必填欄位") }}
-            {{ render_field(form.start_date, 6, "必填欄位") }}
-            {{ render_field(form.days, 6, "必填欄位") }}
-            {{ render_field(form.buffer_days) }}
             {{ render_field(form.radio, 6, "例如：144.28/藍天藍") }}
             {{ render_field(form.satellite_telephone, 6, "例如：6號機、+882314657982") }}
             {{ render_field(form.gathering_point, 6, "例如：光口") }}
@@ -84,60 +78,74 @@
   </div>
 </section>
 {% endblock %}
-{% block script %}
-<script>
-  $(document).ready(function () {
 
-    // search for leader
-    var leader = new Awesomplete(document.getElementById('search-member1'));
-    $('#search-member1').on('keyup', function () {
-      $.ajax({
-        url: "{{ url_for('member.search') }}",
-        method: 'GET',
-        data: { 'keyword': this.value },
-        dataType: 'json',
-        error: function (errorData) {
-          console.log(errorData);
-        }
-      })
-        .done(function (data) {
-          leader.list = data;
-        });
+{% block script %}
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script>
+
+  $(function () {
+    $(".searchMember").on("focus", function () {
+      $(this).autocomplete({
+        source: function (request, response) {
+          $.ajax({
+            url: "{{ url_for('member.search') }}",
+            dataType: "json",
+            data: {
+              keyword: request.term      //回傳的參數
+            },
+            success: function (data) {
+              response(data);
+            }
+          });
+        },
+        minLength: 1
+      });
     });
-    // search for guide
-    var guide = new Awesomplete(document.getElementById('search-member2'));
-    $('#search-member2').on('keyup', function () {
-      $.ajax({
-        url: "{{ url_for('member.search') }}",
-        method: 'GET',
-        data: { 'keyword': this.value },
-        dataType: 'json',
-        error: function (errorData) {
-          console.log(errorData);
+  });
+
+  $(function () {
+
+    function split(val) {
+      return val.split(/,\s*/);
+    }
+    function extractLast(term) {
+      return split(term).pop();
+    }
+
+    $(".searchMultiMember")
+      .autocomplete({
+        minLength: 0,
+        source: function (request, response) {
+          $.ajax({
+            url: "{{ url_for('member.search') }}",
+            dataType: "json",
+            data: {
+              keyword: extractLast(request.term)
+            },
+            success: function (data) {
+              response(data);
+            }
+          });
+        },
+        focus: function () {
+          return false;
+        },
+        select: function (event, ui) {
+          var terms = split(this.value);
+          // remove the current input
+          terms.pop();
+          // add the selected item
+          terms.push(ui.item.value);
+          // add placeholder to get the comma-and-space at the end
+          terms.push("");
+          uniq = [...new Set(terms)];
+          this.value = uniq.join(", ");
+          return false;
         }
-      })
-        .done(function (data) {
-          guide.list = data;
-        });
-    });
-    // search for attendees
-    var attendees1 = new Awesomplete(document.getElementById('search-member3'));
-    var attendees2 = document.getElementById('attendees');
-    $('#search-member3').on('keyup', function () {
-      $.ajax({
-        url: "{{ url_for('member.search') }}",
-        method: 'GET',
-        data: { 'keyword': this.value },
-        dataType: 'json',
-        error: function (errorData) {
-          console.log(errorData);
-        }
-      })
-        .done(function (data) {
-          attendees1.list = data;
-        });
-    });
-  })
+      });
+  });
 
 </script>
 {% endblock %}
