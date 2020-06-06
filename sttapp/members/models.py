@@ -3,17 +3,18 @@ import datetime
 from sttapp.db import db
 from sttapp.users.enums import Level
 from sttapp.proposals.enums import Difficulty
+from .enums import Gender
 
 
 class Member(db.Document):
 
     # 基本資料
     name = db.StringField()
-    username = db.StringField()
+    nickname = db.StringField()
     security_number = db.StringField(unique=True)
     birthday = db.DateTimeField()
     cellphone_number = db.StringField()
-    gender = db.StringField()
+    gender = db.StringField(choices=Gender.get_choices())
 
     # 進階資料
     # email = db.EmailField()
@@ -44,11 +45,20 @@ class Member(db.Document):
 
     @property
     def display_name(self):
-        if self.username:
-            return username
+        if self.nickname:
+            return nickname
         else:
             return self.name
 
     @property
     def selected_name(self):
         return "{}|{}".format(self.name, self.security_number)
+
+    @property
+    def birthday_str(self):
+        if not self.birthday:
+            return ""
+        if type(self.birthday) == datetime.datetime:
+            return self.birthday.strftime("%Y/%m/%d")
+        # not save to DB yet, return the birthday directly
+        return str(self.birthday)

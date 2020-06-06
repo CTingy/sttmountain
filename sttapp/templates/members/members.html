@@ -1,5 +1,165 @@
 {% extends "event_home.html" %}
-{% set page_name="出隊人員資料" %}
+
+{% block page_name %}
+出隊人員資料
+{% endblock %}
+
 {% block sub_content %}
-lalalal member
+
+<form class="form-inline" action="{{ url_for('member.search_one') }}" method="post">
+  <h3>出隊人員資料修改與刪除</h3>
+  <br>
+  <p>為了保障隱私，請輸入完整姓名、身份證字號來做查詢</p>
+  <p>查詢後再進行修改或刪除，若查無目標資料，可建立新的成員資料</p>
+  <br>
+  <div class="form-group">
+    <input name="name" type="text" class="form-control" placeholder="請輸入姓名">
+  </div>
+  <div class="form-group">
+    <input name="security_number" type="text" class="form-control" placeholder="請輸入身份證字號(第一碼大寫)">
+  </div>
+  <div class="form-group">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <button type="submit" class="btn btn-lg btn-main"><i class="tf-ion-ios-search"></i> 搜尋</button>
+  </div>
+</form>
+
+<br>
+<br>
+{% if for_updating %}
+<h4>修改人員資料</h4>
+{% else %}
+<button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapseForm" aria-expanded="false"
+  aria-controls="collapseExample">
+  建立新的人員資料&nbsp;&nbsp;<i class="tf-ion-android-add-circle"></i>
+</button>
+<br>
+<br>
+{% endif %}
+<div class="{% if not for_updating %}collapse{% endif %}" id="collapseForm">
+  <hr>
+  <span style="color: red; font-size: 12px;">*為必填欄位</span>
+  <br><br>
+  <form class="checkout-form" method="POST"
+    action="{% if for_updating %}{{ url_for('member.update', member_id=member.id) }}{% else %}{{ url_for('member.create') }}{% endif %}">
+    <p>基本資料</p>
+    <div class="checkout-country-code clearfix">
+      <div class="form-group">
+        <label>*真實姓名</label>
+        <input type="text" class="form-control" name="name" value="{% if member.name %}{{ member.name }}{% endif %}"
+          placeholder="">
+      </div>
+
+      <div class="form-group">
+        <label>綽號</label>
+        <input type="text" class="form-control" name="nickname"
+          value="{% if member.nickname %}{{ member.nickname }}{% endif %}" placeholder="ex: 串串（用於網站名稱顯示，可以不填寫）">
+      </div>
+    </div>
+    <div class="checkout-country-code clearfix">
+      <div class="form-group">
+        <label>*身份證字號</label>
+        <input type="text" class="form-control" name="security_number"
+          value="{% if member.security_number %}{{ member.security_number }}{% endif %}" placeholder="ex: A123456789">
+      </div>
+      <div class="form-group">
+        <label>*性別</label>
+        <input type="text" class="form-control" name="gender"
+          value="{% if member.gender %}{{ member.get_gender_display() }}{% endif %}" placeholder="ex: 男 / 女 / 中">
+      </div>
+    </div>
+    <div class="checkout-country-code clearfix">
+      <div class="form-group">
+        <label>*生日(西元/月/日)</label>
+        <input type="text" class="form-control" name="birthday" value="{{ member.birthday_str }}"
+          placeholder="ex: 1990-05-13">
+      </div>
+      <div class="form-group">
+        <label>*手機號碼</label>
+        <input type="text" class="form-control" name="cellphone_number"
+          value="{% if member.cellphone_number %}{{ member.cellphone_number }}{% endif %}" placeholder="ex: 0912345678">
+      </div>
+    </div>
+    <br>
+    <p>最高資歷</p>
+    <div class="form-group">
+      <label>*山協等級</label>
+      <input type="text" class="form-control" name="level"
+        value="{% if member.level %}{{ member.get_level_display() }}{% endif %}" placeholder="ex: 新生 / 隊員 / 幹部">
+    </div>
+    <div class="checkout-country-code clearfix">
+      <div class="form-group">
+        <label>路線</label>
+        <input type="text" class="form-control" name="highest_difficulty_experience"
+          value="{% if member.highest_difficulty_experience %}{{ member.highest_difficulty_experience }}{% endif %}"
+          placeholder="ex: 嵐山 / 南二段 / 大小水沖">
+      </div>
+      <div class="form-group">
+        <label>路線難度</label>
+        <input type="text" class="form-control" name="highest_difficulty"
+          value="{% if member.highest_difficulty %}{{ member.get_highest_difficulty_display() }}{% endif %}"
+          placeholder="ex: D / C / B / A">
+      </div>
+    </div>
+    <br>
+    <p>校內、校外、OB</p>
+    <div class="checkout-country-code clearfix">
+      <div class="form-group">
+        <label>*系級/OB/校外</label>
+        <input type="text" class="form-control" name="department_and_grade"
+          value="{% if member.department_and_grade %}{{ member.department_and_grade }}{% endif %}"
+          placeholder="ex: 水利四 / OB / 物理所 / 校外">
+      </div>
+      <div class="form-group">
+        <label>學號</label>
+        <input type="text" class="form-control" name="student_id"
+          value="{% if member.student_id %}{{ member.student_id }}{% endif %}" placeholder="OB或校外不用填寫">
+      </div>
+    </div>
+    <br>
+    <p>醫藥相關</p>
+    <div class="checkout-country-code clearfix">
+      <div class="form-group">
+        <label>藥物過敏</label>
+        <input type="text" class="form-control" name="drug_allergy"
+          value="{% if member.drug_allergy %}{{ member.drug_allergy }}{% endif %}" placeholder="ex: 蠶豆症、沒有的話不用填寫">
+      </div>
+      <div class="form-group">
+        <label>血型</label>
+        <input type="text" class="form-control" name="blood_type"
+          value="{% if member.blood_type %}{{ member.blood_type }}{% endif %}" placeholder="ex: A, O, AB">
+      </div>
+    </div>
+    <br>
+    <p>緊急聯絡人</p>
+
+    <div class="form-group">
+      <label>*聯絡人姓名</label>
+      <input type="text" class="form-control" name="emergency_contact"
+        value="{% if member.emergency_contact %}{{ member.emergency_contact }}{% endif %}" placeholder="">
+    </div>
+    <div class="checkout-country-code clearfix">
+      <div class="form-group">
+        <label>*聯絡人電話</label>
+        <input type="text" class="form-control"
+          name="{% if member.emergency_contact_phone %}{{ member.emergency_contact_phone }}{% endif %}"
+          value="{{ member.emergency_contact_phone }}" placeholder="">
+      </div>
+      <div class="form-group">
+        <label>聯絡人關係</label>
+        <input type="text" class="form-control" name="emergency_contact_relationship"
+          value="{% if member.emergency_contact_relationship %}{{ member.emergency_contact_relationship }}{% endif %}"
+          placeholder="ex: 父 / 母 / 女友 / 兄 / 室友">
+      </div>
+    </div>
+    <!-- submit button -->
+    <div class="form-group">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <button type="submit" class="btn btn-lg btn-main mt-20">
+        {% if for_updating %}修改{% else %}建立{% endif %}
+      </button>
+    </div>
+
+  </form>
+</div>
 {% endblock %}

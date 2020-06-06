@@ -1,9 +1,13 @@
 {% extends "event_home.html" %}
-{% set page_name="提案總覽" %}
+
 {% block sub_content %}
 {% for prop in proposals %}
 <div class="post">
-  <h2 class="post-title">{{ prop.title }}</h2>
+  <h2 class="post-title">
+    {% block page_name %}
+    提案隊伍總覽
+    {% endblock%}
+  </h2>
   <div class="post-meta">
     <div class="col-md-10">
       <ul>

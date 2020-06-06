@@ -16,15 +16,17 @@
 </div>
 {% endblock %}
 
-{% set page_name="隊伍總覽" %}
-
 {% block content %}
 <section class="page-header">
   <div class="container">
     <div class="row">
       <div class="col-md-12">
         <div class="content">
-          <h1 class="page-name">{{ page_name }}</h1>
+          <h1 class="page-name">
+            {% block page_name %}
+            總覽
+            {% endblock %}
+          </h1>
         </div>
       </div>
     </div>
