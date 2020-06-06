@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+<!-- Start Top Header Bar -->
+{% block top %}
+{% include "top.html" %}
+{% endblock %}
+
+<!-- Main Menu Section -->
+{% block menu %}
+{% include "menu.html" %}
+{% endblock %}
+
+{% block alerts %}
+<div class="container">
+  {% include "alerts.html" %}
+</div>
+{% endblock %}
+
+{% set page_name="隊伍總覽" %}
+
+{% block content %}
+<section class="page-header">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="content">
+          <h1 class="page-name">{{ page_name }}</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="page-wrapper">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <aside class="sidebar">
+          <!-- Widget Category -->
+          <div class="widget widget-category">
+            <h4 class="widget-title">分類</h4>
+            <ul class="widget-category-list">
+              <li><a href="#">隊伍</a>
+              </li>
+              <li><a href="#">即將上山</a>
+              </li>
+              <li><a href="#">紀錄</a>
+              </li>
+            </ul>
+          </div> <!-- End category  -->
+          {% if current_user.is_authenticated %}
+          <div class="widget widget-category">
+            <h4 class="widget-title">會員專區</h4>
+            <ul class="widget-category-list">
+              <li><a href="{{ url_for('proposal.proposals') }}">提案</a>
+              </li>
+              <li><a href="{{ url_for('member.members') }}">出隊人員資料</a>
+            </ul>
+          </div>
+          {% endif %}
+
+          <!-- Widget tag -->
+          <!-- <div class="widget widget-tag">
+            <h4 class="widget-title">Tag Cloud</h4>
+            <ul class="widget-tag-list">
+              <li><a href="#">Animals</a>
+              </li>
+              <li><a href="#">Landscape</a>
+              </li>
+              <li><a href="#">Portrait</a>
+              </li>
+              <li><a href="#">Wild Life</a>
+              </li>
+              <li><a href="#">Video</a>
+              </li>
+            </ul>
+          </div>  -->
+          <!-- End tag  -->
+        </aside>
+      </div>
+      <div class="col-md-9">
+        {% block sub_content %}
+        {% endblock %}
+        <!-- <div class="text-center">
+          <ul class="pagination post-pagination">
+            <li><a href="#">Prev</a>
+            </li>
+            <li class="active"><a href="#">1</a>
+            </li>
+            <li><a href="#">2</a>
+            </li>
+            <li><a href="#">3</a>
+            </li>
+            <li><a href="#">4</a>
+            </li>
+            <li><a href="#">5</a>
+            </li>
+            <li><a href="#">Next</a>
+            </li>
+          </ul>
+        </div> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+{% include "footer.html" %}
+{% endblock %}

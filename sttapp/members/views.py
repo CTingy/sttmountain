@@ -25,3 +25,10 @@ def search():
     members = Member.objects.filter(name__contains=keyword)
     name_list = ["{}|{}".format(m.name, m.security_number) for m in members]
     return jsonify(name_list)
+
+
+@bp.route('/members/')
+@login_required
+def members():
+
+    return render_template("members/members.html")
