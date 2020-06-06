@@ -13,10 +13,10 @@
   <p>查詢後再進行修改或刪除，若查無目標資料，可建立新的成員資料</p>
   <br>
   <div class="form-group">
-    <input name="name" type="text" class="form-control" placeholder="請輸入姓名">
+    <input required name="name" type="text" class="form-control" placeholder="請輸入姓名">
   </div>
   <div class="form-group">
-    <input name="security_number" type="text" class="form-control" placeholder="請輸入身份證字號(第一碼大寫)">
+    <input required name="security_number" type="text" class="form-control" placeholder="請輸入身份證字號(第一碼大寫)">
   </div>
   <div class="form-group">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -27,7 +27,13 @@
 <br>
 <br>
 {% if for_updating %}
-<h4>修改人員資料</h4>
+<div class="col-md-10">
+  <h4>修改人員資料</h4>
+</div>
+<div class="col-md-2">
+  <a type="button" href="{{ url_for('member.members') }}" class="btn btn-default mt-20">
+    回到新增人員
+  </a></div>
 {% else %}
 <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapseForm" aria-expanded="false"
   aria-controls="collapseExample">
@@ -46,8 +52,8 @@
     <div class="checkout-country-code clearfix">
       <div class="form-group">
         <label>*真實姓名</label>
-        <input type="text" class="form-control" name="name" value="{% if member.name %}{{ member.name }}{% endif %}"
-          placeholder="">
+        <input required type="text" class="form-control" name="name"
+          value="{% if member.name %}{{ member.name }}{% endif %}" placeholder="">
       </div>
 
       <div class="form-group">
@@ -59,24 +65,24 @@
     <div class="checkout-country-code clearfix">
       <div class="form-group">
         <label>*身份證字號</label>
-        <input type="text" class="form-control" name="security_number"
+        <input required type="text" class="form-control" name="security_number"
           value="{% if member.security_number %}{{ member.security_number }}{% endif %}" placeholder="ex: A123456789">
       </div>
       <div class="form-group">
         <label>*性別</label>
-        <input type="text" class="form-control" name="gender"
+        <input required type="text" class="form-control" name="gender"
           value="{% if member.gender %}{{ member.get_gender_display() }}{% endif %}" placeholder="ex: 男 / 女 / 中">
       </div>
     </div>
     <div class="checkout-country-code clearfix">
       <div class="form-group">
         <label>*生日(西元/月/日)</label>
-        <input type="text" class="form-control" name="birthday" value="{{ member.birthday_str }}"
-          placeholder="ex: 1990-05-13">
+        <input required type="text" class="form-control" name="birthday" value="{{ member.birthday_str }}"
+          placeholder="ex: 1990/05/13">
       </div>
       <div class="form-group">
         <label>*手機號碼</label>
-        <input type="text" class="form-control" name="cellphone_number"
+        <input required type="text" class="form-control" name="cellphone_number"
           value="{% if member.cellphone_number %}{{ member.cellphone_number }}{% endif %}" placeholder="ex: 0912345678">
       </div>
     </div>
@@ -84,7 +90,7 @@
     <p>最高資歷</p>
     <div class="form-group">
       <label>*山協等級</label>
-      <input type="text" class="form-control" name="level"
+      <input required type="text" class="form-control" name="level"
         value="{% if member.level %}{{ member.get_level_display() }}{% endif %}" placeholder="ex: 新生 / 隊員 / 幹部">
     </div>
     <div class="checkout-country-code clearfix">
@@ -106,7 +112,7 @@
     <div class="checkout-country-code clearfix">
       <div class="form-group">
         <label>*系級/OB/校外</label>
-        <input type="text" class="form-control" name="department_and_grade"
+        <input required type="text" class="form-control" name="department_and_grade"
           value="{% if member.department_and_grade %}{{ member.department_and_grade }}{% endif %}"
           placeholder="ex: 水利四 / OB / 物理所 / 校外">
       </div>
@@ -135,15 +141,14 @@
 
     <div class="form-group">
       <label>*聯絡人姓名</label>
-      <input type="text" class="form-control" name="emergency_contact"
+      <input required type="text" class="form-control" name="emergency_contact"
         value="{% if member.emergency_contact %}{{ member.emergency_contact }}{% endif %}" placeholder="">
     </div>
     <div class="checkout-country-code clearfix">
       <div class="form-group">
         <label>*聯絡人電話</label>
-        <input type="text" class="form-control"
-          name="{% if member.emergency_contact_phone %}{{ member.emergency_contact_phone }}{% endif %}"
-          value="{{ member.emergency_contact_phone }}" placeholder="">
+        <input required type="text" class="form-control" name="emergency_contact_phone"
+          value="{% if member.emergency_contact_phone %}{{ member.emergency_contact_phone }}{% endif %}" placeholder="">
       </div>
       <div class="form-group">
         <label>聯絡人關係</label>
@@ -159,7 +164,6 @@
         {% if for_updating %}修改{% else %}建立{% endif %}
       </button>
     </div>
-
   </form>
 </div>
 {% endblock %}

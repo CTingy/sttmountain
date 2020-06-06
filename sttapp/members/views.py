@@ -61,25 +61,41 @@ def search_one():
 def update(member_id):
     
     member = Member.objects.get_or_404(id=member_id)
-    form = MemberForm(request.form)
-    
-    member2 = Member(**request.form)
-    print(member2.name, '~~~~')
 
     if request.method == "POST":
+        form = MemberForm(request.form)
         if form.validate_on_submit():
-            flash("123123", FlashCategory.success)
+            member.created_by = current_user.id
+            member.save()
+            flash("")
             return redirect(url_for('member.update', member_id=member_id))
-    
-    return render_template("members/members.html", member_obj=member, for_updating=True)        
+        else:
+            for field, errs in form.errors.items():
+                for err in errs:
+                    flash("{}格式錯誤: {}".format(field, err), FlashCategory.error)
+    return render_template("members/members.html", member=member, for_updating=True)        
 
 
 @bp.route('/create/', methods=["POST"])
 @login_required
 def create():
-    pass
+    
+    info_dict = dict(request.form)
+    info_dict.pop('csrf_token', None)
+    member = Member(**info_dict)
 
-
+    form = MemberForm(request.form)
+    if form.validate_on_submit():
+        member.created_by = current_user.id
+        member.save()
+        flash("出隊人員資料新增成功", FlashCategory.success)
+        return redirect(url_for('member.update', member_id=member.id))
+    else:
+        for field, errs in form.errors.items():
+            for err in errs:
+                flash("{}格式錯誤: {}".format(field, err), FlashCategory.error)
+        return render_template("members/members.html", member=member, for_updating=False)
+    
 
 @bp.route('/delete/<string:prop_id>', methods=["POST"])
 @login_required

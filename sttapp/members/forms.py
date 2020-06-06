@@ -31,6 +31,6 @@ class MemberForm(FlaskForm):
     highest_difficulty_experience = StringField()  # 手動輸入出隊資歷，ex: 哈崙鐵道
 
     # 緊急聯絡人
-    emargency_contact = StringField(validators=[validators.DataRequired()])
-    emargency_contact_phone = StringField(validators=[validators.DataRequired()])
-    emargency_contact_relationship = StringField()  # ex: 父子、母子
+    emergency_contact = StringField(validators=[validators.DataRequired()])
+    emergency_contact_phone = StringField(validators=[validators.DataRequired()])
+    emergency_contact_relationship = StringField()  # ex: 父子、母子

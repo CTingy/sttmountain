@@ -56,7 +56,8 @@
             <ul class="widget-category-list">
               <li><a href="{{ url_for('proposal.proposals') }}">提案</a>
               </li>
-              <li><a href="{{ url_for('member.members') }}">出隊人員資料</a>
+              <li><a href="{{ url_for('member.members') }}">新增出隊人員資料</a>
+              <li><a href="{{ url_for('member.members') }}">出隊人員資料異動與查詢</a>
             </ul>
           </div>
           {% endif %}
@@ -110,4 +111,7 @@
 
 {% block footer %}
 {% include "footer.html" %}
+{% endblock %}
+
+{% block script %}
 {% endblock %}

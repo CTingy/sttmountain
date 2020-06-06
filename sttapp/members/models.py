@@ -32,9 +32,9 @@ class Member(db.Document):
     highest_difficulty_experience = db.StringField()  # 手動輸入出隊資歷，ex: 哈崙鐵道
 
     # 緊急聯絡人
-    emargency_contact = db.StringField()
-    emargency_contact_phone = db.StringField()
-    emargency_contact_relationship = db.StringField()  # ex: 父子、母子
+    emergency_contact = db.StringField()
+    emergency_contact_phone = db.StringField()
+    emergency_contact_relationship = db.StringField()  # ex: 父子、母子
 
     # 系統紀錄
     created_by = db.ReferenceField('sttapp.users.models.SttUser')
