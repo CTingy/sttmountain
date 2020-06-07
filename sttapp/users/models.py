@@ -4,23 +4,24 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
 from sttapp.db import db
+from sttapp.base.models import RecordModel
 from sttapp.login import login_manager
 from .enums import Group, Position, Level
 
 
 class InvitationInfo(db.EmbeddedDocument):
 
-    invited_by = db.ReferenceField('SttUser')
+    invited_by = db.ReferenceField('sttapp.members.models.SttUser')
     invited_at = db.DateTimeField()
     email = db.EmailField()
     token = db.StringField()
 
 
-class User(UserMixin, db.Document):
+class User(UserMixin, RecordModel):
 
     username = db.StringField()  # 網站顯示的綽號
     email = db.EmailField(unique=True)  # 登入帳號
-    created_at = db.DateTimeField()
+
     last_login_at = db.DateTimeField()
     social_login_with = db.StringField()
     social_login_id = db.StringField()
@@ -46,7 +47,7 @@ class SttUser(User):
     group = db.StringField(choices=Group.get_choices())  # 嚮導隊
     position = db.StringField(choices=Position.get_choices())  # 工作組，總務、教學
     level = db.StringField(choices=Level.get_choices())  # 新生、隊員、幹部等
-    member_info = db.ReferenceField('sttapp.proposals.models.Member')
+    member_info = db.ReferenceField('sttapp.members.models.Member')
     # experiences_list =
     # stt_experiences_list =
 

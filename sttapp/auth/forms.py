@@ -9,7 +9,7 @@ from sttapp.users.enums import Group, Level, Position
 
 class InvitationForm(FlaskForm):
 
-    email = EmailField('Email', validators=[validators.DataRequired()])
+    email = EmailField('Email', validators=[validators.DataRequired("此為必填欄位")])
 
     def validate_email(self, field):
         if SttUser.objects(email=field.data):
@@ -20,7 +20,7 @@ class SignupForm(FlaskForm):
     username = StringField(
         "* 綽號", 
         validators=[
-            validators.DataRequired(), 
+            validators.DataRequired("此為必填欄位"), 
             validators.Length(max=10, message="太長了呦，最多10個字")
         ]
     )
@@ -80,10 +80,10 @@ class SignupForm(FlaskForm):
 
 class SttSignupForm(SignupForm):
     password = PasswordField("* 密碼（長度6至20）", validators=[
-        validators.DataRequired(), 
+        validators.DataRequired("此為必填欄位"), 
         validators.Length(min=6, max=20, message="長度6至20")])
     confirm = PasswordField("* 請重複輸入密碼", validators=[
-        validators.DataRequired(),
+        validators.DataRequired("此為必填欄位"),
         validators.EqualTo("password", "密碼輸入不一致")
     ])
 
@@ -94,8 +94,8 @@ class PostSignupForm(SignupForm):
 
 class LoginForm(FlaskForm):
 
-    email = EmailField('Email', validators=[validators.DataRequired()])
-    password = PasswordField("密碼", validators=[validators.DataRequired()])
+    email = EmailField('Email', validators=[validators.DataRequired("此為必填欄位")])
+    password = PasswordField("密碼", validators=[validators.DataRequired("此為必填欄位")])
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

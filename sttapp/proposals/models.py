@@ -1,6 +1,7 @@
 import datetime
 
 from sttapp.db import db
+from sttapp.base.models import RecordModel
 from .enums import Difficulty, EventType
 
 
@@ -14,7 +15,7 @@ class Itinerary(db.EmbeddedDocument):
     meta = {'ordering': ['-day_number']}
 
 
-class BaseEvent(db.Document):
+class Proposal(RecordModel):
     title = db.StringField()
     difficulty = db.StringField(choices=Difficulty.get_choices())
     start_date = db.DateTimeField()
@@ -30,20 +31,7 @@ class BaseEvent(db.Document):
     approach_way = db.StringField()
     radio = db.StringField()
     satellite_telephone = db.StringField()
-    gathering_point = db.StringField()
-    gathering_time = db.DateTimeField()
-
     attendees = db.ListField(db.ReferenceField('sttapp.members.models.Member'))
-
-    created_at = db.DateTimeField(default=datetime.datetime.utcnow)
-    created_by = db.ReferenceField('sttapp.users.models.SttUser')
-    updated_at = db.DateTimeField()
-
-    meta = {'abstract': True, }
-
-
-class Proposal(BaseEvent):
-
     gathering_point = db.StringField()
     gathering_time = db.DateTimeField()
 

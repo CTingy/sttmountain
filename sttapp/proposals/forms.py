@@ -8,11 +8,11 @@ from .enums import EventType
 
 
 class ProposalForm(FlaskForm):
-    title = StringField("隊伍名稱", validators=[validators.DataRequired()])
+    title = StringField("隊伍名稱", validators=[validators.DataRequired("此為必填欄位")])
     start_date = StringField(
-        "出發日期(含交通天)(YYYY/MM/DD)", validators=[validators.DataRequired()])
+        "出發日期(含交通天)(YYYY/MM/DD)", validators=[validators.DataRequired("此為必填欄位")])
     days = StringField("預計天數(含交通天)")
-    leader = StringField("領隊", validators=[validators.DataRequired()])
+    leader = StringField("領隊", validators=[validators.DataRequired("此為必填欄位")])
     guide = StringField("嚮導")
     attendees = StringField("成員")
     supporter = StringField("留守")

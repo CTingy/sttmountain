@@ -1,12 +1,13 @@
 import datetime
 
 from sttapp.db import db
+from sttapp.base.models import RecordModel
 from sttapp.users.enums import Level
 from sttapp.proposals.enums import Difficulty
 from .enums import Gender
 
 
-class Member(db.Document):
+class Member(RecordModel):
 
     # 基本資料
     name = db.StringField()
@@ -35,13 +36,6 @@ class Member(db.Document):
     emergency_contact = db.StringField()
     emergency_contact_phone = db.StringField()
     emergency_contact_relationship = db.StringField()  # ex: 父子、母子
-
-    # 系統紀錄
-    created_by = db.ReferenceField('sttapp.users.models.SttUser')
-    created_at = db.DateTimeField(default=datetime.datetime.utcnow)
-    updated_by = db.ReferenceField('sttapp.users.models.SttUser')
-    updated_at = db.DateTimeField()
-    # events_history =
 
     @property
     def display_name(self):
