@@ -31,7 +31,15 @@ def search():
 @bp.route('/members/')
 @login_required
 def members():
-    return render_template("members/members.html", member=None, for_updating=False)
+    return render_template("members/members.html", member=None, 
+                            for_updating=False, errors=None)
+
+
+@bp.route('/search_for_updating/')
+@login_required
+def search_for_updating():
+    return render_template("members/members.html", member=None, 
+                            for_updating=True, errors=None)
 
 
 @bp.route('/search_one/', methods=["POST"])
@@ -44,8 +52,8 @@ def search_one():
     if not name or not security_number:
         flash("姓名與身份證字號都必須輸入喔！", FlashCategory.error)
         return redirect(url_for("member.members"))
-    if security_number[0].islower():
-        flash("身份證字號第一碼請大寫", FlashCategory.error)
+    if not security_number[0].isupper():
+        flash("身份證字號第一碼需為英文字母大寫", FlashCategory.error)
         return redirect(url_for("member.members"))
     try:
         member = Member.objects.get(name=name, security_number=security_number)
@@ -71,9 +79,10 @@ def update(member_id):
             return redirect(url_for('member.update', member_id=member_id))
         else:
             for field, errs in form.errors.items():
-                for err in errs:
-                    flash("{}格式錯誤: {}".format(field, err), FlashCategory.error)
-    return render_template("members/members.html", member=member, for_updating=True)        
+                print(123)
+            flash("表單格式有誤，請重新填寫", FlashCategory.error)
+    return render_template("members/members.html", member=member, 
+                            for_updating=True, errors=dict())        
 
 
 @bp.route('/create/', methods=["POST"])
@@ -83,6 +92,7 @@ def create():
     info_dict = dict(request.form)
     info_dict.pop('csrf_token', None)
     member = Member(**info_dict)
+    errors = dict()
 
     form = MemberForm(request.form)
     if form.validate_on_submit():
@@ -92,9 +102,9 @@ def create():
         return redirect(url_for('member.update', member_id=member.id))
     else:
         for field, errs in form.errors.items():
-            for err in errs:
-                flash("{}格式錯誤: {}".format(field, err), FlashCategory.error)
-        return render_template("members/members.html", member=member, for_updating=False)
+            errors[field] = errs[0]    
+        flash("表單格式有誤，請重新填寫", FlashCategory.error)
+        return render_template("members/members.html", member=member, errors=errors, for_updating=False)
     
 
 @bp.route('/delete/<string:prop_id>', methods=["POST"])
