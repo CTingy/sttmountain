@@ -1,8 +1,11 @@
 class Choice:
 
     @classmethod
-    def get_choices(cls):
-        choices = [("NA", "未填寫")]
+    def get_choices(cls, include_na=True):
+        if include_na:
+            choices = [("NA", "未填寫")]
+        else:
+            choices = []
         for attr, v in cls.__dict__.items():
             if attr.startswith("__"):
                 continue
@@ -10,9 +13,9 @@ class Choice:
         return choices
 
     @classmethod
-    def get_map(cls):
+    def get_map(cls, include_na=True):
         return {
-            display: value for value, display in cls.get_choices()
+            display: value for value, display in cls.get_choices(include_na)
         }
 
 

@@ -5,6 +5,9 @@ from flask_login import login_user, current_user, login_required
 # from mongoengine.queryset.visitor import Q
 
 from sttapp.base.enums import FlashCategory
+from sttapp.users.enums import Level
+from sttapp.proposals.enums import Difficulty
+from .enums import Gender
 from .models import Member
 from .forms import MemberForm
 
@@ -26,13 +29,6 @@ def search():
     members = Member.objects.filter(name__contains=keyword)
     name_list = ["{}|{}".format(m.name, m.security_number) for m in members]
     return jsonify(name_list)
-
-
-@bp.route('/members/')
-@login_required
-def members():
-    return render_template("members/members.html", member=None, 
-                            for_updating=False, errors=None)
 
 
 @bp.route('/search_for_updating/')
@@ -69,34 +65,50 @@ def search_one():
 def update(member_id):
     
     member = Member.objects.get_or_404(id=member_id)
+    errors = dict()
 
     if request.method == "POST":
+        info_dict = dict(request.form)
+        info_dict.pop('csrf_token', None)
+        member = Member(**info_dict)
+        member.id = member_id
         form = MemberForm(request.form)
         if form.validate_on_submit():
             member.created_by = current_user.id
+            member.birthday = form.birthday_dt
+            member.gender = Gender.get_map().get(form.gender.data)
+            member.level = Level.get_map().get(form.level.data)
+            member.highest_difficulty = Level.get_map().get(form.highest_difficulty.data)
             member.save()
-            flash("")
+            flash("修改成功，請檢查", FlashCategory.success)
             return redirect(url_for('member.update', member_id=member_id))
         else:
             for field, errs in form.errors.items():
-                print(123)
+                errors[field] = errs[0]    
             flash("表單格式有誤，請重新填寫", FlashCategory.error)
     return render_template("members/members.html", member=member, 
-                            for_updating=True, errors=dict())        
+                            for_updating=True, errors=errors)        
 
 
-@bp.route('/create/', methods=["POST"])
+@bp.route('/create/', methods=["GET", "POST"])
 @login_required
 def create():
+    if request.method == "GET":
+        return render_template("members/members.html", member=None, 
+                                for_updating=False, errors=None)
     
     info_dict = dict(request.form)
     info_dict.pop('csrf_token', None)
     member = Member(**info_dict)
     errors = dict()
-
     form = MemberForm(request.form)
+    
     if form.validate_on_submit():
         member.created_by = current_user.id
+        member.birthday = form.birthday_dt
+        member.gender = Gender.get_map().get(form.gender.data)
+        member.level = Level.get_map().get(form.level.data)
+        member.highest_difficulty = Level.get_map().get(form.highest_difficulty.data)
         member.save()
         flash("出隊人員資料新增成功", FlashCategory.success)
         return redirect(url_for('member.update', member_id=member.id))

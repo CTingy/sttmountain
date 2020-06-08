@@ -60,12 +60,12 @@ class MemberForm(FlaskForm):
             raise ValidationError("電話格式錯誤，需為09開頭之數字共10碼")
 
     def validate_gender(self, field):
-        keys = Gender.get_map().keys()
+        keys = Gender.get_map(False).keys()
         if field.data not in keys:
             raise ValidationError("性別需為{}的其中一個".format("、".join(keys)))
         
     def validate_level(self, field):
-        keys = Level.get_map().keys()
+        keys = Level.get_map(False).keys()
         if field.data not in keys:
             raise ValidationError("等級需為{}的其中一個".format("、".join(keys)))
     
@@ -78,7 +78,7 @@ class MemberForm(FlaskForm):
     def validate_highest_difficulty(self, field):
         if not field.data:
             return None
-        keys = Difficulty.get_map().keys()
+        keys = Difficulty.get_map(False).keys()
         if field.data not in keys:
             raise ValidationError("最高級數需為{}的其中一個".format("、".join(keys)))
 
