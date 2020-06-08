@@ -119,14 +119,12 @@ def create():
         return render_template("members/members.html", member=member, errors=errors, for_updating=False)
     
 
-@bp.route('/delete/<string:prop_id>', methods=["POST"])
+@bp.route('/delete/<string:member_id>', methods=["POST"])
 @login_required
-def delete(prop_id):
-    # prop = Proposal.objects.get_or_404(id=prop_id)
-    # if prop.created_by.id != current_user.id:
+def delete(member_id):
+    member = Member.objects.get_or_404(id=member_id)
+    # if member_id.created_by.id != current_user.id:
     #     flash("只有張貼者能夠刪除隊伍提案", FlashCategory.error)
-    #     return redirect(url_for('proposal.proposals'))
-    # prop.delete()
-    # flash("已經為您刪除隊伍提案：{}".format(prop.title), FlashCategory.success)
-    # return redirect(url_for("proposal.proposals"))
-    pass
+    member.delete()
+    flash("已經為您刪除人員：{}".format(member.name), FlashCategory.success)
+    return redirect(url_for('member.search_for_updating'))
