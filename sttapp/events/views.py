@@ -14,4 +14,5 @@ bp = Blueprint('event', __name__, url_prefix='/event')
 @bp.route('/create/<string:prop_id>', methods=["POST", "GET"])
 @login_required
 def create(prop_id):
+    pass
 

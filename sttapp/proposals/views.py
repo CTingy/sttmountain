@@ -7,6 +7,8 @@ from mongoengine.queryset.visitor import Q
 from sttapp.base.enums import FlashCategory
 from .forms import ProposalForm
 from .models import Proposal, Itinerary
+from sttapp.users.enums import Level
+from sttapp.members.enums import Gender
 
 
 import iso8601
@@ -206,10 +208,23 @@ def publish(prop_id):
 
 @bp.route('/published/')
 def published():
-
     utcnow = datetime.datetime.utcnow()
     props = Proposal.objects.filter(
         Q(published_at__ne=None) & Q(is_back=False)
     )
     
+    for prop in props:
+        
+        gender_dict = {field: 0 for field, display in Gender.get_choices()}
+        level_dict = {field: 0 for field, display in Level.get_choices()}
+        for a in prop.attendees:
+            if getattr(a, 'gender'):
+                gender_dict[getattr(a, 'gender')] += 1
+            if getattr(a, 'level'):
+                level_dict[getattr(a, 'level')] +=1
+        
+        prop.total_members = len(prop.attendees)
+        prop.gender_ratio = "{}/{}".format(gender_dict["Y"], gender_dict["X"])
+        prop.struct_ratio = "{}/{}/{}".format(level_dict["cadre"], level_dict["medium"], level_dict["newbie"])
+
     return render_template('proposals/published.html', proposals=props, now=datetime.datetime.utcnow())
