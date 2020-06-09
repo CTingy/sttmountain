@@ -21,6 +21,7 @@ def create(prop_id):
     if request.method == "GET":
         itinerary_list = prop.itinerary_list
     else:
-        request.form.get()
+        pass
 
-    return render_template('events/create.html', itinerary_list=itinerary_list)
+    return render_template('events/create.html', itinerary_list=itinerary_list, 
+                           max_day=prop.itinerary_list[-1].day_number)
