@@ -5,36 +5,48 @@
 {% block sub_content %}
 {% for prop in proposals %}
 <div class="post">
-  <h2>{{ prop.title }}</h2>
-  <div class="post-meta">
-    <ul>
-      <li>
-        <i class="tf-ion-ios-calendar"></i> 張貼時間： {{ prop.created_at.isoformat() }}
-      </li>
-      <li>
-        <i class="tf-ion-android-person"></i> 張貼者： {{ prop.created_by.username }}
-      </li>
-    </ul>
-  </div>
-  <div class="post-content">
-    <p>
-      時間：{{ prop.start_date.date() }}&nbsp;～&nbsp;{{ prop.end_date.date() }}
-      &nbsp;&nbsp;&nbsp;&nbsp;
-      領隊：{{ prop.leader.display_name }}&nbsp;&nbsp;&nbsp;&nbsp;嚮導：{{ prop.guide.display_name }}
-    </p>
-    <p>
-      人員：
-      {% for a in prop.attendees %}
-      {{ a.display_name }},&nbsp;
-      {% endfor %}
-    </p>
-    <p>預定行程：</p>
-    {% for i in prop.itinerary_list %}
-    {% if i.content %}
-    <p>D{{ i.day_number}}: {{ i.content }}</p>
-    {% endif %}
-    {% endfor %}
-  </div>
+  {% if prop.start_date < now %}
+  <h2 class="post-title">
+    <form action="{{ url_for('proposal.publish', prop_id=prop.id) }}" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      [進行中]&nbsp;{{ prop.title }}&nbsp;&nbsp;
+      {% if current_user.is_authenticated %}
+      <button type="submit" class="btn btn-default">回報下山</button>
+      {% endif %}
+    </form>
+    <h2>
+      {% else %}
+      <h2 class="post-title">{{ prop.title }}</h2>
+      {% endif %}
+      <div class="post-meta">
+        <ul>
+          <li>
+            <i class="tf-ion-ios-calendar"></i> 張貼時間： {{ prop.created_at_str }}
+          </li>
+          <li>
+            <i class="tf-ion-android-person"></i> 張貼者： {{ prop.created_by.username }}
+          </li>
+        </ul>
+      </div>
+      <div class="post-content">
+        <p>
+          時間：{{ prop.start_date_str }}&nbsp;～&nbsp;{{ prop.end_date_str }}
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          領隊：{{ prop.leader.display_name }}&nbsp;&nbsp;&nbsp;&nbsp;嚮導：{{ prop.guide.display_name }}
+        </p>
+        <p>
+          人員：
+          {% for a in prop.attendees %}
+          {{ a.display_name }},&nbsp;
+          {% endfor %}
+        </p>
+        <p>預定行程：</p>
+        {% for i in prop.itinerary_list %}
+        {% if i.content %}
+        <p>D{{ i.day_number}}: {{ i.content }}</p>
+        {% endif %}
+        {% endfor %}
+      </div>
 </div>
 {% endfor %}
 {% endblock %}

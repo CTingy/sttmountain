@@ -39,3 +39,15 @@ class Proposal(RecordModel):
     is_back = db.BooleanField(default=False)
 
     meta = {'ordering': ['-start_date']}
+
+    @property
+    def start_date_str(self):
+        return self.start_date.strftime("%Y/%m/%d")
+
+    @property
+    def end_date_str(self):
+        return self.end_date.strftime("%Y/%m/%d")
+
+    @property
+    def gathering_time_str(self):
+        return self._dt_to_str(self.gathering_time)

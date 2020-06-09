@@ -21,7 +21,7 @@
     <div class="col-md-9">
       <ul>
         <li>
-          <i class="tf-ion-ios-calendar"></i> 張貼時間： {{ prop.created_at.isoformat() }}
+          <i class="tf-ion-ios-calendar"></i> 張貼時間： {{ prop.created_at_str }}
         </li>
         <li>
           <i class="tf-ion-android-person"></i> 張貼者： {{ prop.created_by.username }}
@@ -63,7 +63,7 @@
   </div>
   <div class="post-content">
     <p>
-      時間：{{ prop.start_date.date() }}&nbsp～&nbsp{{ prop.end_date.date() }}
+      時間：{{ prop.start_date_str }}&nbsp～&nbsp{{ prop.end_date_str }}
       &nbsp&nbsp&nbsp&nbsp
       領隊：{{ prop.leader.display_name }}&nbsp&nbsp&nbsp&nbsp嚮導：{{ prop.guide.display_name }}
     </p>
