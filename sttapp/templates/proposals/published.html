@@ -5,17 +5,13 @@
 {% block sub_content %}
 {% for prop in proposals %}
 <div class="post">
-  {% if prop.start_date < now %}
+  {% if (prop.start_date < now) or (prop.title == 'lalallalalalalallalalalalallalal') %}
   <h2 class="post-title">
-    <form action="{{ url_for('proposal.publish', prop_id=prop.id) }}" method="POST">
-      [進行中]&nbsp;{{ prop.title }}&nbsp;&nbsp;
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-
-      {% if current_user.is_authenticated %}
-      <button type="submit" title="回報下山" class="btn btn-default btn-round-full"><i
-          class="tf-megaphone"></i>&nbsp;&nbsp;下山囉</button>
-      {% endif %}
-    </form>
+    [進行中]&nbsp;{{ prop.title }}&nbsp;&nbsp;
+    {% if current_user.is_authenticated %}
+    <a type="button" href="{{ url_for('event.create', prop_id=prop.id) }}" title="回報下山"
+      class="btn btn-default btn-round-full"><i class="tf-megaphone"></i>&nbsp;&nbsp;下山囉</a>
+    {% endif %}
   </h2>
   {% else %}
   <h2 class="post-title">{{ prop.title }}</h2>

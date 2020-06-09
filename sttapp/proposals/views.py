@@ -208,11 +208,9 @@ def publish(prop_id):
 
 @bp.route('/published/')
 def published():
-    utcnow = datetime.datetime.utcnow()
     props = Proposal.objects.filter(
         Q(published_at__ne=None) & Q(is_back=False)
-    )
-    
+    )   
     for prop in props:
         
         gender_dict = {field: 0 for field, display in Gender.get_choices()}
