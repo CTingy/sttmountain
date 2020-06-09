@@ -124,7 +124,7 @@ def create():
 def delete(member_id):
     member = Member.objects.get_or_404(id=member_id)
     # if member_id.created_by.id != current_user.id:
-    #     flash("只有張貼者能夠刪除隊伍提案", FlashCategory.error)
+    #     flash("只有能夠刪除", FlashCategory.error)
     member.delete()
     flash("已經為您刪除人員：{}".format(member.name), FlashCategory.success)
     return redirect(url_for('member.search_for_updating'))

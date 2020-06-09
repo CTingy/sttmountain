@@ -2,7 +2,7 @@ import datetime
 
 from flask import flash, Blueprint, session, request, url_for, render_template, redirect, current_app
 from flask_login import login_user, current_user, login_required
-# from mongoengine.queryset.visitor import Q
+from mongoengine.queryset.visitor import Q
 
 from sttapp.base.enums import FlashCategory
 from .forms import ProposalForm
@@ -18,7 +18,7 @@ bp = Blueprint('proposal', __name__, url_prefix='/proposal')
 @bp.route('/proposals/')
 # @login_required
 def proposals():
-
+    flash("已發佈之提案，會公開於即將上山之頁面", FlashCategory.info)
     return render_template("proposals/proposals.html", proposals=Proposal.objects.all())
 
 
@@ -82,7 +82,6 @@ def update(prop_id):
                 "%Y/%m/%d %H/%M") if prop.gathering_time else ""
         )
     else:
-        print(prop.event_type, "~~~~~~~~")
         form = ProposalForm(request.form)
 
         if form.validate_on_submit():
@@ -116,7 +115,9 @@ def update(prop_id):
                 leader=form.leader_id,
                 guide=form.guide_id,
                 attendees=form.attendees_ids,
-                supporter=form.supporter.data
+                supporter=form.supporter.data,
+                updated_at=datetime.datetime.utcnow(),
+                updated_by=current_user.id
             )
             proposal.save()
             return redirect(url_for('proposal.update_itinerary', prop_id=prop_id))
@@ -157,7 +158,8 @@ def update_itinerary(prop_id):
         flash("行程更新成功", FlashCategory.success)
         Proposal.objects(id=prop_id).update_one(
             updated_at=datetime.datetime.utcnow(),
-            itinerary_list=updated_list
+            itinerary_list=updated_list,
+            updated_by=current_user.id
         )
         return redirect(url_for('proposal.proposals'))
 
@@ -169,8 +171,36 @@ def update_itinerary(prop_id):
 def delete(prop_id):
     prop = Proposal.objects.get_or_404(id=prop_id)
     if prop.created_by.id != current_user.id:
-        flash("只有張貼者能夠刪除隊伍提案", FlashCategory.error)
+        flash("只有張貼者能夠刪除隊伍提案", FlashCategory.warn)
         return redirect(url_for('proposal.proposals'))
     prop.delete()
     flash("已經為您刪除隊伍提案：{}".format(prop.title), FlashCategory.success)
     return redirect(url_for("proposal.proposals"))
+
+
+@bp.route('/publish/<string:prop_id>', methods=["POST"])
+@login_required
+def publish(prop_id):
+    prop = Proposal.objects.get_or_404(id=prop_id)
+    if prop.created_by.id != current_user.id:
+        flash("只有張貼者能夠發佈出隊文", FlashCategory.warn)
+        return redirect(url_for('proposal.proposals'))
+
+    Proposal.objects(id=prop_id).update_one(
+        updated_at=datetime.datetime.utcnow(),
+        published_at=datetime.datetime.utcnow(),
+        updated_by=current_user.id
+    )
+    flash("發佈成功！", FlashCategory.success)
+    return redirect(url_for("proposal.proposals"))
+
+
+@bp.route('/published/')
+def published():
+
+    utcnow = datetime.datetime.utcnow()
+    props = Proposal.objects.filter(
+        Q(published_at__ne=None) & Q(is_back=False)
+    )
+    
+    return render_template('proposals/published.html', proposals=props, now=datetime.datetime.utcnow())

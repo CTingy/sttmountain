@@ -36,5 +36,6 @@ class Proposal(RecordModel):
     gathering_time = db.DateTimeField()
 
     published_at = db.DateTimeField()
+    is_back = db.BooleanField(default=False)
 
     meta = {'ordering': ['-start_date']}

@@ -5,11 +5,20 @@
 {% block sub_content %}
 {% for prop in proposals %}
 <div class="post">
-  <h2 class="post-title">
-    {{ prop.title }}
-  </h2>
+  {% if not prop.published_at %}
+  <form action="{{ url_for('proposal.publish', prop_id=prop.id) }}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <h2 class="post-title">
+      {{ prop.title }}&nbsp;&nbsp;
+      <button title="發佈為出隊文" type="submit" class="btn btn-default"><i class="tf-ion-ios-cloud-upload-outline"
+          aria-hidden="true"></i></button>
+    </h2>
+  </form>
+  {% else %}
+  <h2>[已發佈]&nbsp;{{ prop.title }}</h2>
+  {% endif %}
   <div class="post-meta">
-    <div class="col-md-10">
+    <div class="col-md-9">
       <ul>
         <li>
           <i class="tf-ion-ios-calendar"></i> 張貼時間： {{ prop.created_at.isoformat() }}
@@ -18,36 +27,37 @@
           <i class="tf-ion-android-person"></i> 張貼者： {{ prop.created_by.username }}
         </li>
     </div>
-
-    <div class="btn-group col-md-2" role="group" acion="">
-      <button type="button" class="btn btn-default"><a href="{{ url_for('proposal.update', prop_id=prop.id) }}"><i
-            class="tf-pencil2" aria-hidden="true"></i></a></button>
-      <button type="button" data-toggle="modal" data-target="#Modal" class="btn btn-default"><i class="tf-ion-close"
-          aria-hidden="true"></i></button>
-      <!-- Modal -->
-      <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-body">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-              <h4>你確定要刪除出隊提案？刪除後將無法復原喔！</h4>
-            </div>
-            <div class="modal-footer">
-              <form action="{{ url_for('proposal.delete', prop_id=prop.id)}}" method="POST">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                <button type="submit" class="btn btn-danger">確定刪除</button>
-              </form>
-            </div>
+    <div class="col-md-3">
+      <div class="btn-group" role="group">
+        <button title="檢視&修改提案" type="button" class="btn btn-default"><a
+            href="{{ url_for('proposal.update', prop_id=prop.id) }}"><i class="tf-pencil2"
+              aria-hidden="true"></i></a></button>
+        <button title="刪除提案" type="button" data-toggle="modal" data-target="#Modal" class="btn btn-default"><i
+            class="tf-ion-close" aria-hidden="true"></i></button>
+      </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4>你確定要刪除出隊提案？刪除後將無法復原喔！</h4>
+          </div>
+          <div class="modal-footer">
+            <form action="{{ url_for('proposal.delete', prop_id=prop.id)}}" method="POST">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+              <button type="submit" class="btn btn-danger">確定刪除</button>
+            </form>
           </div>
         </div>
       </div>
-      <!-- end Modal -->
-
     </div>
+    <!-- end Modal -->
 
     </ul>
   </div>
