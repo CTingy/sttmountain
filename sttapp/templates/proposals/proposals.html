@@ -15,7 +15,7 @@
     </h2>
   </form>
   {% else %}
-  <h2>[已發佈]&nbsp;{{ prop.title }}</h2>
+  <h2 class="post-title">[已發佈]&nbsp;{{ prop.title }}</h2>
   {% endif %}
   <div class="post-meta">
     <div class="col-md-9">
@@ -26,7 +26,9 @@
         <li>
           <i class="tf-ion-android-person"></i> 張貼者： {{ prop.created_by.username }}
         </li>
+      </ul>
     </div>
+    {% if not prop.is_back %}
     <div class="col-md-3">
       <div class="btn-group" role="group">
         <button title="檢視&修改提案" type="button" class="btn btn-default"><a
@@ -58,8 +60,8 @@
       </div>
     </div>
     <!-- end Modal -->
-
-    </ul>
+    {% endif %}
+    <br>
   </div>
   <div class="post-content">
     <p>

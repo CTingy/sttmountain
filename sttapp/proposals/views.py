@@ -16,9 +16,8 @@ bp = Blueprint('proposal', __name__, url_prefix='/proposal')
 
 
 @bp.route('/proposals/')
-# @login_required
+@login_required
 def proposals():
-    flash("已發佈之提案，會公開於即將上山之頁面", FlashCategory.info)
     return render_template("proposals/proposals.html", proposals=Proposal.objects.all())
 
 
@@ -65,6 +64,9 @@ def create():
 def update(prop_id):
 
     prop = Proposal.objects.get_or_404(id=prop_id)
+    if prop.is_back:
+        flash("已下山之隊伍提案不可編輯", FlashCategory.warn)
+        return redirect(url_for('proposal.proposals'))
 
     if request.method == "GET":
         form = ProposalForm(
@@ -140,6 +142,9 @@ def update(prop_id):
 def update_itinerary(prop_id):
 
     prop = Proposal.objects.get_or_404(id=prop_id)
+    if prop.is_back:
+        flash("已下山之隊伍提案不可編輯", FlashCategory.warn)
+        return redirect(url_for('proposal.proposals'))
 
     if request.method == "POST":
         updated_list = []
@@ -170,6 +175,10 @@ def update_itinerary(prop_id):
 @login_required
 def delete(prop_id):
     prop = Proposal.objects.get_or_404(id=prop_id)
+
+    if prop.is_back:
+        flash("已下山之隊伍提案不可刪除", FlashCategory.warn)
+        return redirect(url_for('proposal.proposals'))
     if prop.created_by.id != current_user.id:
         flash("只有張貼者能夠刪除隊伍提案", FlashCategory.warn)
         return redirect(url_for('proposal.proposals'))
