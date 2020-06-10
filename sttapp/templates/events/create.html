@@ -9,7 +9,7 @@
           <a class="logo" href="/">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="">
           </a>
-          <form class="text-left clearfix" action="" method="GET">
+          <form class="text-left clearfix" action="" method="POST">
             <h4 class="text-center">填入每日實際行程，若無交通天，D0不需要填</h4>
             {% include 'alerts.html' %}
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -44,9 +44,9 @@
             <br>
             <div class="text-center form-group row">
               <a id="addInput" onclick="addFormRow()" class="btn btn-default btn-round-full"><i
-                  class="tf-ion-android-add-circle"></i> 增加1天</a>
+                  class="tf-ion-android-add"></i> 增加</a>
               <a id="minusInput" onclick="minusFormRow()" class="btn btn-default btn-round-full"><i
-                  class="tf-ion-minus-circled"></i> 減少1天</a>
+                  class="tf-ion-minus"></i> 減少</a>
             </div>
             <hr>
             <div class="form-group row">
@@ -74,14 +74,13 @@
     var presentNumber = document.getElementById("itinerary_num");
     var dayNumber = parseInt(presentNumber.value);
 
-    var div = document.getElementById(dayNumber);
+    var div = document.getElementById("0");
     div = div.cloneNode(true);
 
     var newDayNumber = dayNumber + 1;
     // day number label
     div.getElementsByTagName('label')[0].innerHTML = "D" + newDayNumber;
     var divInputs = div.getElementsByTagName('input')
-    console.log(divInputs.length);
 
     // clear all the inputs value and set new "name" attr
     // content
