@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="page-404">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <a href="{{ url_for('home.index') }}"">
+          <img src=" {{ url_for('static', filename='images/stt_logo.png') }}" alt="site logo" />
+        </a>
+        <h1 style="font-size: 200px;">404</h1>
+        <h2>您所找的頁面不存在</h2>
+        <a href="{{ url_for('home.index') }}" class="btn btn-main"><i class="tf-ion-android-arrow-back"></i> 回到首頁</a>
+        <p class="copyright-text">© 2018 Themefisher All Rights Reserved</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
