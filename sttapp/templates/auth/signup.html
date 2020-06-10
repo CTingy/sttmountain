@@ -4,17 +4,18 @@
 <div class="form-group col-md-{{ width }} col-sm-{{ width }} col-xs-12">
   <!-- <input type="email" class="form-control" placeholder="Email"> -->
   {{ field.label }}
-  {% if field.errors %}
-  {% for error in field.errors %}
-  <span class="text-danger">{{ error }}</span>
-  {% endfor %}
-  {% endif %}
   <br>
   {% if placeholder %}
   {{ field(class_='form-control', placeholder=placeholder) }}
   {% else %}
   {{ field(class_='form-control') }}
   {% endif %}
+  {% if field.errors %}
+  {% for error in field.errors %}
+  <span style="color: red; font-size: 10px;">{{ error }}</span>
+  {% endfor %}
+  {% endif %}
+  <br>
 </div>
 {% endmacro %}
 
@@ -42,6 +43,7 @@
               <label for="email">email（登入用帳號，註冊後可更改）</label>
               <br>
               <input id="email" class="form-control" type="text" name="email" value="{{ email }}" readonly>
+              <br>
             </div>
             {{ render_field(form.username, 6, "登入後顯示名稱，例如：豆子") }}
             {{ render_field(form.name) }}

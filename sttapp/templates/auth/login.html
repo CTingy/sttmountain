@@ -4,13 +4,14 @@
 <div class="form-group">
   <!-- <input type="email" class="form-control" placeholder="Email"> -->
   {{ field.label }}
+  <br>
+  {{ field(class_='form-control') }}
   {% if field.errors %}
   {% for error in field.errors %}
-  <span>：{{ error }}</span>
+  <span style="color: red; font-size: 10px;">{{ error }}</span>
   {% endfor %}
   {% endif %}
   <br>
-  {{ field(class_='form-control') }}
 </div>
 {% endmacro %}
 
