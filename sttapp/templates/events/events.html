@@ -1,0 +1,75 @@
+{% extends "event_home.html" %}
+{% block page_name %}
+RE：出隊文
+{% endblock%}
+{% block sub_content %}
+{% for event in events %}
+<div class="post">
+  <h2 class="post-title">{{ event.proposal.title }}</h2>
+  <div class="post-meta">
+    <ul>
+      <li>
+        <i class="tf-ion-ios-calendar"></i> 張貼時間： {{ event.created_at_str }}
+      </li>
+      <li>
+        <i class="tf-ion-android-person"></i> 張貼者： {{ event.created_by.username }}
+      </li>
+    </ul>
+  </div>
+  <div class="post-content">
+    <div>
+      <p>
+        時間：{{ event.proposal.start_date_str }}&nbsp;～&nbsp;{{ event.proposal.end_date_str }}
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        領隊：{{ event.proposal.leader.display_name }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;嚮導：{{ event.proposal.guide.display_name }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        天數：{{ event.proposal.days }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;留守：{{ event.proposal.supporter }}
+      </p>
+      <p>
+        人員：
+        {% for a in event.proposal.attendees %}
+        {{ a.display_name }},&nbsp;
+        {% endfor %}
+      </p>
+    </div>
+    <p>
+      <a class="btn btn-default btn-round-full" data-toggle="collapse" href="#{{ event.id }}" aria-expanded="false"
+        aria-controls="collapseExample">
+        展開詳細資訊&nbsp;<i class="tf-ion-chevron-down"></i>
+      </a>
+    </p>
+    <div class="collapse" id="{{ event.id }}">
+      <div class="card card-body">
+        總人數：{{ event.proposal.total_members }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        幹/隊/新：{{ event.proposal.struct_ratio }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        男女比：{{ event.proposal.gender_ratio }}<br>
+        <br>
+        心得：<br>
+        {{ event.feedback }}<br>
+        <br>
+        預定行程：<br>
+        {% for i in event.proposal.itinerary_list %}
+        {% if i.content %}
+        D{{ i.day_number}}: {{ i.content }}<br>
+        {% endif %}
+        {% endfor %}
+        <br>
+        實際行程：<br>
+        {% for i in event.itinerary_list %}
+        {% if i.content %}
+        D{{ i.day_number}}: {{ i.content }}<br>
+        {% endif %}
+        {% endfor %}
+        <br>
+        撤退路線：{{ event.proposal.return_plan }}<br><br>
+        預備天：{{ event.proposal.buffer_days }}天&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        交通方式：{{ event.proposal.approach_way }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        無線電頻率/台號：{{ event.proposal.radio }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+        衛星電話：{{ event.proposal.satellite_telephone }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        出發時間：{{ event.proposal.gathering_time_str }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        集合地點：{% if event.proposal.gathering_point %}{{ event.proposal.gathering_point }}, 歡迎送行。{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}

@@ -5,7 +5,7 @@
 {% block sub_content %}
 {% for prop in proposals %}
 <div class="post">
-  {% if (prop.start_date < now) or (prop.title == 'lalallalalalalallalalalalallalal') %}
+  {% if prop.start_date < now %}
   <h2 class="post-title">
     [進行中]&nbsp;{{ prop.title }}&nbsp;&nbsp;
     {% if current_user.is_authenticated %}

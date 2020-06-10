@@ -48,14 +48,21 @@ def create(prop_id):
             if not prop.is_back and Event.objects.get(proposal=prop_id):
                 Proposal.objects(id=prop_id).update_one(is_back=True)
             flash("該出隊文已經回報下山囉，請勿重複回報", FlashCategory.warn)
-            return redirect(url_for('proposal.published'))
+            return redirect(url_for('event.events'))
         
         Proposal.objects(id=prop_id).update_one(
             is_back=True,
             updated_at=datetime.datetime.utcnow(),
             updated_by=current_user.id
         )
-        flash("RE:出隊文建立完成！", FlashCategory.success)
-        return redirect(url_for('proposal.published'))
+        flash("RE：出隊文建立完成！", FlashCategory.success)
+        return redirect(url_for('event.events'))
     return render_template('events/create.html', itinerary_list=itinerary_list, 
                             max_day=prop.itinerary_list[-1].day_number)
+
+
+@bp.route('/events/')
+@login_required
+def events():
+    events = Event.objects.all()
+    return render_template('events/events.html', events=events)
