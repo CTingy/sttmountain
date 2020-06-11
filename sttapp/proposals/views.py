@@ -219,17 +219,15 @@ def published():
         Q(published_at__ne=None) & Q(is_back=False)
     )   
     for prop in props:
-        
-        gender_dict = {field: 0 for field, display in Gender.get_choices()}
-        level_dict = {field: 0 for field, display in Level.get_choices()}
-        for a in prop.attendees:
-            if getattr(a, 'gender'):
-                gender_dict[getattr(a, 'gender')] += 1
-            if getattr(a, 'level'):
-                level_dict[getattr(a, 'level')] +=1
-        
-        prop.total_members = len(prop.attendees)
-        prop.gender_ratio = "{}/{}".format(gender_dict["Y"], gender_dict["X"])
-        prop.struct_ratio = "{}/{}/{}".format(level_dict["cadre"], level_dict["medium"], level_dict["newbie"])
-
+        gender_dict = prop.gender_structure
+        level_dict = prop.level_structure
+        prop.gender_ratio = "{}/{}".format(
+            gender_dict[Gender.get_map()[Gender.MALE]], 
+            gender_dict[Gender.get_map()[Gender.FEMALE]]
+        )
+        prop.level_ratio = "{}/{}/{}".format(
+            level_dict[Level.get_map()[Level.CADRE]],
+            level_dict[Level.get_map()[Level.MEDIUM]],
+            level_dict[Level.get_map()[Level.NEWBIE]],
+        )
     return render_template('proposals/published.html', proposals=props, now=datetime.datetime.utcnow())

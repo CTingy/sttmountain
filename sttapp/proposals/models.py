@@ -2,7 +2,7 @@ import datetime
 
 from sttapp.db import db
 from sttapp.base.models import RecordModel
-from sttapp.base.enums import Difficulty, EventType
+from sttapp.base.enums import Difficulty, EventType, Gender, Level
 
 
 class Itinerary(db.EmbeddedDocument):
@@ -51,6 +51,28 @@ class Proposal(RecordModel):
     @property
     def gathering_time_str(self):
         return self._dt_to_str(self.gathering_time)
+
+    @property
+    def total_number(self):
+        return len(self.attendees)
+    
+    @property
+    def gender_structure(self):
+        gender_dict = {field: 0 for field, display in Gender.get_choices()}
+        for a in self.attendees:
+            if not getattr(a, 'gender'):
+                continue
+            gender_dict[getattr(a, 'gender')] += 1
+        return gender_dict       
+
+    @property
+    def level_structure(self):
+        level_dict = {field: 0 for field, display in Level.get_choices()}
+        for a in self.attendees:
+            if not getattr(a, 'level'):
+                continue
+            level_dict[getattr(a, 'level')] += 1
+        return level_dict 
 
     def validate_for_publishing(self):
         required_fields = {
