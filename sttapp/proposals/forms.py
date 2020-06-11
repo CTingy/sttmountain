@@ -3,8 +3,8 @@ from flask_wtf import FlaskForm
 from wtforms import ValidationError, IntegerField, StringField, SelectField, PasswordField, validators
 
 from sttapp.members.models import Member
+from sttapp.base.enums import EventType
 from .models import Proposal
-from .enums import EventType
 
 
 class ProposalForm(FlaskForm):

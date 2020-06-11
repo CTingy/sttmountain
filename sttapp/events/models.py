@@ -3,7 +3,7 @@ import datetime
 from sttapp.db import db
 from sttapp.base.models import RecordModel
 from sttapp.proposals.models import Itinerary
-from sttapp.proposals.enums import Difficulty, EventType
+from sttapp.base.enums import Difficulty, EventType
 
 
 class Event(RecordModel):

@@ -2,7 +2,7 @@ import datetime
 
 from sttapp.db import db
 from sttapp.base.models import RecordModel
-from .enums import Difficulty, EventType
+from sttapp.base.enums import Difficulty, EventType
 
 
 class Itinerary(db.EmbeddedDocument):

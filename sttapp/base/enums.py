@@ -1,3 +1,10 @@
+class FlashCategory:
+    ERROR = "danger"
+    WARNING = "warning"
+    INFO = "info"
+    SUCCESS = "success"
+
+
 class Choice:
 
     @classmethod
@@ -19,8 +26,51 @@ class Choice:
         }
 
 
-class FlashCategory:
-    error = "danger"
-    warn = "warning"
-    info = "info"
-    success = "success"
+class Difficulty(Choice):
+
+    LEVEL_A = "A"
+    LEVEL_B = "B"
+    LEVEL_C = "C"
+    LEVEL_D = "D"
+
+
+class EventType(Choice):
+
+    EXPORATION = "探勘"
+    GENERAL = "活動"
+    RIVER_TRACING = "溯溪"
+    SNOW = "雪地"
+    OTHERS = "其他"
+
+
+class Gender(Choice):
+
+    FEMALE = '女'
+    MALE = '男'
+
+
+class Group(Choice):
+    BEAR = '小熊'
+    STAR = '北極星'
+    SANSAN = '三三'
+    WOLF = '野狼'
+    GOAT = '山羊'
+
+
+class Level(Choice):
+    NEWBIE = '新生'
+    MEDIUM = '隊員'
+    CADRE = '幹部'
+
+
+class Position(Choice):
+    PRESIDENT = '社長'
+    EDUCATION = '教學組'
+    EQUIPMENT = '裝備組'
+    ROCK = '岩推組'
+    TECH = '技推組'
+    IT = '資訊組'
+    MEDICINE = '醫藥箱組'
+    CHIEF = '山防組長'
+    CADRE_LEAD = '幹部群長'
+    ACCOUNT = '總務'

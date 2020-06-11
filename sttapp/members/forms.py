@@ -4,10 +4,8 @@ from flask_wtf import FlaskForm
 from wtforms import ValidationError, IntegerField, StringField, SelectField, PasswordField, validators
 
 from sttapp.members.models import Member
-from sttapp.users.enums import Level
-from sttapp.proposals.enums import Difficulty
+from sttapp.base.enums import Level, Gender, Difficulty
 from .models import Member
-from .enums import Gender
 
 
 class MemberForm(FlaskForm):
@@ -16,7 +14,7 @@ class MemberForm(FlaskForm):
     security_number = StringField("身份證字號", validators=[validators.DataRequired("此為必填欄位")])
     birthday = StringField("生日", validators=[validators.DataRequired("此為必填欄位")])
     cellphone_number = StringField("手機號碼", validators=[validators.DataRequired("此為必填欄位")])
-    gender = StringField("性別", validators=[validators.DataRequired("此為必填欄位")])
+    gender = StringField("性別")
 
     # 進階資料
     # email = EmailField()
@@ -58,11 +56,6 @@ class MemberForm(FlaskForm):
     def validate_cellphone_number(self, field):
         if not re.search("09[0-9]{8}$", field.data):
             raise ValidationError("電話格式錯誤，需為09開頭之數字共10碼")
-
-    def validate_gender(self, field):
-        keys = Gender.get_map(False).keys()
-        if field.data not in keys:
-            raise ValidationError("性別需為{}的其中一個".format("、".join(keys)))
         
     def validate_level(self, field):
         keys = Level.get_map(False).keys()

@@ -47,7 +47,7 @@ def create(prop_id):
         except NotUniqueError:
             if not prop.is_back and Event.objects.get(proposal=prop_id):
                 Proposal.objects(id=prop_id).update_one(is_back=True)
-            flash("該出隊文已經回報下山囉，請勿重複回報", FlashCategory.warn)
+            flash("該出隊文已經回報下山囉，請勿重複回報", FlashCategory.WARNING)
             return redirect(url_for('event.events'))
         
         Proposal.objects(id=prop_id).update_one(
@@ -55,7 +55,7 @@ def create(prop_id):
             updated_at=datetime.datetime.utcnow(),
             updated_by=current_user.id
         )
-        flash("RE：出隊文建立完成！", FlashCategory.success)
+        flash("RE：出隊文建立完成！", FlashCategory.SUCCESS)
         return redirect(url_for('event.events'))
     return render_template('events/create.html', itinerary_list=itinerary_list, 
                             max_day=prop.itinerary_list[-1].day_number)

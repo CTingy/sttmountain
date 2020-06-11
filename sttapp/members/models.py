@@ -2,9 +2,7 @@ import datetime
 
 from sttapp.db import db
 from sttapp.base.models import RecordModel
-from sttapp.users.enums import Level
-from sttapp.proposals.enums import Difficulty
-from .enums import Gender
+from sttapp.base.enums import Level, Gender, Difficulty
 
 
 class Member(RecordModel):

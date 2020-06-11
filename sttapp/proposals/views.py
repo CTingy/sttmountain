@@ -4,12 +4,9 @@ from flask import flash, Blueprint, session, request, url_for, render_template, 
 from flask_login import login_user, current_user, login_required
 from mongoengine.queryset.visitor import Q
 
-from sttapp.base.enums import FlashCategory
+from sttapp.base.enums import FlashCategory, Level, Gender
 from .forms import ProposalForm
 from .models import Proposal, Itinerary
-from sttapp.users.enums import Level
-from sttapp.members.enums import Gender
-
 
 import iso8601
 
@@ -53,10 +50,10 @@ def create():
                 Itinerary(day_number=i) for i in range(0, days+1)
             ]
             proposal.save()
-            flash("基本資料完成，請確認以下資訊，再下一步編輯預計行程", FlashCategory.info)
+            flash("基本資料完成，請確認以下資訊，再下一步編輯預計行程", FlashCategory.INFO)
             return redirect(url_for("proposal.update", prop_id=proposal.id))
         else:
-            flash("格式錯誤", FlashCategory.error)
+            flash("格式錯誤", FlashCategory.ERROR)
 
     return render_template("proposals/proposal_detail.html", form=form, update_itinerary=False)
 
@@ -67,7 +64,7 @@ def update(prop_id):
 
     prop = Proposal.objects.get_or_404(id=prop_id)
     if prop.is_back:
-        flash("已下山之隊伍提案不可編輯", FlashCategory.warn)
+        flash("已下山之隊伍提案不可編輯", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
 
     if request.method == "GET":
@@ -126,7 +123,7 @@ def update(prop_id):
             proposal.save()
             return redirect(url_for('proposal.update_itinerary', prop_id=prop_id))
         else:
-            flash("欄位錯誤", FlashCategory.error)
+            flash("欄位錯誤", FlashCategory.ERROR)
             return redirect(url_for('proposal.update', prop_id=prop_id))
     
     attendees_list = [a.selected_name for a in prop.attendees]
@@ -145,7 +142,7 @@ def update_itinerary(prop_id):
 
     prop = Proposal.objects.get_or_404(id=prop_id)
     if prop.is_back:
-        flash("已下山之隊伍提案不可編輯", FlashCategory.warn)
+        flash("已下山之隊伍提案不可編輯", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
 
     if request.method == "POST":
@@ -162,7 +159,7 @@ def update_itinerary(prop_id):
             )
             updated_list.append(itinerary)
 
-        flash("行程更新成功", FlashCategory.success)
+        flash("行程更新成功", FlashCategory.SUCCESS)
         Proposal.objects(id=prop_id).update_one(
             updated_at=datetime.datetime.utcnow(),
             itinerary_list=updated_list,
@@ -179,13 +176,13 @@ def delete(prop_id):
     prop = Proposal.objects.get_or_404(id=prop_id)
 
     if prop.is_back:
-        flash("已下山之隊伍提案不可刪除", FlashCategory.warn)
+        flash("已下山之隊伍提案不可刪除", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
     if prop.created_by.id != current_user.id:
-        flash("只有張貼者能夠刪除隊伍提案", FlashCategory.warn)
+        flash("只有張貼者能夠刪除隊伍提案", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
     prop.delete()
-    flash("已經為您刪除隊伍提案：{}".format(prop.title), FlashCategory.success)
+    flash("已經為您刪除隊伍提案：{}".format(prop.title), FlashCategory.SUCCESS)
     return redirect(url_for("proposal.proposals"))
 
 
@@ -194,11 +191,11 @@ def delete(prop_id):
 def publish(prop_id):
     prop = Proposal.objects.get_or_404(id=prop_id)
     if prop.created_by.id != current_user.id:
-        flash("只有張貼者能夠發佈出隊文", FlashCategory.warn)
+        flash("只有張貼者能夠發佈出隊文", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
 
     if not prop.validate_for_publishing():
-        flash("提案欄位有缺少，無法發佈，請填寫完成再試一次", FlashCategory.warn)
+        flash("提案欄位有缺少，無法發佈，請填寫完成再試一次", FlashCategory.WARNING)
         return redirect(url_for('proposal.update', prop_id=prop_id))
    
     Proposal.objects(id=prop_id).update_one(
@@ -206,7 +203,7 @@ def publish(prop_id):
         published_at=datetime.datetime.utcnow(),
         updated_by=current_user.id
     )
-    flash("發佈成功！", FlashCategory.success)
+    flash("發佈成功！", FlashCategory.SUCCESS)
     return redirect(url_for("proposal.proposals"))
 
 

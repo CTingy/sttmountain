@@ -81,7 +81,7 @@
   <div class="checkout-country-code clearfix">
     {{ render_field("身份證字號*", "security_number", "ex: A123456789") }}
     <div class="form-group">
-      <label>性別*</label>
+      <label>性別</label>
       <input required type="text" class="form-control" name="gender"
         value="{% if member.gender %}{{ member.get_gender_display() }}{% endif %}" placeholder="ex: 男 / 女 / 中">
       {% if errors.gender %}<span style="color: red; font-size: 10px;">{{ errors.gender }}</span>{% endif %}

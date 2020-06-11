@@ -3,8 +3,8 @@ from flask_wtf import FlaskForm
 from wtforms.fields.html5 import EmailField
 from wtforms import ValidationError, StringField, SelectField, PasswordField, validators
 
+from sttapp.base.enums import Group, Level, Position
 from sttapp.users.models import SttUser
-from sttapp.users.enums import Group, Level, Position
 
 
 class InvitationForm(FlaskForm):

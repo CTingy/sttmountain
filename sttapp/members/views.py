@@ -4,10 +4,7 @@ from flask import flash, Blueprint, session, request, jsonify, url_for, render_t
 from flask_login import login_user, current_user, login_required
 # from mongoengine.queryset.visitor import Q
 
-from sttapp.base.enums import FlashCategory
-from sttapp.users.enums import Level
-from sttapp.proposals.enums import Difficulty
-from .enums import Gender
+from sttapp.base.enums import FlashCategory, Level, Difficulty, Gender
 from .models import Member
 from .forms import MemberForm
 
@@ -46,17 +43,17 @@ def search_one():
     security_number = request.form.get("security_number")
 
     if not name or not security_number:
-        flash("姓名與身份證字號都必須輸入喔！", FlashCategory.error)
+        flash("姓名與身份證字號都必須輸入喔！", FlashCategory.ERROR)
         return redirect(url_for("member.members"))
     if not security_number[0].isupper():
-        flash("身份證字號第一碼需為英文字母大寫", FlashCategory.error)
+        flash("身份證字號第一碼需為英文字母大寫", FlashCategory.ERROR)
         return redirect(url_for("member.members"))
     try:
         member = Member.objects.get(name=name, security_number=security_number)
     except Member.DoesNotExist:
-        flash("查無此姓名或查無此身份證字號，請建立新的人員資料", FlashCategory.warn)
+        flash("查無此姓名或查無此身份證字號，請建立新的人員資料", FlashCategory.WARNING)
         return redirect(url_for("member.members"))
-    flash("已查到資料，可進一步修改資料", FlashCategory.success)
+    flash("已查到資料，可進一步修改資料", FlashCategory.SUCCESS)
     return redirect(url_for('member.update', member_id=member.id))
 
 
@@ -80,12 +77,12 @@ def update(member_id):
             member.level = Level.get_map().get(form.level.data)
             member.highest_difficulty = Level.get_map().get(form.highest_difficulty.data)
             member.save()
-            flash("修改成功，請檢查", FlashCategory.success)
+            flash("修改成功，請檢查", FlashCategory.SUCCESS)
             return redirect(url_for('member.update', member_id=member_id))
         else:
             for field, errs in form.errors.items():
                 errors[field] = errs[0]    
-            flash("表單格式有誤，請重新填寫", FlashCategory.error)
+            flash("表單格式有誤，請重新填寫", FlashCategory.ERROR)
     return render_template("members/members.html", member=member, 
                             for_updating=True, errors=errors)        
 
@@ -110,12 +107,12 @@ def create():
         member.level = Level.get_map().get(form.level.data)
         member.highest_difficulty = Level.get_map().get(form.highest_difficulty.data)
         member.save()
-        flash("出隊人員資料新增成功", FlashCategory.success)
+        flash("出隊人員資料新增成功", FlashCategory.SUCCESS)
         return redirect(url_for('member.update', member_id=member.id))
     else:
         for field, errs in form.errors.items():
             errors[field] = errs[0]    
-        flash("表單格式有誤，請重新填寫", FlashCategory.error)
+        flash("表單格式有誤，請重新填寫", FlashCategory.ERROR)
         return render_template("members/members.html", member=member, errors=errors, for_updating=False)
     
 
@@ -124,7 +121,7 @@ def create():
 def delete(member_id):
     member = Member.objects.get_or_404(id=member_id)
     # if member_id.created_by.id != current_user.id:
-    #     flash("只有能夠刪除", FlashCategory.error)
+    #     flash("只有能夠刪除", FlashCategory.ERROR)
     member.delete()
-    flash("已經為您刪除人員：{}".format(member.name), FlashCategory.success)
+    flash("已經為您刪除人員：{}".format(member.name), FlashCategory.SUCCESS)
     return redirect(url_for('member.search_for_updating'))
