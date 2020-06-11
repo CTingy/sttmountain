@@ -197,6 +197,10 @@ def publish(prop_id):
         flash("只有張貼者能夠發佈出隊文", FlashCategory.warn)
         return redirect(url_for('proposal.proposals'))
 
+    if not prop.validate_for_publishing():
+        flash("提案欄位有缺少，無法發佈，請填寫完成再試一次", FlashCategory.warn)
+        return redirect(url_for('proposal.update', prop_id=prop_id))
+   
     Proposal.objects(id=prop_id).update_one(
         updated_at=datetime.datetime.utcnow(),
         published_at=datetime.datetime.utcnow(),

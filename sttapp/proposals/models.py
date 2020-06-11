@@ -51,3 +51,15 @@ class Proposal(RecordModel):
     @property
     def gathering_time_str(self):
         return self._dt_to_str(self.gathering_time)
+
+    def validate_for_publishing(self):
+        required_fields = (
+            "title", "start_date", "days", "leader", "guide", "supporter",
+            "return_plan", "buffer_days", "approach_way", "radio", 
+            "satellite_telephone", "attendees", "gathering_point", 
+            "gathering_time"
+        )
+        for field in required_fields:
+            if not getattr(self, field):
+                return False
+        return True
