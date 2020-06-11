@@ -55,6 +55,8 @@
               <br>
               <input name="guide" type="text" class="searchMember form-control" value="{{ guide }}"
                 placeholder="請輸入姓名" />
+              {% if form.guide.errors %}<span
+                style="color: red; font-size: 10px;">{{ form.guide.errors[0] }}</span>{% endif %}
               <br>
             </div>
             {{ render_field(form.supporter, 4) }}
@@ -69,7 +71,6 @@
             {{ render_field(form.satellite_telephone, 6, "例如：6號機、+882314657982") }}
             {{ render_field(form.gathering_point, 6, "例如：光口") }}
             {{ render_field(form.gathering_time, 6, "例如：2020/04/15 08:05") }}
-
             <div class=" text-center col-md-12">
               <br>
               <button type="submit" class="btn btn-main text-center">

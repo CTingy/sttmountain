@@ -80,7 +80,7 @@ def update(prop_id):
             satellite_telephone=prop.satellite_telephone,
             gathering_point=prop.gathering_point,
             gathering_time=prop.gathering_time.strftime(
-                "%Y/%m/%d %H/%M") if prop.gathering_time else ""
+                "%Y/%m/%d %H:%M") if prop.gathering_time else ""
         )
     else:
         form = ProposalForm(request.form)
@@ -194,8 +194,14 @@ def publish(prop_id):
         flash("只有張貼者能夠發佈出隊文", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
 
-    if not prop.validate_for_publishing():
-        flash("提案欄位有缺少，無法發佈，請填寫完成再試一次", FlashCategory.WARNING)
+    failed_fields, failed_itinerary = prop.validate_for_publishing()
+    if failed_fields or failed_itinerary:
+        if failed_fields:
+            flash("無法發佈，提案欄位有缺少：{}，請填寫完成再試一次".format("、".join(failed_fields)), 
+                   FlashCategory.WARNING)
+        if failed_itinerary:
+            flash("無法發佈，預定行程中{}的內容是空白的，請填寫完成再試一次".format("、".join(failed_itinerary)), 
+                   FlashCategory.WARNING)
         return redirect(url_for('proposal.update', prop_id=prop_id))
    
     Proposal.objects(id=prop_id).update_one(

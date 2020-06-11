@@ -101,7 +101,10 @@ class ProposalForm(FlaskForm):
             if not data:
                 continue
             ids.append(self._get_member_id(data))
-        self.attendees_ids = ids
+        
+        ids.append(self.leader_id)
+        ids.append(self.guide_id)
+        self.attendees_ids = list(set(ids))
         return None
 
     def validate_event_type(self, field):

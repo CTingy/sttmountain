@@ -53,13 +53,27 @@ class Proposal(RecordModel):
         return self._dt_to_str(self.gathering_time)
 
     def validate_for_publishing(self):
-        required_fields = (
-            "title", "start_date", "days", "leader", "guide", "supporter",
-            "return_plan", "buffer_days", "approach_way", "radio", 
-            "satellite_telephone", "attendees", "gathering_point", 
-            "gathering_time"
-        )
-        for field in required_fields:
+        required_fields = {
+            "title": "隊伍名稱", 
+            "start_date": "上山日期", 
+            "days": "天數",
+            "leader": "領隊", 
+            "guide": "嚮導",          
+            "supporter": "留守", 
+            "buffer_days": "預備天數", 
+            "gathering_time": "集合時間",
+            "attendees": "成員", 
+            "gathering_point": "集合地點",
+            # "return_plan": "",  
+            # "approach_way": "", 
+        }
+        failed_fields = []
+        for field, name in required_fields.items():
             if not getattr(self, field):
-                return False
-        return True
+                failed_fields.append(name)
+        
+        failed_itinerary = []
+        for itinerary in self.itinerary_list:
+            if not itinerary.content:
+                failed_itinerary.append("D{}".format(itinerary.day_number))
+        return failed_fields, failed_itinerary
