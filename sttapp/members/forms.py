@@ -11,10 +11,14 @@ from .models import Member
 class MemberForm(FlaskForm):
     name = StringField("真實姓名", validators=[validators.DataRequired("此為必填欄位")])
     nickname = StringField("綽號")
-    security_number = StringField("身份證字號", validators=[validators.DataRequired("此為必填欄位")])
+    security_number = StringField("身份證字號", validators=[
+        validators.DataRequired("此為必填欄位"),
+        validators.Regexp("^[A-Z]\d{9}$", message="身份證字號格式需為：首字大寫加9碼數字")])
     birthday = StringField("生日", validators=[validators.DataRequired("此為必填欄位")])
-    cellphone_number = StringField("手機號碼", validators=[validators.DataRequired("此為必填欄位")])
-    gender = StringField("性別")
+    cellphone_number = StringField("手機號碼", validators=[
+        validators.DataRequired("此為必填欄位"), 
+        validators.Regexp("09[0-9]{8}$", message="電話格式錯誤，需為09開頭之數字共10碼")])
+    gender = StringField("性別", validators=[validators.Optional()])
 
     # 進階資料
     # email = EmailField()
@@ -24,7 +28,8 @@ class MemberForm(FlaskForm):
     level = StringField("山協等級", validators=[validators.DataRequired("此為必填欄位")])  # 新生、隊員、幹部等
 
     # 學校資訊
-    student_id = StringField("學號")
+    student_id = StringField("學號", validators=[
+        validators.Optional(), validators.Regexp("[A-Z]\d{8}$", message="學號格式錯誤")])
     department_and_grade = StringField("系級/OB/校外", validators=[validators.DataRequired("此為必填欄位")])  # ex: 水利四 / ob / 物理所 / 校外
 
     # 最高資歷
@@ -33,18 +38,14 @@ class MemberForm(FlaskForm):
 
     # 緊急聯絡人
     emergency_contact = StringField("緊急聯絡人", validators=[validators.DataRequired("此為必填欄位")])
-    emergency_contact_phone = StringField("聯絡人電話", validators=[validators.DataRequired("此為必填欄位")])
+    emergency_contact_phone = StringField("聯絡人電話", validators=[
+        validators.DataRequired("此為必填欄位"), 
+        validators.Regexp("09[0-9]{8}$", message="電話格式錯誤，需為09開頭之數字共10碼")])
     emergency_contact_relationship = StringField("與聯絡人關係")  # ex: 父子、母子
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.birthday_dt = None
-
-    def validate_security_number(self, field):
-        if not field.data[0].isupper():
-            raise ValidationError("身份證字號第一碼需為英文字母大寫")
-        if not re.search("^[A-Z]\d{9}$", field.data):
-            raise ValidationError("身份證字號格式錯誤")
 
     def validate_birthday(self, field):
         try:
@@ -53,20 +54,15 @@ class MemberForm(FlaskForm):
         except ValueError:
             raise ValidationError("出生日期格式錯誤，應為：YYYY/MM/DD")
 
-    def validate_cellphone_number(self, field):
-        if not re.search("09[0-9]{8}$", field.data):
-            raise ValidationError("電話格式錯誤，需為09開頭之數字共10碼")
-        
+    def validate_gender(self, field):
+        keys = Gender.get_map(False).keys()
+        if field.data not in keys:
+            raise ValidationError("性別需為{}的其中一個，或是不填寫".format("、".join(keys)))
+       
     def validate_level(self, field):
         keys = Level.get_map(False).keys()
         if field.data not in keys:
             raise ValidationError("等級需為{}的其中一個".format("、".join(keys)))
-    
-    def validate_student_id(self, field):
-        if not field.data:
-            return None
-        if not re.search("^[A-Z]\d{8}$", field.data):
-            raise ValidationError("學號格式錯誤")
 
     def validate_highest_difficulty(self, field):
         if not field.data:
@@ -74,7 +70,3 @@ class MemberForm(FlaskForm):
         keys = Difficulty.get_map(False).keys()
         if field.data not in keys:
             raise ValidationError("最高級數需為{}的其中一個".format("、".join(keys)))
-
-    def validate_emergency_contact_phone(self, field):
-        if not re.search("09[0-9]{8}$", field.data):
-            raise ValidationError("電話格式錯誤，需為09開頭之數字共10碼")

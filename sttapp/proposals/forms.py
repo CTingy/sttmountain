@@ -11,20 +11,20 @@ class ProposalForm(FlaskForm):
     title = StringField("隊伍名稱", validators=[validators.DataRequired("此為必填欄位")])
     start_date = StringField(
         "出發日期(含交通天)(YYYY/MM/DD)", validators=[validators.DataRequired("此為必填欄位")])
-    days = StringField("預計天數(*不*含交通天)")
+    days = StringField("預計天數(*不*含交通天)", validators=[validators.DataRequired("此為必填欄位")])
     has_d0 = BooleanField("是否有交通天", default=False)
     leader = StringField("領隊", validators=[validators.DataRequired("此為必填欄位")])
-    guide = StringField("嚮導")
-    attendees = StringField("成員")
-    supporter = StringField("留守")
+    guide = StringField("嚮導", validators=[validators.Optional()])
+    attendees = StringField("成員", validators=[validators.Optional()])
+    supporter = StringField("留守", validators=[validators.Optional()])
     event_type = SelectField("隊伍類型", choices=EventType.get_choices())
-    return_plan = StringField("撤退計畫")
-    buffer_days = StringField("預備天")
-    approach_way = StringField("交通方式")
-    radio = StringField("無線電頻率/台號")
-    satellite_telephone = StringField("衛星電話")
-    gathering_point = StringField("集合地點")
-    gathering_time = StringField("集合時間(YYYY/MM/DD hh:mm)")
+    return_plan = StringField("撤退計畫", validators=[validators.Optional()])
+    buffer_days = StringField("預備天", validators=[validators.Optional()])
+    approach_way = StringField("交通方式", validators=[validators.Optional()])
+    radio = StringField("無線電頻率/台號", validators=[validators.Optional()])
+    satellite_telephone = StringField("衛星電話", validators=[validators.Optional()])
+    gathering_point = StringField("集合地點", validators=[validators.Optional()])
+    gathering_time = StringField("集合時間(YYYY/MM/DD hh:mm)", validators=[validators.Optional()])
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -90,15 +90,11 @@ class ProposalForm(FlaskForm):
         return None
 
     def validate_guide(self, field):
-        if not field.data:
-            return None
         id_ = self._get_member_id(field.data)
         self.guide_id = id_
         return None
 
     def validate_attendees(self, field):
-        if not field.data:
-            return None
         data_list = field.data.split(', ')
         ids = []
         for data in data_list:
@@ -118,13 +114,9 @@ class ProposalForm(FlaskForm):
             raise ValidationError("隊伍類型錯誤")
 
     def validate_buffer_days(self, field):
-        if not field.data:
-            return None
         return self._validate_int(field)
 
     def validate_gathering_time(self, field):
-        if not field.data:
-            return None
         self._validate_date(field, True)
         if self.gathering_time_dt.date() > self.start_date_dt.date():
             self.gathering_time_dt = None
