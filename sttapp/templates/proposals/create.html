@@ -15,7 +15,6 @@
   <span style="color: red; font-size: 10px;">{{ error }}</span>
   {% endfor %}
   {% endif %}
-  <br>
 </div>
 {% endmacro %}
 
@@ -38,9 +37,15 @@
               {{ form.csrf_token }}
               {{ render_field(form.title, 10, "必填欄位") }}
               {{ render_field(form.event_type, 2) }}
-              {{ render_field(form.start_date, 6, "必填欄位") }}
-              {{ render_field(form.days, 6, "必填欄位") }}
-              {{ render_field(form.buffer_days, 6) }}
+              {{ render_field(form.start_date, 5, "必填欄位") }}
+              {{ render_field(form.days, 5, "必填欄位") }}
+            <div class="form-check col-md-2">
+              <label class="form-check-label" for="exampleCheck1">有交通天</label>
+              <br>
+              <input type="checkbox" class="form-check-input" id="exampleCheck1" name="has_d0" value="y">
+              {% if form.has_d0.errors %}<span
+                style="color: red; font-size: 10px;">{{ form.has_d0.errors[0] }}</span>{% endif %}
+            </div>
             <div class="form-group col-md-4 col-sm-4 col-xs-12">
               <label for="leader">領隊</label>
               <br>
@@ -48,7 +53,6 @@
                 placeholder="必填欄位，請輸入姓名" />
               {% if form.leader.errors %}<span
                 style="color: red; font-size: 10px;">{{ form.leader.errors[0] }}</span>{% endif %}
-              <br>
             </div>
             <div class="form-group col-md-4 col-sm-4 col-xs-12">
               <label for="guide">嚮導</label>
@@ -57,7 +61,6 @@
                 placeholder="請輸入姓名" />
               {% if form.guide.errors %}<span
                 style="color: red; font-size: 10px;">{{ form.guide.errors[0] }}</span>{% endif %}
-              <br>
             </div>
             {{ render_field(form.supporter, 4) }}
             <div class=" form-group col-md-12 col-sm-12 col-xs-12">
@@ -65,20 +68,23 @@
               <br>
               <input id="attendees" class="searchMultiMember form-control" type="text" name="attendees"
                 value="{{ attendees }}">
-              <br>
             </div>
             {{ render_field(form.radio, 6, "例如：144.28/藍天藍") }}
             {{ render_field(form.satellite_telephone, 6, "例如：6號機、+882314657982") }}
             {{ render_field(form.gathering_point, 6, "例如：光口") }}
             {{ render_field(form.gathering_time, 6, "例如：2020/04/15 08:05") }}
+            <div class=" form-group col-md-10 col-sm-12 col-xs-12">
+              <label for="return_plan">撤退計畫</label>
+              <br>
+              <textarea class="form-control" name="return_plan" id="return_plan" rows="5" value=""></textarea>
+              {% if form.guide.errors %}<span
+                style="color: red; font-size: 10px;">{{ form.guide.errors[0] }}</span>{% endif %}
+            </div>
+            {{ render_field(form.buffer_days, 2, "預設1天") }}
             <div class=" text-center col-md-12">
               <br>
               <button type="submit" class="btn btn-main text-center">
-                {% if update_itinerary %}
-                下一步，編輯每日行程
-                {% else %}
                 送出
-                {% endif %}
               </button>
             </div>
           </form>

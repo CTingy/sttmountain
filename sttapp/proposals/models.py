@@ -20,6 +20,7 @@ class Proposal(RecordModel):
     difficulty = db.StringField(choices=Difficulty.get_choices())
     start_date = db.DateTimeField()
     end_date = db.DateTimeField()
+    has_d0 = db.BooleanField(default=False)
     event_type = db.StringField(choices=EventType.get_choices())
     days = db.IntField(default=1)
     leader = db.ReferenceField('sttapp.members.models.Member')

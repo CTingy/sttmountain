@@ -1,6 +1,6 @@
 import datetime
 from flask_wtf import FlaskForm
-from wtforms import ValidationError, IntegerField, StringField, SelectField, PasswordField, validators
+from wtforms import ValidationError, IntegerField, StringField, SelectField, PasswordField, BooleanField, validators
 
 from sttapp.members.models import Member
 from sttapp.base.enums import EventType
@@ -11,14 +11,15 @@ class ProposalForm(FlaskForm):
     title = StringField("隊伍名稱", validators=[validators.DataRequired("此為必填欄位")])
     start_date = StringField(
         "出發日期(含交通天)(YYYY/MM/DD)", validators=[validators.DataRequired("此為必填欄位")])
-    days = StringField("預計天數(含交通天)")
+    days = StringField("預計天數(*不*含交通天)")
+    has_d0 = BooleanField("是否有交通天", default=False)
     leader = StringField("領隊", validators=[validators.DataRequired("此為必填欄位")])
     guide = StringField("嚮導")
     attendees = StringField("成員")
     supporter = StringField("留守")
     event_type = SelectField("隊伍類型", choices=EventType.get_choices())
     return_plan = StringField("撤退計畫")
-    buffer_days = StringField("預備天(預設1天)")
+    buffer_days = StringField("預備天")
     approach_way = StringField("交通方式")
     radio = StringField("無線電頻率/台號")
     satellite_telephone = StringField("衛星電話")
@@ -28,6 +29,7 @@ class ProposalForm(FlaskForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.start_date_dt = None
+        self.end_date_dt = None
         self.gathering_time_dt = None
         self.leader_id = None
         self.guide_id = None
@@ -74,6 +76,9 @@ class ProposalForm(FlaskForm):
             raise ValidationError("格式錯誤，請填入數字")     
 
     def validate_start_date(self, field):
+        return self._validate_date(field)
+
+    def validate_end_date(self, field):
         return self._validate_date(field)
 
     def validate_days(self, field):
@@ -127,6 +132,6 @@ class ProposalForm(FlaskForm):
 
 
 class ItineraryForm(FlaskForm):
-    content = StringField("")
+    content = StringField()
     water_info = StringField()
     communication_info = StringField()

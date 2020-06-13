@@ -30,6 +30,7 @@ def create():
             proposal = Proposal(
                 title=form.title.data,
                 start_date=form.start_date_dt,
+                has_d0=form.has_d0.data,
                 days=days,
                 end_date=form.start_date_dt + datetime.timedelta(days=days-1),
                 return_plan=form.return_plan.data,
@@ -47,15 +48,17 @@ def create():
                 supporter=form.supporter.data
             )
             proposal.itinerary_list = [
-                Itinerary(day_number=i) for i in range(0, days+1)
+                Itinerary(day_number=i) for i in range(1, days+1)
             ]
+            if proposal.has_d0:
+                proposal.itinerary_list.insert(0, Itinerary(day_number=0))
             proposal.save()
-            flash("基本資料完成，請確認以下資訊，再下一步編輯預計行程", FlashCategory.INFO)
+            flash("基本資料完成，請接著編輯預計行程", FlashCategory.INFO)
             return redirect(url_for("proposal.update", prop_id=proposal.id))
         else:
             flash("格式錯誤", FlashCategory.ERROR)
 
-    return render_template("proposals/proposal_detail.html", form=form, update_itinerary=False)
+    return render_template("proposals/create.html", form=form, update_itinerary=False)
 
 
 @bp.route('/update/<string:prop_id>', methods=["GET", "POST"])
