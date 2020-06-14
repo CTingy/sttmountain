@@ -24,10 +24,10 @@ def proposals():
 @login_required
 def create():
 
-    types = EventType.get_map(True).keys()
+    types = EventType.get_map(True)
     
     if request.method == "GET":
-        return render_template("proposals/basic_info.html", prop=None, 
+        return render_template("proposals/basic_form.html", prop=None, 
                                 for_updating=False, errors=None, types=types)
     
     info_dict = dict(request.form)
@@ -45,6 +45,7 @@ def create():
         prop.leader = form.leader_id
         prop.guide = form.guide_id
         prop.attendees = form.attendees_ids
+        prop.event_type = EventType.get_map()[form.event_type.data]
 
         # generate itinerary_list
         prop.itinerary_list = [
@@ -61,7 +62,7 @@ def create():
         for field, errs in form.errors.items():
             errors[field] = errs[0]    
         flash("表單格式有誤，請重新填寫", FlashCategory.ERROR)
-        return render_template("proposals/basic_info.html", prop=prop, 
+        return render_template("proposals/basic_form.html", prop=prop, 
                                 for_updating=False, errors=errors, types=types)
 
 
@@ -93,9 +94,7 @@ def update(prop_id):
         return redirect(url_for('proposal.proposals'))
     if current_user.id != prop.created_by.id:
         flash("僅隊伍提案創建者可編輯", FlashCategory.WARNING)
-        return redirect(url_for('proposal.proposals'))
-
-    
+        return redirect(url_for('proposal.proposals'))  
 
     if request.method == "GET":
         form = ProposalForm(
@@ -161,10 +160,9 @@ def update(prop_id):
     
     attendees_list = [a.selected_name for a in prop.attendees]
     return render_template(
-        'proposals/proposal_detail.html', 
-        form=form, 
+        'proposals/basic_form.html', for_updating=True, 
+        prop=prop, 
         attendees=", ".join(attendees_list),
-        update_itinerary=True, 
         leader=prop.leader.selected_name if prop.leader else "", 
         guide=prop.guide.selected_name if prop.guide else "")
 

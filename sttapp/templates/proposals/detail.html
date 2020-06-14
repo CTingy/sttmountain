@@ -46,110 +46,27 @@
       </div>
     </div>
     <!-- end Modal -->
-    <h2 class="text-center">{{ prop.title }}</h2>
-    <br>
-    <div class="row">
-      <div class="col-md-2">
-        <p><b>活動日期</b>:&nbsp;</p>
-      </div>
-      <div class="col-md-3">
-        {{ prop.start_date_str }}&nbsp;～&nbsp;{{ prop.end_date_str }}
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-2">
-        <p><b>留守</b>:&nbsp;</p>
-      </div>
-      <div class="col-md-3">
-        {{ prop.supporter }}
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-2">
-        <p><b>領隊</b>:&nbsp;</p>
-      </div>
-      <div class="col-md-3">
-        {{ prop.leader.name }}
-      </div>
-      <div class="col-md-2">
-        <p><b>嚮導</b>:&nbsp;</p>
-      </div>
-      <div class="col-md-3">
-        {{ prop.guide.name }}
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-2">
-        <p><b>活動人員</b>:&nbsp;</p>
-      </div>
-      <div class="col-md-3">
-        {% for a in prop.attendees %}{{ a.name }}、{% endfor %}
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-2">
-        <p><b>人員結構</b>:&nbsp;</p>
-      </div>
-      <div class="col-md-3">
-        總人數： {{ prop.total_number }} <br>
-        幹/隊/新： {{ prop.level_ratio }} <br>
-        男女比： {{ prop.gender_ratio }} <br><br>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-2">
-        <p><b>預備天</b>:&nbsp;</p>
-      </div>
-      <div class="col-md-3">
-        {{ prop.buffer_days }}天
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-2">
-        <p><b>交通方式</b>:&nbsp;</p>
-      </div>
-      <div class="col-md-8">
-        {{ prop.approach_way }}
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-2">
-        <p><b>無線電</b>:&nbsp;</p>
-      </div>
-      <div class="col-md-8">
-        {{ prop.radio }}
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-2">
-        <p><b>衛星電話</b>:&nbsp;</p>
-      </div>
-      <div class="col-md-8">
-        {{ prop.satellite_telephone }}
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-2">
-        <p><b>開機時間</b>:&nbsp;</p>
-      </div>
-      <div class="col-md-8">
-        {{ prop.open_time }}
-      </div>
-    </div>
+    {% include 'proposals/basic_info.html' %}
+    <!-- 基本資料end -->
   </div>
-  <!-- 基本資料end -->
-</div>
-<div id="menu1" class="tab-pane fade">
-  <!-- 詳細人員資料 -->
-
-  <!-- 詳細人員資料end -->
-</div>
-<div id="menu2" class="tab-pane fade">
-</div>
-<div id="menu3" class="tab-pane fade">
-</div>
-<div id="menu4" class="tab-pane fade">
-</div>
+  <div id="menu1" class="tab-pane fade">
+    <!-- 預計行程 -->
+    {% include 'proposals/itinerary_detail.html' %}
+    <!-- 預計行程 end -->
+  </div>
+  <div id="menu2" class="tab-pane fade">
+    <!-- 詳細人員資料 -->
+    {% include 'proposals/attendees_detail.html' %}
+    <!-- 詳細人員資料 end -->
+  </div>
+  <div id="menu3" class="tab-pane fade">
+    <!-- 裝備表 -->
+    <!-- 裝備表 end -->
+  </div>
+  <div id="menu4" class="tab-pane fade">
+    <!-- 行前會 -->
+    <!-- 行前會 end -->
+  </div>
 </div>
 
 

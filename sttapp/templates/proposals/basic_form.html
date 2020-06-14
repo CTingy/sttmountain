@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% macro render_field(label, field_name, width=6, placeholder="", required=False) %}
+<div class="form-group col-md-{{ width }}">
+  <label>{{ label }}</label>
+  <input {% if required %}required{% endif %} type="text" class="form-control" name="{{ field_name }}"
+    value="{% if prop|attr(field_name) %}{{ prop|attr(field_name) }}{% endif %}" placeholder="{{ placeholder }}">
+  {% if errors[field_name] %}
+  <span style="color: red; font-size: 10px;">{{ errors[field_name] }}</span>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% block content %}
+<section class="signin-page account">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <div class="block text-center">
+          <a class="logo" href="{{ url_for('proposal.proposals') }}">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="">
+          </a>
+          <form class="text-left clearfix" action="" method="post">
+            {% include 'alerts.html' %}
+            <h4 class="text-center">
+              {% if not for_updating %}
+              開隊請先填寫隊伍基本資料
+              {% else %}
+              修改隊伍基本資料
+              {% endif %}
+            </h4>
+            <br>
+            <p class="text-center">
+              必填為：<b>隊伍名稱、上山日期、預計天數、領隊</b>，表格內容均可再更改</p>
+            <div class="row">
+              <div class="col-md-12">
+                {{ render_field("隊伍名稱*", "title", 10, "必填欄位", True) }}
+                <div class="form-group col-md-2">
+                  <label for="FormControlSelect">隊伍類型</label>
+                  <select class="form-control" id="FormControlSelect" name="event_type">
+                    {% for display, type in types.items() %}
+                    <option {% if prop.event_type == type %}selected{% endif %}>
+                      {{ display }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                  {% if errors.event_type %}<span
+                    style="color: red; font-size: 10px;">{{ errors.event_type }}</span>{% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                {{ render_field("上山日期(不含交通天)", "start_date", 4, "必填欄位", True) }}
+                {{ render_field("預計天數(不含交通天)", "days", 4, "必填欄位", True) }}
+                {{ render_field("預備天數", "buffer_days", 2, "預設1天") }}
+                <div class="form-check col-md-2">
+                  <label class="form-check-label" for="exampleCheck1">有交通天</label>
+                  <br>
+                  <input type="checkbox" class="form-check-input" id="exampleCheck1" name="has_d0" value="y">
+                  {% if errors.has_d0 %}<span style="color: red; font-size: 10px;">{{ errors.has_d0 }}</span>{% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group col-md-4 col-sm-4 col-xs-12">
+                  <label for="leader">領隊</label>
+                  <br>
+                  <input required name="leader" type="text" class="searchMember form-control" value="{{ leader }}"
+                    placeholder="必填欄位，請輸入姓名" />
+                  {% if errors.leader %}<span style="color: red; font-size: 10px;">{{ errors.leader }}</span>{% endif %}
+                </div>
+                <div class="form-group col-md-4 col-sm-4 col-xs-12">
+                  <label for="guide">嚮導</label>
+                  <br>
+                  <input name="guide" type="text" class="searchMember form-control" value="{{ guide }}"
+                    placeholder="請輸入姓名" />
+                  {% if errors.guide %}<span style="color: red; font-size: 10px;">{{ errors.guide }}</span>{% endif %}
+                </div>
+                {{ render_field("留守", "supporter", 4, "填入留守姓名或綽號") }}
+              </div>
+            </div>
+            <div class=" form-group col-md-12 col-sm-12 col-xs-12">
+              <label for="attendees">成員</label>
+              <br>
+              <input id="attendees" class="searchMultiMember form-control" type="text" name="attendees"
+                value="{{ attendees }}">
+              {% if errors.attendees %}<span
+                style="color: red; font-size: 10px;">{{ errors.attendees }}</span>{% endif %}
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                {{ render_field("無線電頻率/台號", "radio", 4, "例如：144.28/藍天藍") }}
+                {{ render_field("衛星電話號碼", "satellite_telephone", 4, "例如：6號機、+882314657982") }}
+                {{ render_field("開機時間", "open_time", 4, "例如：18:30") }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class=" form-group col-md-4 col-sm-12 col-xs-12">
+                  <label for="approach_way">交通方式</label>
+                  <br>
+                  <textarea class="form-control" name="approach_way" id="approach_way" rows="5" value=""></textarea>
+                  {% if errors.approach_way %}<span
+                    style="color: red; font-size: 10px;">{{ errors.approach_way }}</span>{% endif %}
+                </div>
+                <div class=" form-group col-md-8 col-sm-12 col-xs-12">
+                  <label for="return_plan">撤退計畫</label>
+                  <br>
+                  <textarea class="form-control" name="return_plan" id="return_plan" rows="5" value=""></textarea>
+                  {% if errors.return_plan %}<span
+                    style="color: red; font-size: 10px;">{{ errors.return_plan }}</span>{% endif %}
+                </div>
+              </div>
+            </div>
+            <div class=" text-center col-md-12">
+              <br>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+              <button type="submit" class="btn btn-main text-center">
+                送出
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block script %}
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script>
+
+  $(function () {
+    $(".searchMember").on("focus", function () {
+      $(this).autocomplete({
+        source: function (request, response) {
+          $.ajax({
+            url: "{{ url_for('member.search') }}",
+            dataType: "json",
+            data: {
+              keyword: request.term      //回傳的參數 
+            },
+            success: function (data) {
+              response(data);
+            }
+          });
+        },
+        minLength: 1
+      });
+    });
+  });
+
+  $(function () {
+
+    function split(val) {
+      return val.split(/,\s*/);
+    }
+    function extractLast(term) {
+      return split(term).pop();
+    }
+
+    $(".searchMultiMember")
+      .autocomplete({
+        minLength: 0,
+        source: function (request, response) {
+          $.ajax({
+            url: "{{ url_for('member.search') }}",
+            dataType: "json",
+            data: {
+              keyword: extractLast(request.term)
+            },
+            success: function (data) {
+              response(data);
+            }
+          });
+        },
+        focus: function () {
+          return false;
+        },
+        select: function (event, ui) {
+          var terms = split(this.value);
+          // remove the current input 
+          terms.pop();
+          // add the selected item 
+          terms.push(ui.item.value);
+          // add placeholder to get the comma-and-space at the end 
+          terms.push("");
+          uniq = [...new Set(terms)];
+          this.value = uniq.join(", ");
+          return false;
+        }
+      });
+  });
+
+</script>
+{% endblock %}

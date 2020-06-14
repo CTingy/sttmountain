@@ -101,20 +101,19 @@ class ProposalForm(FlaskForm):
 
     def validate_attendees(self, field):
         data_list = field.data.split(', ')
-        ids = []
+        ids = [self.leader_id]
+        if self.guide_id:
+            ids.append(self.guide_id)
         for data in data_list:
             data = data.strip()
             if not data:
                 continue
             ids.append(self._get_member_id(data))
-        
-        ids.append(self.leader_id)
-        ids.append(self.guide_id)
         self.attendees_ids = list(set(ids))
         return None
 
     def validate_event_type(self, field):
-        types = [i[0] for i in EventType.get_choices()]
+        types = [i[1] for i in EventType.get_choices()]
         if field.data not in types:
             raise ValidationError("隊伍類型錯誤")
 

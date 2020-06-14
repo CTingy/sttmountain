@@ -1,0 +1,95 @@
+<h2 class="text-center">{{ prop.title }}</h2>
+<br><br>
+<div class="row">
+  <div class="col-md-2">
+    <p><b>活動日期</b>:&nbsp;</p>
+  </div>
+  <div class="col-md-3">
+    {{ prop.start_date_str }}&nbsp;～&nbsp;{{ prop.end_date_str }}
+  </div>
+  <div class="col-md-2">
+    <p><b>天數</b>:&nbsp;</p>
+  </div>
+  <div class="col-md-3">
+    {{ prop.days }} 天
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-2">
+    <p><b>留守</b>:&nbsp;</p>
+  </div>
+  <div class="col-md-8">
+    {{ prop.supporter }}
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-2">
+    <p><b>領隊</b>:&nbsp;</p>
+  </div>
+  <div class="col-md-3">
+    {{ prop.leader.name }}
+  </div>
+  <div class="col-md-2">
+    <p><b>嚮導</b>:&nbsp;</p>
+  </div>
+  <div class="col-md-3">
+    {{ prop.guide.name }}
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-2">
+    <p><b>活動人員</b>:&nbsp;</p>
+  </div>
+  <div class="col-md-8">
+    {% for a in prop.attendees %}{{ a.name }}、{% endfor %}
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-2">
+    <p><b>人員結構</b>:&nbsp;</p>
+  </div>
+  <div class="col-md-8">
+    <br>
+    總人數： {{ prop.total_number }} <br>
+    幹/隊/新： {{ prop.level_ratio }} <br>
+    男女比： {{ prop.gender_ratio }} <br><br>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-2">
+    <p><b>預備天</b>:&nbsp;</p>
+  </div>
+  <div class="col-md-8">
+    {{ prop.buffer_days }} 天
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-2">
+    <p><b>交通方式</b>:&nbsp;</p>
+  </div>
+  <div class="col-md-8">
+    {{ prop.approach_way }}
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-2">
+    <p><b>無線電</b>:&nbsp;</p>
+  </div>
+  <div class="col-md-3">
+    {{ prop.radio }}
+  </div>
+  <div class="col-md-2">
+    <p><b>衛星電話</b>:&nbsp;</p>
+  </div>
+  <div class="col-md-3">
+    {{ prop.satellite_telephone }}
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-2">
+    <p><b>開機時間</b>:&nbsp;</p>
+  </div>
+  <div class="col-md-8">
+    {{ prop.open_time }}
+  </div>
+</div>
