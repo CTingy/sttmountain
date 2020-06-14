@@ -17,20 +17,7 @@ bp = Blueprint('proposal', __name__, url_prefix='/proposal')
 @bp.route('/proposals/')
 @login_required
 def proposals():
-    props = Proposal.objects.all()
-    for prop in props:
-        gender_dict = prop.gender_structure
-        level_dict = prop.level_structure
-        prop.gender_ratio = "{}/{}".format(
-            gender_dict[Gender.get_map()[Gender.MALE]], 
-            gender_dict[Gender.get_map()[Gender.FEMALE]]
-        )
-        prop.level_ratio = "{}/{}/{}".format(
-            level_dict[Level.get_map()[Level.CADRE]],
-            level_dict[Level.get_map()[Level.MEDIUM]],
-            level_dict[Level.get_map()[Level.NEWBIE]],
-        )
-    return render_template('proposals/proposals.html', proposals=props)
+    return render_template('proposals/proposals.html', proposals=Proposal.objects.all())
 
 
 @bp.route('/create/', methods=["GET", "POST"])
@@ -82,6 +69,17 @@ def create():
 @login_required
 def detail(prop_id):
     prop = Proposal.objects.get_or_404(id=prop_id)
+    gender_dict = prop.gender_structure
+    level_dict = prop.level_structure
+    prop.gender_ratio = "{} / {}".format(
+        gender_dict[Gender.get_map()[Gender.MALE]], 
+        gender_dict[Gender.get_map()[Gender.FEMALE]]
+    )
+    prop.level_ratio = "{} / {} / {}".format(
+        level_dict[Level.get_map()[Level.CADRE]],
+        level_dict[Level.get_map()[Level.MEDIUM]],
+        level_dict[Level.get_map()[Level.NEWBIE]],
+    )
     return render_template('proposals/detail.html', prop=prop)
 
 
