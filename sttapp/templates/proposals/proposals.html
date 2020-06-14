@@ -8,81 +8,71 @@
   {% if not prop.published_at %}
   <form action="{{ url_for('proposal.publish', prop_id=prop.id) }}" method="POST">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-    <h2 class="post-title">
-      {{ prop.title }}&nbsp;&nbsp;
-      <button title="發佈為出隊文" type="submit" class="btn btn-default btn-round-full"><i class="tf-upload2"
-          aria-hidden="true"></i></button>
-    </h2>
+    <a href="{{ url_for('proposal.detail', prop_id=prop.id) }}">
+      <h2 class="post-title">
+        {{ prop.title }}&nbsp;&nbsp;
+        <button title="發佈為出隊文" type="submit" class="btn btn-default btn-round-full"><i class="tf-upload2"
+            aria-hidden="true"></i></button>
+      </h2>
+    </a>
   </form>
   {% else %}
-  <h2 class="post-title">[已發佈]&nbsp;{{ prop.title }}</h2>
+  <a href="{{ url_for('proposal.detail', prop_id=prop.id) }}">
+    <h2 class="post-title">[已發佈]&nbsp;{{ prop.title }}</h2>
+  </a>
   {% endif %}
   <div class="post-meta">
-    <div style="display: -webkit-inline-box;">
-      <ul>
-        <li>
-          <i class="tf-ion-ios-calendar"></i> 張貼時間： {{ prop.created_at_str }}
-        </li>
-        <li>
-          <i class="tf-ion-android-person"></i> 張貼者： {{ prop.created_by.username }}
-        </li>
-      </ul>
-    </div>
-    {% if not prop.is_back %}
-    <div style="display: -webkit-inline-box; float:right;">
-      <div class="btn-group" role="group">
-        <button title="檢視&修改提案" type="button" class="btn btn-default"><a
-            href="{{ url_for('proposal.update', prop_id=prop.id) }}"><i class="tf-pencil2"
-              aria-hidden="true"></i></a></button>
-        <button title="刪除提案" type="button" data-toggle="modal" data-target="#Modal" class="btn btn-default"><i
-            class="tf-ion-close" aria-hidden="true"></i></button>
-      </div>
-    </div>
-    <!-- Modal -->
-    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-      aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-body">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <h4>你確定要刪除出隊提案？刪除後將無法復原喔！</h4>
-          </div>
-          <div class="modal-footer">
-            <form action="{{ url_for('proposal.delete', prop_id=prop.id)}}" method="POST">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-              <button type="submit" class="btn btn-danger">確定刪除</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- end Modal -->
-    {% endif %}
-    <br>
+    <ul>
+      <li>
+        <i class="tf-ion-ios-calendar"></i> 張貼時間： {{ prop.created_at_str }}
+      </li>
+      <li>
+        <i class="tf-ion-android-person"></i> 張貼者： {{ prop.created_by.username }}
+      </li>
+    </ul>
   </div>
   <div class="post-content">
+    <div>
+      <p>
+        時間：{{ prop.start_date_str }}&nbsp;～&nbsp;{{ prop.end_date_str }}
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        領隊：{{ prop.leader.display_name }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;嚮導：{{ prop.guide.display_name }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        天數：{{ prop.days }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;留守：{{ prop.supporter }}
+      </p>
+      <p>
+        人員：
+        {% for a in prop.attendees %}
+        {{ a.display_name }},&nbsp;
+        {% endfor %}
+      </p>
+    </div>
     <p>
-      時間：{{ prop.start_date_str }}&nbsp;～&nbsp;{{ prop.end_date_str }}
-      &nbsp;&nbsp;&nbsp;&nbsp;
-      領隊：{{ prop.leader.display_name }}&nbsp;&nbsp;&nbsp;&nbsp;嚮導：{{ prop.guide.display_name }}
+      <a class="btn btn-default btn-round-full" data-toggle="collapse" href="#{{ prop.id }}" aria-expanded="false"
+        aria-controls="collapseExample">
+        see more...&nbsp;<i class="tf-ion-chevron-down"></i>
+      </a>
     </p>
-    <p>
-      人員：
-      {% for a in prop.attendees %}
-      {{ a.display_name }},&nbsp;
-      {% endfor %}
-    </p>
-    <p>預定行程：</p>
-    {% for i in prop.itinerary_list %}
-    {% if i.content %}
-    <p>D{{ i.day_number}}: {{ i.content }}</p>
-    {% endif %}
-    {% endfor %}
-    <p>撤退路線：</p>
-    <p style="white-space: pre-wrap;">{{ prop.return_plan }}</p>
+    <div class="collapse" id="{{ prop.id }}">
+      <div class="card card-body">
+        總人數：{{ prop.total_number }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        幹/隊/新：{{ prop.level_ratio }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        男女比：{{ prop.gender_ratio }}<br>
+        <br>
+        預定行程：<br>
+        {% for i in prop.itinerary_list %}
+        {% if i.content %}
+        D{{ i.day_number}}: {{ i.content }}<br>
+        {% endif %}
+        {% endfor %}
+        <br>
+        撤退路線：{{ prop.return_plan }}<br><br>
+        預備天：{{ prop.buffer_days }}天&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+        交通方式：{{ prop.approach_way }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+        無線電頻率/台號：{{ prop.radio }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        衛星電話：{{ prop.satellite_telephone }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        開機時間：{{ prop.open_time }}
+      </div>
+    </div>
   </div>
 </div>
 {% endfor %}

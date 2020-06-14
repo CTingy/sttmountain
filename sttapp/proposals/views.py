@@ -17,8 +17,20 @@ bp = Blueprint('proposal', __name__, url_prefix='/proposal')
 @bp.route('/proposals/')
 @login_required
 def proposals():
-    ps = Proposal.objects.all()
-    return render_template("proposals/proposals.html", proposals=ps)
+    props = Proposal.objects.all()
+    for prop in props:
+        gender_dict = prop.gender_structure
+        level_dict = prop.level_structure
+        prop.gender_ratio = "{}/{}".format(
+            gender_dict[Gender.get_map()[Gender.MALE]], 
+            gender_dict[Gender.get_map()[Gender.FEMALE]]
+        )
+        prop.level_ratio = "{}/{}/{}".format(
+            level_dict[Level.get_map()[Level.CADRE]],
+            level_dict[Level.get_map()[Level.MEDIUM]],
+            level_dict[Level.get_map()[Level.NEWBIE]],
+        )
+    return render_template('proposals/proposals.html', proposals=props)
 
 
 @bp.route('/create/', methods=["GET", "POST"])
@@ -64,6 +76,13 @@ def create():
         flash("表單格式有誤，請重新填寫", FlashCategory.ERROR)
         return render_template("proposals/basic_info.html", prop=prop, 
                                 for_updating=False, errors=errors, types=types)
+
+
+@bp.route('/detail/<string:prop_id>', methods=["GET", "POST"])
+@login_required
+def detail(prop_id):
+    prop = Proposal.objects.get_or_404(id=prop_id)
+    return render_template('proposals/detail.html', prop=prop)
 
 
 @bp.route('/update/<string:prop_id>', methods=["GET", "POST"])
