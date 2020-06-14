@@ -4,7 +4,7 @@ from flask import flash, Blueprint, session, request, url_for, render_template, 
 from flask_login import login_user, current_user, login_required
 from mongoengine.queryset.visitor import Q
 
-from sttapp.base.enums import FlashCategory, Level, Gender
+from sttapp.base.enums import FlashCategory, Level, Gender, EventType
 from .forms import ProposalForm
 from .models import Proposal, Itinerary
 
@@ -18,51 +18,52 @@ bp = Blueprint('proposal', __name__, url_prefix='/proposal')
 @login_required
 def proposals():
     ps = Proposal.objects.all()
-    for p in Proposal.objects.all():
-        p.return_plan = p.return_plan.replace("\r", "")
     return render_template("proposals/proposals.html", proposals=ps)
 
 
 @bp.route('/create/', methods=["GET", "POST"])
 @login_required
 def create():
-    form = ProposalForm(request.form)
-    if request.method == "POST":
-        if form.validate_on_submit():
-            days = int(form.days.data)
-            proposal = Proposal(
-                title=form.title.data,
-                start_date=form.start_date_dt,
-                has_d0=form.has_d0.data,
-                days=days,
-                end_date=form.start_date_dt + datetime.timedelta(days=days-1),
-                return_plan=form.return_plan.data,
-                buffer_days=int(
-                    form.buffer_days.data) if form.buffer_days.data else None,
-                approach_way=form.approach_way.data,
-                radio=form.radio.data,
-                satellite_telephone=form.satellite_telephone.data,
-                gathering_point=form.gathering_point.data,
-                gathering_time=form.gathering_time_dt,
-                created_by=current_user.id,
-                leader=form.leader_id,
-                guide=form.guide_id,
-                attendees=form.attendees_ids,
-                supporter=form.supporter.data, 
-                open_time=form.open_time.data
-            )
-            proposal.itinerary_list = [
-                Itinerary(day_number=i) for i in range(1, days+1)
-            ]
-            if proposal.has_d0:
-                proposal.itinerary_list.insert(0, Itinerary(day_number=0))
-            proposal.save()
-            flash("基本資料完成，請接著編輯預計行程", FlashCategory.INFO)
-            return redirect(url_for("proposal.update", prop_id=proposal.id))
-        else:
-            flash("格式錯誤", FlashCategory.ERROR)
 
-    return render_template("proposals/create.html", form=form, update_itinerary=False)
+    types = EventType.get_map(True).keys()
+    
+    if request.method == "GET":
+        return render_template("proposals/basic_info.html", prop=None, 
+                                for_updating=False, errors=None, types=types)
+    
+    info_dict = dict(request.form)
+    info_dict.pop('csrf_token', None)
+    prop = Proposal(**info_dict)
+    form = ProposalForm(request.form)
+
+    if form.validate_on_submit():
+        prop.created_by = current_user.id
+        prop.created_at = datetime.datetime.utcnow()
+        prop.start_date = form.start_date_dt
+        prop.has_d0 = form.has_d0.data
+        prop.end_date = form.start_date_dt + datetime.timedelta(days=prop.days-1)
+        prop.buffer_days = form.buffer_days.data or None
+        prop.leader = form.leader_id
+        prop.guide = form.guide_id
+        prop.attendees = form.attendees_ids
+
+        # generate itinerary_list
+        prop.itinerary_list = [
+            Itinerary(day_number=i) for i in range(1, prop.days+1)
+        ]
+        if prop.has_d0:
+            prop.itinerary_list.insert(0, Itinerary(day_number=0))
+        prop.save()
+        flash("基本資料完成，請接著編輯預計行程", FlashCategory.INFO)
+        return redirect(url_for("proposal.update_itinerary", prop_id=prop.id))
+
+    else:
+        errors = dict()
+        for field, errs in form.errors.items():
+            errors[field] = errs[0]    
+        flash("表單格式有誤，請重新填寫", FlashCategory.ERROR)
+        return render_template("proposals/basic_info.html", prop=prop, 
+                                for_updating=False, errors=errors, types=types)
 
 
 @bp.route('/update/<string:prop_id>', methods=["GET", "POST"])
@@ -70,9 +71,14 @@ def create():
 def update(prop_id):
 
     prop = Proposal.objects.get_or_404(id=prop_id)
-    if prop.is_back:
-        flash("已下山之隊伍提案不可編輯", FlashCategory.WARNING)
+    if prop.start_date.date() <= (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).date():
+        flash("已開始之隊伍提案不可編輯", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
+    if current_user.id != prop.created_by.id:
+        flash("僅隊伍提案創建者可編輯", FlashCategory.WARNING)
+        return redirect(url_for('proposal.proposals'))
+
+    
 
     if request.method == "GET":
         form = ProposalForm(
@@ -100,9 +106,12 @@ def update(prop_id):
             if days > prop.days:
                 for i in range(prop.days+1, days+1):
                     itinerary_list.append(Itinerary(day_number=i))
-
             elif days < prop.days:
                 itinerary_list = itinerary_list[:days+1]
+            if form.has_d0.data and not prop.has_d0:
+                itinerary_list.insert(0, Itinerary(day_number=0))
+            elif not form.has_d0.data and prop.has_d0:
+                itinerary_list.pop(0)
 
             proposal = Proposal(
                 id=prop.id,
@@ -148,8 +157,11 @@ def update(prop_id):
 def update_itinerary(prop_id):
 
     prop = Proposal.objects.get_or_404(id=prop_id)
-    if prop.is_back:
-        flash("已下山之隊伍提案不可編輯", FlashCategory.WARNING)
+    if prop.start_date.date() <= (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).date():
+        flash("已開始之隊伍提案不可編輯", FlashCategory.WARNING)
+        return redirect(url_for('proposal.proposals'))
+    if current_user.id != prop.created_by.id:
+        flash("僅隊伍提案創建者可編輯", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
 
     if request.method == "POST":

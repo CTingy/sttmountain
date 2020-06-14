@@ -10,7 +10,7 @@ class Choice:
     @classmethod
     def get_choices(cls, include_na=True):
         if include_na:
-            choices = [("NA", "未填寫")]
+            choices = [("", "未填寫")]
         else:
             choices = []
         for attr, v in cls.__dict__.items():

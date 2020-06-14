@@ -33,8 +33,6 @@ class Proposal(RecordModel):
     radio = db.StringField()
     satellite_telephone = db.StringField()
     attendees = db.ListField(db.ReferenceField('sttapp.members.models.Member'))
-    gathering_point = db.StringField()
-    gathering_time = db.DateTimeField()
     open_time=db.StringField()
 
     published_at = db.DateTimeField()

@@ -17,21 +17,22 @@ class ProposalForm(FlaskForm):
     guide = StringField("嚮導", validators=[validators.Optional()])
     attendees = StringField("成員", validators=[validators.Optional()])
     supporter = StringField("留守", validators=[validators.Optional()])
-    event_type = SelectField("隊伍類型", choices=EventType.get_choices())
+    event_type = StringField("隊伍類型", validators=[validators.Optional()])
     return_plan = TextAreaField("撤退計畫", validators=[validators.Optional()])
     buffer_days = StringField("預備天", validators=[validators.Optional()])
     approach_way = TextAreaField("交通方式", validators=[validators.Optional()])
-    radio = StringField("無線電頻率/台號", validators=[validators.Optional()])
-    satellite_telephone = StringField("衛星電話", validators=[validators.Optional()])
-    gathering_point = StringField("集合地點", validators=[validators.Optional()])
-    gathering_time = StringField("集合時間(YYYY/MM/DD hh:mm)", validators=[validators.Optional()])
+    radio = StringField("無線電頻率/台號", validators=[
+        validators.Optional(),
+        validators.Regexp("^14[4-5].[0-9]{2}\/", message="格式錯誤")])
+    satellite_telephone = StringField("衛星電話", validators=[
+        validators.Optional(), 
+        validators.Regexp("\+882[0-9]{10}$", message="電話格式錯誤，需為+882開頭，加上10碼數字")])
     open_time = StringField("開機時間(hh:mm)", validators=[validators.Optional()])
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.start_date_dt = None
         self.end_date_dt = None
-        self.gathering_time_dt = None
         self.open_time_dt = None
         self.leader_id = None
         self.guide_id = None
@@ -55,12 +56,14 @@ class ProposalForm(FlaskForm):
         if not field.data:
             raise ValidationError('缺少必填欄位')
 
-        patterns = filter(
-            lambda x: x if x[0] else None,
-            [(for_date, "%Y/%m/%d", "2020/04/09"), (for_time, "%H:%M", "05:30")])
+        flags = []
+        if for_date:
+            flags.append(("%Y/%m/%d", "2020/04/09"))
+        if for_time:
+            flags.append(("%H:%M", "05:30"))
 
-        dt_pattern = " ".join(i[1] for i in patterns)
-        dt_example = " ".join(i[2] for i in patterns)
+        dt_pattern = " ".join(i[0] for i in flags)
+        dt_example = " ".join(i[1] for i in flags)
 
         try:
             dt = datetime.datetime.strptime(field.data, dt_pattern)
@@ -73,9 +76,9 @@ class ProposalForm(FlaskForm):
 
     def _validate_int(self, field):
         try:
-            int(field.data)
+            field.data = int(field.data)
         except ValueError:
-            raise ValidationError("格式錯誤，請填入數字")     
+            raise ValidationError("格式錯誤，請填入數字")
 
     def validate_start_date(self, field):
         return self._validate_date(field)
@@ -118,17 +121,8 @@ class ProposalForm(FlaskForm):
     def validate_buffer_days(self, field):
         return self._validate_int(field)
 
-    def validate_gathering_time(self, field):
-        self._validate_date(field, True, True)
-        if self.gathering_time_dt.date() > self.start_date_dt.date():
-            self.gathering_time_dt = None
-            raise ValidationError('集合時間不得晚於上山時間')
-
     def validate_open_time(self, field):
         self._validate_date(field, False, True)
-        if self.gathering_time_dt.date() > self.start_date_dt.date():
-            self.gathering_time_dt = None
-            raise ValidationError('集合時間不得晚於上山時間')
 
 
 class ItineraryForm(FlaskForm):

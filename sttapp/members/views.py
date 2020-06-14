@@ -97,7 +97,6 @@ def create():
     info_dict = dict(request.form)
     info_dict.pop('csrf_token', None)
     member = Member(**info_dict)
-    errors = dict()
     form = MemberForm(request.form)
     
     if form.validate_on_submit():
@@ -110,6 +109,7 @@ def create():
         flash("出隊人員資料新增成功", FlashCategory.SUCCESS)
         return redirect(url_for('member.update', member_id=member.id))
     else:
+        errors = dict()
         for field, errs in form.errors.items():
             errors[field] = errs[0]    
         flash("表單格式有誤，請重新填寫", FlashCategory.ERROR)
@@ -120,8 +120,8 @@ def create():
 @login_required
 def delete(member_id):
     member = Member.objects.get_or_404(id=member_id)
-    # if member_id.created_by.id != current_user.id:
-    #     flash("只有能夠刪除", FlashCategory.ERROR)
+    if member_id.created_by.id != current_user.id:
+        flash("只有此筆資料創建者能夠刪除", FlashCategory.ERROR)
     member.delete()
     flash("已經為您刪除人員：{}".format(member.name), FlashCategory.SUCCESS)
     return redirect(url_for('member.search_for_updating'))
