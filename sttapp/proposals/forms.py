@@ -1,6 +1,6 @@
 import datetime
 from flask_wtf import FlaskForm
-from wtforms import ValidationError, IntegerField, StringField, SelectField, PasswordField, BooleanField, validators
+from wtforms import ValidationError, IntegerField, TextAreaField ,StringField, SelectField, PasswordField, BooleanField, validators
 
 from sttapp.members.models import Member
 from sttapp.base.enums import EventType
@@ -18,19 +18,21 @@ class ProposalForm(FlaskForm):
     attendees = StringField("成員", validators=[validators.Optional()])
     supporter = StringField("留守", validators=[validators.Optional()])
     event_type = SelectField("隊伍類型", choices=EventType.get_choices())
-    return_plan = StringField("撤退計畫", validators=[validators.Optional()])
+    return_plan = TextAreaField("撤退計畫", validators=[validators.Optional()])
     buffer_days = StringField("預備天", validators=[validators.Optional()])
-    approach_way = StringField("交通方式", validators=[validators.Optional()])
+    approach_way = TextAreaField("交通方式", validators=[validators.Optional()])
     radio = StringField("無線電頻率/台號", validators=[validators.Optional()])
     satellite_telephone = StringField("衛星電話", validators=[validators.Optional()])
     gathering_point = StringField("集合地點", validators=[validators.Optional()])
     gathering_time = StringField("集合時間(YYYY/MM/DD hh:mm)", validators=[validators.Optional()])
+    open_time = StringField("開機時間(hh:mm)", validators=[validators.Optional()])
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.start_date_dt = None
         self.end_date_dt = None
         self.gathering_time_dt = None
+        self.open_time_dt = None
         self.leader_id = None
         self.guide_id = None
         self.attendees_ids = None
@@ -48,17 +50,17 @@ class ProposalForm(FlaskForm):
             raise ValidationError("{}不存在".format(name))
         return member.id
     
-    def _validate_date(self, field, has_time=False):
+    def _validate_date(self, field, for_date=True, for_time=False):
 
         if not field.data:
             raise ValidationError('缺少必填欄位')
 
-        dt_pattern = "%Y/%m/%d"
-        dt_example = "2020/04/09"
+        patterns = filter(
+            lambda x: x if x[0] else None,
+            [(for_date, "%Y/%m/%d", "2020/04/09"), (for_time, "%H:%M", "05:30")])
 
-        if has_time:
-            dt_pattern += " %H:%M"
-            dt_example += " 19:15"
+        dt_pattern = " ".join(i[1] for i in patterns)
+        dt_example = " ".join(i[2] for i in patterns)
 
         try:
             dt = datetime.datetime.strptime(field.data, dt_pattern)
@@ -117,7 +119,13 @@ class ProposalForm(FlaskForm):
         return self._validate_int(field)
 
     def validate_gathering_time(self, field):
-        self._validate_date(field, True)
+        self._validate_date(field, True, True)
+        if self.gathering_time_dt.date() > self.start_date_dt.date():
+            self.gathering_time_dt = None
+            raise ValidationError('集合時間不得晚於上山時間')
+
+    def validate_open_time(self, field):
+        self._validate_date(field, False, True)
         if self.gathering_time_dt.date() > self.start_date_dt.date():
             self.gathering_time_dt = None
             raise ValidationError('集合時間不得晚於上山時間')

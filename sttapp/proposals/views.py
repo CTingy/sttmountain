@@ -17,7 +17,10 @@ bp = Blueprint('proposal', __name__, url_prefix='/proposal')
 @bp.route('/proposals/')
 @login_required
 def proposals():
-    return render_template("proposals/proposals.html", proposals=Proposal.objects.all())
+    ps = Proposal.objects.all()
+    for p in Proposal.objects.all():
+        p.return_plan = p.return_plan.replace("\r", "")
+    return render_template("proposals/proposals.html", proposals=ps)
 
 
 @bp.route('/create/', methods=["GET", "POST"])
@@ -45,7 +48,8 @@ def create():
                 leader=form.leader_id,
                 guide=form.guide_id,
                 attendees=form.attendees_ids,
-                supporter=form.supporter.data
+                supporter=form.supporter.data, 
+                open_time=form.open_time.data
             )
             proposal.itinerary_list = [
                 Itinerary(day_number=i) for i in range(1, days+1)

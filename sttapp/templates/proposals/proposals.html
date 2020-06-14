@@ -1,6 +1,6 @@
 {% extends "event_home.html" %}
 {% block page_name %}
-提案隊伍總覽
+開隊提案總覽
 {% endblock%}
 {% block sub_content %}
 {% for prop in proposals %}
@@ -81,6 +81,8 @@
     <p>D{{ i.day_number}}: {{ i.content }}</p>
     {% endif %}
     {% endfor %}
+    <p>撤退路線：</p>
+    <p style="white-space: pre-wrap;">{{ prop.return_plan }}</p>
   </div>
 </div>
 {% endfor %}

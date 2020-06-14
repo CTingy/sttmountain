@@ -35,6 +35,7 @@ class Proposal(RecordModel):
     attendees = db.ListField(db.ReferenceField('sttapp.members.models.Member'))
     gathering_point = db.StringField()
     gathering_time = db.DateTimeField()
+    open_time=db.StringField()
 
     published_at = db.DateTimeField()
     is_back = db.BooleanField(default=False)
