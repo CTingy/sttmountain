@@ -80,7 +80,12 @@ def detail(prop_id):
         level_dict[Level.get_map()[Level.CADRE]],
         level_dict[Level.get_map()[Level.MEDIUM]],
         level_dict[Level.get_map()[Level.NEWBIE]],
-    )
+    )  
+    # give every itinerary obj a date str
+    for i in prop.itinerary_list:
+        i.date_str = (prop.start_date + datetime.timedelta(
+            days=i.day_number-1)).strftime("%m/%d")
+
     return render_template('proposals/detail.html', prop=prop)
 
 

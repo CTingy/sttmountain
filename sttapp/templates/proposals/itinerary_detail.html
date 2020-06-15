@@ -1,0 +1,44 @@
+<br>
+<h4></h4>
+<div style="display: -webkit-inline-box; float:right;">
+  <div class="btn-group" role="group">
+    {% if current_user.id == prop.created_by.id %}
+    <button title="修改每日預計行程" type="button" class="btn btn-default"><a
+        href="{{ url_for('proposal.update_itinerary', prop_id=prop.id) }}"><i class="tf-pencil2" aria-hidden="true"></i>
+        修改</a></button>
+    {% endif %}
+  </div>
+</div>
+<h3 class="text-center">預訂行程表</h3>
+<br>
+<div class="row">
+  <div class="col-md-8">
+    <p>行程</p>
+  </div>
+  <div class="col-md-2">
+    <p>水源</p>
+  </div>
+  <div class="col-md-2">
+    <p>通訊</p>
+  </div>
+</div>
+{% for i in prop.itinerary_list %}
+<div class="row">
+  <div class="col-md-8">
+    <p><b>{{ i.date_str }} D{{ i.day_number }}: </b>{{ i.content }}</p>
+  </div>
+  <div class="col-md-2">
+    <p>{{ i.water_info }}</p>
+  </div>
+  <div class="col-md-2">
+    <p>{{ i.communication_info }}</p>
+  </div>
+</div>
+{% endfor %}
+<br>
+<h4>撤退計畫</h4>
+{% if prop.return_plan %}
+<p>{{ prop.return_plan }}</p>
+{% else %}
+<p>尚未填寫，請盡速補上</p>
+{% endif %}

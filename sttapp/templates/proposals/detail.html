@@ -1,11 +1,13 @@
 {% extends "event_home.html" %}
-
+{% block page_name %}
+企劃書
+{% endblock%}
 {% block sub_content %}
 
 <ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#home">隊伍基本資料</a></li>
-  <li><a data-toggle="tab" href="#menu1">預計行程</a></li>
-  <li><a data-toggle="tab" href="#menu2">詳細人員資料</a></li>
+  <li class="active"><a data-toggle="tab" href="#home">基本資料</a></li>
+  <li><a data-toggle="tab" href="#menu1">行程</a></li>
+  <li><a data-toggle="tab" href="#menu2">成員</a></li>
   <li><a data-toggle="tab" href="#menu3">裝備表</a></li>
   <li><a data-toggle="tab" href="#menu4">行前會</a></li>
 </ul>
@@ -17,11 +19,13 @@
     <h4></h4>
     <div style="display: -webkit-inline-box; float:right;">
       <div class="btn-group" role="group">
+        {% if current_user.id == prop.created_by.id %}
         <button title="修改基本資料" type="button" class="btn btn-default"><a
             href="{{ url_for('proposal.update', prop_id=prop.id) }}"><i class="tf-pencil2"
               aria-hidden="true"></i></a></button>
         <button title="刪除整個出隊提案" type="button" data-toggle="modal" data-target="#Modal" class="btn btn-default"><i
             class="tf-ion-close" aria-hidden="true"></i></button>
+        {% endif %}
       </div>
     </div>
     <!-- Modal -->

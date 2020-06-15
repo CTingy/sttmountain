@@ -1,0 +1,51 @@
+<br>
+<h4></h4>
+<div style="display: -webkit-inline-box; float:right;">
+  <div class="btn-group" role="group">
+    {% if current_user.id == prop.created_by.id %}
+    <button title="修改出隊人員" type="button" class="btn btn-default"><a
+        href="{{ url_for('proposal.update', prop_id=prop.id) }}"><i class="tf-pencil2" aria-hidden="true"></i>
+        修改</a></button>
+    {% endif %}
+  </div>
+</div>
+<h3 class="text-center">人員資料表</h3>
+<br>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th class="text-center" scope="col">學號<br>系級</th>
+      <th class="text-center" scope="col">姓名<br>電話</th>
+      <th class="text-center" scope="col">級數<br>資歷</th>
+      <th class="text-center" scope="col">身份證字號<br>生日</th>
+      <th class="text-center" scope="col">緊急聯絡人<br>電話</th>
+      <th class="text-center" scope="col">血型</th>
+      <th class="text-center" scope="col">藥物<br>過敏</th>
+      <th class="text-center" scope="col">未成年<br>
+        < 20</th>
+      <th class="text-center" scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for a in prop.attendees %}
+    <tr>
+      <td class="text-center">{{ a.department_and_grade }}{% if a.student_id %}<br>{{ a.student_id }}{% endif %}</td>
+      <td class="text-center">{{ a.name }}<br>{{ a.cellphone_number }}</td>
+      <td class="text-center">
+        {% if a.highest_difficulty %}{{ a.highest_difficulty }}{% endif %}<br>
+        {% if a.highest_difficulty_experience %}{{ a.highest_difficulty_experience }}{% endif %}</td>
+      <td class="text-center">{{ a.security_number }}<br>{{ a.birthday_str }}</td>
+      <td class="text-center">
+        {{ a.emergency_contact }}
+        {% if a.emergency_contact_relationship %}({{ a.emergency_contact_relationship }}){% endif %}
+        <br>{{ a.emergency_contact_phone }}</td>
+      <td class="text-center">{% if a.blood_type %}{{ a.blood_type }}{% endif %}</td>
+      <td class="text-center">{{ a.drug_allergy }}</td>
+      <td class="text-center">{% if not a.is_adult %}V{% endif%}</td>
+      <td class="text-center"></td>
+      <td class="text-center"><a href="{{ url_for('member.update', member_id=a.id) }}" title="修改該人員資料內容" type="button"
+          class="btn btn-default btn-round-full"><i class="tf-ion-edit" aria-hidden="true"></i></a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

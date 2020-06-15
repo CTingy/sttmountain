@@ -13,7 +13,6 @@ class Member(RecordModel):
     security_number = db.StringField(unique=True)
     birthday = db.DateTimeField()
     cellphone_number = db.StringField()
-    gender = db.StringField(choices=Gender.get_choices())
 
     # 進階資料
     # email = db.EmailField()
@@ -54,3 +53,8 @@ class Member(RecordModel):
             return self.birthday.strftime("%Y/%m/%d")
         # not save to DB yet, return the birthday directly
         return str(self.birthday)
+
+    @property
+    def is_adult(self):
+        today = (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).date()
+        return today.replace(year=today.year-20) >= self.birthday.date()
