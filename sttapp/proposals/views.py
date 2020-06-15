@@ -23,9 +23,7 @@ def proposals():
 @bp.route('/create/', methods=["GET", "POST"])
 @login_required
 def create():
-
-    types = EventType.get_choices(True)
-    
+   
     if request.method == "GET":
         return render_template("proposals/basic_form.html", prop=None, 
                                 for_updating=False, errors=None, types=types)
@@ -40,7 +38,6 @@ def create():
         prop.created_at = datetime.datetime.utcnow()
         prop.start_date = form.start_date_dt
         prop.end_date = form.start_date_dt + datetime.timedelta(days=prop.days-1)
-        prop.buffer_days = form.buffer_days.data or None
         prop.leader = form.leader_id
         prop.guide = form.guide_id
         prop.attendees = form.attendees_ids
@@ -60,8 +57,8 @@ def create():
         for field, errs in form.errors.items():
             errors[field] = errs[0]    
         flash("表單格式有誤，請重新填寫", FlashCategory.ERROR)
-        return render_template("proposals/basic_form.html", prop=prop, 
-                                for_updating=False, errors=errors, types=types)
+        return render_template("proposals/basic_form.html", prop=prop, for_updating=False,
+                               errors=errors, types=EventType.get_choices(True))
 
 
 @bp.route('/detail/<string:prop_id>', methods=["GET", "POST"])
@@ -91,83 +88,63 @@ def detail(prop_id):
 @login_required
 def update(prop_id):
 
-    prop = Proposal.objects.get_or_404(id=prop_id)
-    if prop.start_date.date() <= (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).date():
+    ori_prop = Proposal.objects.get_or_404(id=prop_id)
+    if ori_prop.start_date.date() <= (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).date():
         flash("已開始之隊伍提案不可編輯", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
-    if current_user.id != prop.created_by.id:
+    if current_user.id != ori_prop.created_by.id:
         flash("僅隊伍提案創建者可編輯", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))  
 
-    if request.method == "GET":
-        form = ProposalForm(
-            title=prop.title,
-            start_date=prop.start_date.strftime("%Y/%m/%d"),
-            days=prop.days,
-            supporter=prop.supporter,
-            event_type=prop.event_type,
-            return_plan=prop.return_plan,
-            buffer_days=prop.buffer_days,
-            radio=prop.radio,
-            satellite_telephone=prop.satellite_telephone,
-            gathering_point=prop.gathering_point,
-            gathering_time=prop.gathering_time.strftime(
-                "%Y/%m/%d %H:%M") if prop.gathering_time else ""
-        )
-    else:
+    errors = dict()
+    if request.method == "POST":
+        info_dict = dict(request.form)
+        info_dict.pop('csrf_token', None)
+        prop = Proposal(**info_dict)
+        prop.id = prop_id
         form = ProposalForm(request.form)
-
         if form.validate_on_submit():
+            prop.updated_by = current_user.id
+            prop.updated_at = datetime.datetime.utcnow()
+            prop.start_date = form.start_date_dt
+            prop.end_date = form.start_date_dt + datetime.timedelta(days=prop.days-1)
+            prop.leader = form.leader_id
+            prop.guide = form.guide_id
+            prop.attendees = form.attendees_ids
 
-            # update itinerary count number
-            days = int(form.days.data)
-            itinerary_list = prop.itinerary_list
-            if days > prop.days:
-                for i in range(prop.days+1, days+1):
-                    itinerary_list.append(Itinerary(day_number=i))
-            elif days < prop.days:
-                itinerary_list = itinerary_list[:days+1]
-            if form.has_d0.data and not prop.has_d0:
-                itinerary_list.insert(0, Itinerary(day_number=0))
-            elif not form.has_d0.data and prop.has_d0:
-                itinerary_list.pop(0)
+            # update itineray obj
+            itinerary_list = ori_prop.itinerary_list
+            update_itinerary = False
+            if ori_prop.days != prop.days:
+                update_itinerary = True
+                itinerary_list = ori_prop.itinerary_list
+                if prop.days > ori_prop.days:
+                    for i in range(ori_prop.days+1, prop.days+1):
+                        itinerary_list.append(Itinerary(day_number=i))
+                elif prop.days < ori_prop.days:
+                    for i in range(prop.days+1, ori_prop.days+1):
+                        i = ori_prop.itinerary_list.get(day_number=i)
+                        itinerary_list.remove(i)
+            if ori_prop.has_d0 != prop.has_d0:
+                update_itinerary = True
+                if prop.has_d0 and not ori_prop.has_d0:
+                    itinerary_list.insert(0, Itinerary(day_number=0))
+                elif not prop.has_d0 and ori_prop.has_d0:
+                    itinerary_list.pop(0)
 
-            proposal = Proposal(
-                id=prop.id,
-                title=form.title.data,
-                start_date=form.start_date_dt,
-                end_date=form.start_date_dt + datetime.timedelta(days=days),
-                days=days,
-                event_type=form.event_type.data,
-                return_plan=form.return_plan.data,
-                buffer_days=form.buffer_days.data,
-                approach_way=form.approach_way.data,
-                radio=form.radio.data,
-                satellite_telephone=form.satellite_telephone.data,
-                gathering_point=form.gathering_point.data,
-                gathering_time=form.gathering_time_dt,
-                created_by=current_user.id,
-                itinerary_list=itinerary_list,
-                leader=form.leader_id,
-                guide=form.guide_id,
-                attendees=form.attendees_ids,
-                supporter=form.supporter.data,
-                updated_at=datetime.datetime.utcnow(),
-                updated_by=current_user.id
-            )
-            proposal.save()
-            return redirect(url_for('proposal.update_itinerary', prop_id=prop_id))
+            prop.itinerary_list = itinerary_list
+            prop.save()
+            flash("修改成功，請檢查", FlashCategory.SUCCESS)
+            return redirect(url_for('proposal.{}'.format(
+                "update_itinerary" if update_itinerary else "detail"), prop_id=prop_id))
         else:
-            flash("欄位錯誤", FlashCategory.ERROR)
-            return redirect(url_for('proposal.update', prop_id=prop_id))
-    
-    attendees_list = [a.selected_name for a in prop.attendees]
-    return render_template(
-        'proposals/basic_form.html', for_updating=True, 
-        prop=prop, 
-        attendees=", ".join(attendees_list),
-        leader=prop.leader.selected_name if prop.leader else "", 
-        guide=prop.guide.selected_name if prop.guide else "")
+            for field, errs in form.errors.items():
+                errors[field] = errs[0]
+            flash("表單格式有誤，請重新填寫", FlashCategory.ERROR)
+    prop = ori_prop
+    prop.attendees_display = ", ".join(a.selected_name for a in prop.attendees) + ", "
+    return render_template("proposals/basic_form.html", prop=prop,
+                           for_updating=True, errors=errors, types=EventType.get_choices(True))
 
 
 @bp.route('/update_itinerary/<string:prop_id>/', methods=["GET", "POST"])

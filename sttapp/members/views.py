@@ -79,9 +79,6 @@ def update(member_id):
         if form.validate_on_submit():
             member.created_by = current_user.id
             member.birthday = form.birthday_dt
-            member.group = form.group.data
-            member.level = form.level.data
-            member.highest_difficulty = form.highest_difficulty.data
             member.save()
             flash("修改成功，請檢查", FlashCategory.SUCCESS)
             return redirect(url_for('member.update', member_id=member_id))
@@ -108,9 +105,6 @@ def create():
     if form.validate_on_submit():
         member.created_by = current_user.id
         member.birthday = form.birthday_dt
-        member.group = Group.get_map().get(form.group.data)
-        member.level = Level.get_map().get(form.level.data)
-        member.highest_difficulty = Level.get_map().get(form.highest_difficulty.data)
         member.save()
         flash("出隊人員資料新增成功", FlashCategory.SUCCESS)
         return redirect(url_for('member.update', member_id=member.id))

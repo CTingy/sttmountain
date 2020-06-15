@@ -51,13 +51,21 @@
             </div>
             <div class="row">
               <div class="col-md-12">
-                {{ render_field("上山日期(不含交通天)", "start_date", 4, "必填欄位", True) }}
+                <div class="form-group col-md-4">
+                  <label>上山日期*(不含交通天)</label>
+                  <input required type="text" class="form-control" name="start_date" value="{{ prop.start_date_str }}"
+                    placeholder="必填欄位">
+                  {% if errors.start_date %}
+                  <span style="color: red; font-size: 10px;">{{ errors.start_date }}</span>
+                  {% endif %}
+                </div>
                 {{ render_field("預計天數(不含交通天)", "days", 4, "必填欄位", True) }}
                 {{ render_field("預備天數", "buffer_days", 2, "預設1天") }}
                 <div class="form-check col-md-2">
                   <label class="form-check-label" for="exampleCheck1">有交通天</label>
                   <br>
-                  <input type="checkbox" class="form-check-input" id="exampleCheck1" name="has_d0" value="y">
+                  <input {% if prop.has_d0 %}checked{% endif %} type="checkbox" class="form-check-input"
+                    id="exampleCheck1" name="has_d0" value="y">
                   {% if errors.has_d0 %}<span style="color: red; font-size: 10px;">{{ errors.has_d0 }}</span>{% endif %}
                 </div>
               </div>
@@ -67,15 +75,15 @@
                 <div class="form-group col-md-4 col-sm-4 col-xs-12">
                   <label for="leader">領隊</label>
                   <br>
-                  <input required name="leader" type="text" class="searchMember form-control" value="{{ leader }}"
-                    placeholder="必填欄位，請輸入姓名" />
+                  <input required name="leader" type="text" class="searchMember form-control"
+                    value="{{ prop.leader.selected_name }}" placeholder="必填欄位，請輸入姓名" />
                   {% if errors.leader %}<span style="color: red; font-size: 10px;">{{ errors.leader }}</span>{% endif %}
                 </div>
                 <div class="form-group col-md-4 col-sm-4 col-xs-12">
                   <label for="guide">嚮導</label>
                   <br>
-                  <input name="guide" type="text" class="searchMember form-control" value="{{ guide }}"
-                    placeholder="請輸入姓名" />
+                  <input name="guide" type="text" class="searchMember form-control"
+                    value="{% if prop.guide %}{{ prop.guide.selected_name }}{% endif %}" placeholder="請輸入姓名" />
                   {% if errors.guide %}<span style="color: red; font-size: 10px;">{{ errors.guide }}</span>{% endif %}
                 </div>
                 {{ render_field("留守", "supporter", 4, "填入留守姓名或綽號") }}
@@ -85,7 +93,7 @@
               <label for="attendees">成員</label>
               <br>
               <input id="attendees" class="searchMultiMember form-control" type="text" name="attendees"
-                value="{{ attendees }}">
+                value="{{ prop.attendees_display }}">
               {% if errors.attendees %}<span
                 style="color: red; font-size: 10px;">{{ errors.attendees }}</span>{% endif %}
             </div>
