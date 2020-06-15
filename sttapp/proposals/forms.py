@@ -15,7 +15,7 @@ class ProposalForm(FlaskForm):
     has_d0 = BooleanField("是否有交通天", default=False)
     leader = StringField("領隊", validators=[validators.DataRequired("此為必填欄位")])
     guide = StringField("嚮導", validators=[validators.Optional()])
-    attendees = StringField("成員", validators=[validators.Optional()])
+    attendees = StringField("成員")
     supporter = StringField("留守", validators=[validators.Optional()])
     event_type = StringField("隊伍類型", validators=[validators.Optional()])
     return_plan = TextAreaField("撤退計畫", validators=[validators.Optional()])

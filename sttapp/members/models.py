@@ -68,3 +68,11 @@ class Member(RecordModel):
     def is_adult(self):
         today = (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).date()
         return today.replace(year=today.year-20) >= self.birthday.date()
+
+    @property
+    def attendee_display(self):
+        return "{}({}{})".format(
+            self.display_name,
+            self.get_level_display()[0] if self.level else "",
+            "、{}".format(self.get_group_display()[-1]) if self.group else ""
+        )

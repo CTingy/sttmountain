@@ -94,7 +94,7 @@
   <div class="form-group">
     <div class="row">
       <div class="col-md-4">
-        <span style="font-size: 10px; color: grey;">&nbsp;&nbsp;&nbsp;山協等級*</span>
+        <span style="font-size: 10px; color: grey;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;山協等級*</span>
         <select class="form-control" name="level">
           {% for value, display in choices.level %}
           <option value="{{ value }}" {% if member.level == value %}selected{% endif %}>{{ display }}</option>
@@ -103,7 +103,7 @@
         {% if errors.level %}<span style="color: red; font-size: 10px;">{{ errors.level }}</span>{% endif %}
       </div>
       <div class="col-md-4">
-        <span style="font-size: 10px; color: grey;">&nbsp;&nbsp;&nbsp;路線難度</span>
+        <span style="font-size: 10px; color: grey;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;路線難度</span>
         <select class="form-control" name="highest_difficulty">
           {% for value, display in choices.difficulty %}
           <option value="{{ value }}" {% if member.highest_difficulty == value %}selected{% endif %}>{{ display }}
@@ -114,7 +114,7 @@
           style="color: red; font-size: 10px;">{{ errors.highest_difficulty }}</span>{% endif %}
       </div>
       <div class="col-md-4">
-        <span style="font-size: 10px; color: grey;">&nbsp;&nbsp;&nbsp;嚮導隊</span>
+        <span style="font-size: 10px; color: grey;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;嚮導隊</span>
         <select class="form-control" name="group">
           {% for value, display in choices.group %}
           <option value="{{ value }}" {% if member.group == value %}selected{% endif %}>{{ display }}</option>

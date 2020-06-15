@@ -47,7 +47,7 @@
     <p><b>活動人員</b>:&nbsp;</p>
   </div>
   <div class="col-md-8">
-    {% for a in prop.attendees %}{{ a.name }}、{% endfor %}
+    {% for a in prop.attendees %}{{ a.attendee_display }}、{% endfor %}
   </div>
 </div>
 <div class="row">
