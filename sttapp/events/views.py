@@ -5,7 +5,7 @@ from flask_login import login_user, current_user, login_required
 from mongoengine.queryset.visitor import Q
 from mongoengine.errors import NotUniqueError
 
-from sttapp.base.enums import FlashCategory
+from sttapp.base.enums import FlashCategory, EventStatus, Level, Gender
 from sttapp.proposals.models import Itinerary, Proposal
 from .models import Event
 
@@ -113,8 +113,42 @@ def mark_back(prop_id):
                             max_day=prop.itinerary_list[-1].day_number)
 
 
+@bp.route('/detail/<string:event_id>')
+def detail(event_id):
+    event = Event.objects.get_or_404(id=event_id)
+    prop = Proposal.objects.get_or_404(id=event.proposal.id)
+    gender_dict = prop.gender_structure
+    level_dict = prop.level_structure
+    prop.gender_ratio = "{} / {}".format(
+        gender_dict[Gender.MALE], 
+        gender_dict[Gender.FEMALE]
+    )
+    prop.level_ratio = "{} / {} / {}".format(
+        level_dict[Level.get_map()[Level.CADRE]],
+        level_dict[Level.get_map()[Level.MEDIUM]],
+        level_dict[Level.get_map()[Level.NEWBIE]],
+    )  
+    # give every itinerary obj a date str
+    for i in prop.itinerary_list:
+        i.date_str = (prop.start_date + datetime.timedelta(
+            days=i.day_number-1)).strftime("%m/%d")
+
+    return render_template('events/detail.html', prop=prop, event=event)
+
+
 @bp.route('/events/')
-@login_required
 def events():
     events = Event.objects.all()
-    return render_template('events/events.html', events=events)
+    return render_template('events/events.html', events=events, page_name="出隊文總覽")
+
+
+@bp.route('/not_back_events/')
+def not_back():
+    events = Event.objects.filter(status=EventStatus.NORM)
+    return render_template('events/events.html', events=events, page_name="出隊文（即將上山、進行中）")
+
+
+@bp.route('/back_events/')
+def is_back():
+    events = Event.objects.filter(status=EventStatus.BACK)
+    return render_template('events/events.html', events=events, page_name="出隊文（已下山）")

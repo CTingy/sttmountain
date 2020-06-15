@@ -110,7 +110,8 @@ def create():
     form = MemberForm(request.form)
     
     if form.validate_on_submit():
-        member.created_by = current_user.id
+        member.created_by = member.updated_by = current_user.id
+        member.created_at = member.updated_at = datetime.datetime.utcnow()
         member.birthday = form.birthday_dt
         member.save()
         flash("出隊人員資料新增成功", FlashCategory.SUCCESS)

@@ -74,3 +74,9 @@ class Position(Choice):
     CHIEF = '山防組長'
     CADRE_LEAD = '幹部群長'
     ACCOUNT = '總務'
+
+
+class EventStatus(Choice):
+    BACK = "已下山"  # 包含撤退，就是會有re出隊文的情況
+    CANCEL = "倒隊"
+    NORM = ""

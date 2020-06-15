@@ -35,8 +35,8 @@ def create():
     form = ProposalForm(request.form)
 
     if form.validate_on_submit():
-        prop.created_by = current_user.id
-        prop.created_at = datetime.datetime.utcnow()
+        prop.created_by = prop.updated_by = current_user.id
+        prop.created_at = prop.updated_at = datetime.datetime.utcnow()
         prop.start_date = form.start_date_dt
         prop.end_date = form.start_date_dt + datetime.timedelta(days=prop.days-1)
         prop.leader = form.leader_id
@@ -62,7 +62,7 @@ def create():
                                errors=errors, types=EventType.get_choices(True))
 
 
-@bp.route('/detail/<string:prop_id>', methods=["GET", "POST"])
+@bp.route('/detail/<string:prop_id>')
 @login_required
 def detail(prop_id):
     prop = Proposal.objects.get_or_404(id=prop_id)
