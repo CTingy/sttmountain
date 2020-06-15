@@ -13,9 +13,62 @@ from .models import Event
 bp = Blueprint('event', __name__, url_prefix='/event')
 
 
-@bp.route('/create/<string:prop_id>', methods=["POST", "GET"])
+def check_before_create_event(prop):
+    failed_fields, failed_itinerary = prop.validate_for_publishing()
+    if failed_fields or failed_itinerary:
+        if failed_fields:
+            flash("無法發佈，欄位有缺少：{}，請填寫完成再試一次".format("、".join(failed_fields)), 
+                   FlashCategory.WARNING)
+        if failed_itinerary:
+            flash("無法發佈，預定行程中{}的內容是空白的，請填寫完成再試一次".format("、".join(failed_itinerary)), 
+                   FlashCategory.WARNING)
+        return False
+    return True
+
+
+@bp.route('/create/<string:prop_id>', methods=["POST"])
 @login_required
 def create(prop_id):
+
+    prop = Proposal.objects.get_or_404(id=prop_id)
+    if prop.created_by.id != current_user.id:
+        flash("只有張貼者能夠發佈出隊文", FlashCategory.WARNING)
+        return redirect(url_for('proposal.proposals'))
+    
+    if not check_before_create_event(prop):
+        return redirect(url_for('proposal.update', prop_id=prop_id))
+
+    try:
+        dt = datetime.datetime.strptime(request.form.get("gathering_time"), "%Y/%m/%d %H:%M")
+    except ValueError:
+        flash("集合時間格式錯誤，需為: YYYY/MM/DD hh:mm", FlashCategory.ERROR)
+        return redirect(url_for('proposal.proposals'))
+    else:
+        if dt > prop.start_date + datetime.timedelta(days=1):
+            flash("集合時間格式錯誤，不可比出發日期晚", FlashCategory.ERROR)
+            return redirect(url_for('proposal.proposals'))
+
+    e = Event(
+        proposal=prop_id,
+        created_by=current_user.id,
+        created_at=datetime.datetime.utcnow(),
+        gathering_point=request.form.get("gathering_point"),
+        gathering_time=dt
+    )
+    try:
+        e.save()
+    except NotUniqueError:
+        flash("此企劃已經發佈過出隊文，請勿重複發佈", FlashCategory.ERROR)
+        return redirect(url_for('event.events'))
+    Proposal.objects(id=prop_id).update_one(event=e.id, updated_at=datetime.datetime.utcnow(),
+                                            updated_by=current_user.id)
+    flash("發佈成功！", FlashCategory.SUCCESS)
+    return redirect(url_for('event.events'))
+
+
+@bp.route('/mark_back/<string:prop_id>', methods=["POST", "GET"])
+@login_required
+def mark_back(prop_id):
 
     prop = Proposal.objects.get_or_404(id=prop_id)
 
@@ -23,7 +76,6 @@ def create(prop_id):
         itinerary_list = prop.itinerary_list
     else:
         form = request.form
-        print(form)
         max_itinerary_num = int(form.get("itinerary_len"))
         itinerary_list = []
 

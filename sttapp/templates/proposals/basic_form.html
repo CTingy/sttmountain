@@ -20,7 +20,9 @@
           <a class="logo" href="{{ url_for('proposal.proposals') }}">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="">
           </a>
-          <form class="text-left clearfix" action="" method="post">
+          <form class="text-left clearfix"
+            action="{% if for_updating %}{{ url_for('proposal.update', prop_id=prop.id) }}{% else %}{{ url_for('proposal.create') }}{% endif %}"
+            method="post">
             {% include 'alerts.html' %}
             <h4 class="text-center">
               {% if not for_updating %}

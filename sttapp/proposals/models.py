@@ -34,10 +34,10 @@ class Proposal(RecordModel):
     attendees = db.ListField(db.ReferenceField('sttapp.members.models.Member'))
     open_time=db.StringField()
 
-    published_at = db.DateTimeField()
+    event = db.ReferenceField('sttapp.events.models.Event')
     is_back = db.BooleanField(default=False)
 
-    meta = {'ordering': ['-start_date']}
+    meta = {'ordering': ['-created_at']}
 
     @property
     def start_date_str(self):
@@ -93,11 +93,9 @@ class Proposal(RecordModel):
             "guide": "嚮導",          
             "supporter": "留守", 
             "buffer_days": "預備天數", 
-            "gathering_time": "集合時間",
             "attendees": "成員", 
-            "gathering_point": "集合地點",
-            # "return_plan": "",  
-            # "approach_way": "", 
+            "return_plan": "撤退計畫",
+            "approach_way": "交通方式", 
         }
         failed_fields = []
         for field, name in required_fields.items():

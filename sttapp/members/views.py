@@ -68,16 +68,21 @@ def search_one():
 @login_required
 def update(member_id):
     
-    member = Member.objects.get_or_404(id=member_id)
+    ori_member = Member.objects.get_or_404(id=member_id)
     errors = dict()
     if request.method == "POST":
         info_dict = dict(request.form)
         info_dict.pop('csrf_token', None)
         member = Member(**info_dict)
+        # populate original data
         member.id = member_id
+        member.created_at = ori_member.created_at
+        member.created_by = ori_member.created_by
+
         form = MemberForm(request.form)
         if form.validate_on_submit():
-            member.created_by = current_user.id
+            member.updated_by = current_user.id
+            member.update_at = datetime.datetime.utcnow()
             member.birthday = form.birthday_dt
             member.save()
             flash("修改成功，請檢查", FlashCategory.SUCCESS)
@@ -86,6 +91,8 @@ def update(member_id):
             for field, errs in form.errors.items():
                 errors[field] = errs[0]    
             flash("表單格式有誤，請重新填寫", FlashCategory.ERROR)
+    
+    member = ori_member
     return render_template("members/members.html", member=member, 
                             for_updating=True, errors=errors, choices=CHOICES)      
 

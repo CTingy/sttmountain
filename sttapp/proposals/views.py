@@ -5,6 +5,7 @@ from flask_login import login_user, current_user, login_required
 from mongoengine.queryset.visitor import Q
 
 from sttapp.base.enums import FlashCategory, Level, Gender, EventType
+from sttapp.events.models import Event
 from .forms import ProposalForm
 from .models import Proposal, Itinerary
 
@@ -90,10 +91,10 @@ def update(prop_id):
 
     ori_prop = Proposal.objects.get_or_404(id=prop_id)
     if ori_prop.start_date.date() <= (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).date():
-        flash("已開始之隊伍提案不可編輯", FlashCategory.WARNING)
+        flash("已開始之隊伍企劃不可編輯", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
     if current_user.id != ori_prop.created_by.id:
-        flash("僅隊伍提案創建者可編輯", FlashCategory.WARNING)
+        flash("僅隊伍企劃創建者可編輯", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))  
 
     errors = dict()
@@ -101,7 +102,11 @@ def update(prop_id):
         info_dict = dict(request.form)
         info_dict.pop('csrf_token', None)
         prop = Proposal(**info_dict)
+        # populate original data
         prop.id = prop_id
+        prop.created_at = ori_prop.created_at
+        prop.created_by = ori_prop.created_by
+        
         form = ProposalForm(request.form)
         if form.validate_on_submit():
             prop.updated_by = current_user.id
@@ -152,11 +157,11 @@ def update(prop_id):
 def update_itinerary(prop_id):
 
     prop = Proposal.objects.get_or_404(id=prop_id)
-    if prop.start_date.date() <= (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).date():
-        flash("已開始之隊伍提案不可編輯", FlashCategory.WARNING)
+    if prop.start_date.date() < (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).date():
+        flash("已開始之隊伍企劃不可編輯", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
     if current_user.id != prop.created_by.id:
-        flash("僅隊伍提案創建者可編輯", FlashCategory.WARNING)
+        flash("僅隊伍企劃創建者可編輯", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
 
     if request.method == "POST":
@@ -189,59 +194,12 @@ def update_itinerary(prop_id):
 def delete(prop_id):
     prop = Proposal.objects.get_or_404(id=prop_id)
 
-    if prop.is_back:
-        flash("已下山之隊伍提案不可刪除", FlashCategory.WARNING)
+    if Event.objects.filter(proposal=prop_id):
+        flash("已產生出隊文之隊伍企劃不可刪除", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
     if prop.created_by.id != current_user.id:
-        flash("只有張貼者能夠刪除隊伍提案", FlashCategory.WARNING)
+        flash("只有張貼者能夠刪除隊伍企劃", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
     prop.delete()
-    flash("已經為您刪除隊伍提案：{}".format(prop.title), FlashCategory.SUCCESS)
+    flash("已經為您刪除隊伍企劃：{}".format(prop.title), FlashCategory.SUCCESS)
     return redirect(url_for("proposal.proposals"))
-
-
-@bp.route('/publish/<string:prop_id>', methods=["POST"])
-@login_required
-def publish(prop_id):
-    prop = Proposal.objects.get_or_404(id=prop_id)
-    if prop.created_by.id != current_user.id:
-        flash("只有張貼者能夠發佈出隊文", FlashCategory.WARNING)
-        return redirect(url_for('proposal.proposals'))
-
-    failed_fields, failed_itinerary = prop.validate_for_publishing()
-    if failed_fields or failed_itinerary:
-        if failed_fields:
-            flash("無法發佈，提案欄位有缺少：{}，請填寫完成再試一次".format("、".join(failed_fields)), 
-                   FlashCategory.WARNING)
-        if failed_itinerary:
-            flash("無法發佈，預定行程中{}的內容是空白的，請填寫完成再試一次".format("、".join(failed_itinerary)), 
-                   FlashCategory.WARNING)
-        return redirect(url_for('proposal.update', prop_id=prop_id))
-   
-    Proposal.objects(id=prop_id).update_one(
-        updated_at=datetime.datetime.utcnow(),
-        published_at=datetime.datetime.utcnow(),
-        updated_by=current_user.id
-    )
-    flash("發佈成功！", FlashCategory.SUCCESS)
-    return redirect(url_for("proposal.proposals"))
-
-
-@bp.route('/published/')
-def published():
-    props = Proposal.objects.filter(
-        Q(published_at__ne=None) & Q(is_back=False)
-    )   
-    for prop in props:
-        gender_dict = prop.gender_structure
-        level_dict = prop.level_structure
-        prop.gender_ratio = "{}/{}".format(
-            gender_dict[Gender.get_map()[Gender.MALE]], 
-            gender_dict[Gender.get_map()[Gender.FEMALE]]
-        )
-        prop.level_ratio = "{}/{}/{}".format(
-            level_dict[Level.get_map()[Level.CADRE]],
-            level_dict[Level.get_map()[Level.MEDIUM]],
-            level_dict[Level.get_map()[Level.NEWBIE]],
-        )
-    return render_template('proposals/published.html', proposals=props, now=datetime.datetime.utcnow())

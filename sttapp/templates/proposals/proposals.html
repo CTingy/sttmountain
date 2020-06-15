@@ -4,69 +4,105 @@
 {% endblock%}
 {% block sub_content %}
 {% for prop in proposals %}
-<a href="{{ url_for('proposal.detail', prop_id=prop.id) }}">
-  <div class="post">
-    {% if not prop.published_at %}
-    <form action="{{ url_for('proposal.publish', prop_id=prop.id) }}" method="POST">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-      <h2 class="post-title">
-        {{ prop.title }}&nbsp;&nbsp;
-        <button title="發佈為出隊文" type="submit" class="btn btn-default btn-round-full"><i class="tf-upload2"
-            aria-hidden="true"></i></button>
-      </h2>
-    </form>
-    {% else %}
-    <h2 class="post-title">[已發佈]&nbsp;{{ prop.title }}</h2>
-    {% endif %}
-    <div class="post-meta">
-      <ul>
-        <li>
-          <i class="tf-ion-ios-calendar"></i> 建立時間： {{ prop.created_at_str }}
-        </li>
-        <li>
-          <i class="tf-ion-android-person"></i> 建立者： {{ prop.created_by.username }}
-        </li>
-        {% if prop.updated_at %}
-        <li>
-          <i class="tf-ion-edit"></i> 最後修改： {{ prop.updated_at_str }}
-        </li>
-        {% endif %}
-      </ul>
-    </div>
 
-    <div class="post-content">
-      <div>
-        <p>
-          時間：{{ prop.start_date_str }}&nbsp;～&nbsp;{{ prop.end_date_str }}
-          &nbsp;&nbsp;&nbsp;&nbsp;
-          領隊：{{ prop.leader.display_name }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;嚮導：{{ prop.guide.display_name }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          天數：{{ prop.days }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;留守：{{ prop.supporter }}
-        </p>
-        <p>
-          人員：
-          {% for a in prop.attendees %}
-          {{ a.attendee_display }},&nbsp;
-          {% endfor %}
-        </p>
-      </div>
-      <p>
-        <a class="btn btn-default btn-round-full" data-toggle="collapse" href="#{{ prop.id }}" aria-expanded="false"
-          aria-controls="collapseExample">
-          預定行程...&nbsp;<i class="tf-ion-chevron-down"></i>
-        </a>
-      </p>
-      <div class="collapse" id="{{ prop.id }}">
-        <div class="card card-body">
-          {% for i in prop.itinerary_list %}
-          D{{ i.day_number}}: {{ i.content }}<br>
-          {% endfor %}
-          <br>
-          <p style="white-space: pre-wrap;">撤退路線：<br>{{ prop.return_plan }}</p><br>
-          預備天：{{ prop.buffer_days }}天&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-        </div>
+<div class="post">
+  {% if not prop.event %}
+  <h2 class="post-title">
+    <a href="{{ url_for('proposal.detail', prop_id=prop.id) }}">{{ prop.title }}&nbsp;&nbsp;</a>
+    <button title="發佈為出隊文" type="button" data-toggle="modal" data-target="#Modal"
+      class="btn btn-default btn-round-full"><i class="tf-upload2" aria-hidden="true"></i></button>
+  </h2>
+
+  <!-- Modal -->
+  <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <form action="{{ url_for('event.create', prop_id=prop.id) }}" method="POST">
+          <div class="modal-body">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h3 class="text-center">發佈為出隊文</h3>
+            <p class="text-center">請填寫下表</p>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <div class="col-md-12">
+              <br><br>
+              <div class="form-group">
+                <label>出發時間</label>
+                <input required type="text" class="form-control" name="gathering_time"
+                  placeholder="ex: 2020/04/15 15:30">
+              </div>
+              <div class="form-group">
+                <label>集合地點</label>
+                <input required type="text" class="form-control" name="gathering_point" placeholder="ex:光口">
+              </div>
+              <br>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+            <button type="submit" class="btn btn-primary">確定發佈</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
+  <!-- end modal -->
+  {% else %}
+  <h2 class="post-title">
+    <a href="{{ url_for('proposal.detail', prop_id=prop.id) }}">[已發佈]&nbsp;{{ prop.title }}</a>
+  </h2>
+  {% endif %}
+  <div class="post-meta">
+    <ul>
+      <li>
+        <i class="tf-ion-ios-calendar"></i> 建立時間： {{ prop.created_at_str }}
+      </li>
+      <li>
+        <i class="tf-ion-android-person"></i> 建立者： {{ prop.created_by.username }}
+      </li>
+      {% if prop.updated_at %}
+      <li>
+        <i class="tf-ion-edit"></i> 最後修改： {{ prop.updated_at_str }}
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+
+  <div class="post-content">
+    <div>
+      <p>
+        時間：{{ prop.start_date_str }}&nbsp;～&nbsp;{{ prop.end_date_str }}
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        領隊：{{ prop.leader.display_name }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;嚮導：{{ prop.guide.display_name }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        天數：{{ prop.days }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;留守：{{ prop.supporter }}
+      </p>
+      <p>
+        人員：
+        {% for a in prop.attendees %}
+        {{ a.attendee_display }},&nbsp;
+        {% endfor %}
+      </p>
+    </div>
+    <p>
+      <a class="btn btn-default btn-round-full" data-toggle="collapse" href="#{{ prop.id }}" aria-expanded="false"
+        aria-controls="collapseExample">
+        預定行程...&nbsp;<i class="tf-ion-chevron-down"></i>
+      </a>
+    </p>
+    <div class="collapse" id="{{ prop.id }}">
+      <div class="card card-body">
+        {% for i in prop.itinerary_list %}
+        D{{ i.day_number}}: {{ i.content }}<br>
+        {% endfor %}
+        <br>
+        <p style="white-space: pre-wrap;">撤退路線：<br>{{ prop.return_plan }}</p><br>
+        預備天：{{ prop.buffer_days }}天&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+      </div>
+    </div>
+  </div>
+</div>
 </a>
 {% endfor %}
 {% endblock %}
