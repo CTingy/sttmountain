@@ -39,15 +39,11 @@ def create():
         prop.created_by = current_user.id
         prop.created_at = datetime.datetime.utcnow()
         prop.start_date = form.start_date_dt
-        prop.has_d0 = form.has_d0.data
         prop.end_date = form.start_date_dt + datetime.timedelta(days=prop.days-1)
         prop.buffer_days = form.buffer_days.data or None
         prop.leader = form.leader_id
         prop.guide = form.guide_id
         prop.attendees = form.attendees_ids
-        prop.event_type = form.event_type.data
-        prop.approach_way = form.approach_way.data
-        prop.return_plan = form.return_plan.data
 
         # generate itinerary_list
         prop.itinerary_list = [

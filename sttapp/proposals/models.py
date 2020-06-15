@@ -17,7 +17,6 @@ class Itinerary(db.EmbeddedDocument):
 
 class Proposal(RecordModel):
     title = db.StringField()
-    difficulty = db.StringField(choices=Difficulty.get_choices())
     start_date = db.DateTimeField()
     end_date = db.DateTimeField()
     has_d0 = db.BooleanField(default=False)
@@ -72,7 +71,18 @@ class Proposal(RecordModel):
             if not getattr(a, 'level'):
                 continue
             level_dict[getattr(a, 'level')] += 1
-        return level_dict 
+        return level_dict
+    
+    @property
+    def difficulty(self):
+        if self.days <= 3:
+            return Difficulty.LEVEL_D
+        if self.days <= 5:
+            return Difficulty.LEVEL_C
+        if self.days <= 8:
+            return Difficulty.LEVEL_B
+        else:
+            return Difficulty.LEVEL_A
 
     def validate_for_publishing(self):
         required_fields = {
