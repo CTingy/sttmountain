@@ -27,7 +27,7 @@ def create():
    
     if request.method == "GET":
         return render_template("proposals/basic_form.html", prop=None, 
-                                for_updating=False, errors=None, types=types)
+                                for_updating=False, errors=None, types=EventType.get_choices())
     
     info_dict = dict(request.form)
     info_dict.pop('csrf_token', None)
@@ -42,7 +42,7 @@ def create():
         prop.leader = form.leader_id
         prop.guide = form.guide_id
         prop.attendees = form.attendees_ids
-
+        prop.buffer_days = form.buffer_days.data or None
         # generate itinerary_list
         prop.itinerary_list = [
             Itinerary(day_number=i) for i in range(1, prop.days+1)
@@ -116,6 +116,7 @@ def update(prop_id):
             prop.leader = form.leader_id
             prop.guide = form.guide_id
             prop.attendees = form.attendees_ids
+            prop.buffer_days = form.buffer_days.data or None
 
             # update itineray obj
             itinerary_list = ori_prop.itinerary_list

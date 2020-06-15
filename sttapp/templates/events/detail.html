@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% block top %}{% include "top.html" %}{% endblock %}
+{% block menu %}{% include "menu.html" %}{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="content">
+          <h1 class="page-name">出隊文</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="page-wrapper">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <div class="post">
+          <div class="post-media post-thumb">
+            {% if event.img_url %}
+            <a href="">
+              <img src="{{ event.img_url }}" alt="{{ prop.title }}">
+            </a>
+            {% endif %}
+          </div>
+          {% if current_user.id == event.created_by.id %}
+          <div style="display: -webkit-inline-box; float:right;">
+            <div class="btn-group" role="group">
+              <button title="修改" type="button" class="btn btn-default"><a
+                  href="{{ url_for('proposal.update', prop_id=prop.id) }}"><i class="tf-pencil2"
+                    aria-hidden="true"></i></a></button>
+              <button title="刪除此出隊文" type="button" data-toggle="modal" data-target="#Modal" class="btn btn-default"><i
+                  class="tf-ion-close" aria-hidden="true"></i></button>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+              aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4>你確定要刪除？刪除後將無法復原喔！</h4>
+                  </div>
+                  <div class="modal-footer">
+                    <form action="{{ url_for('proposal.delete', prop_id=prop.id)}}" method="POST">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                      <button type="submit" class="btn btn-danger">確定刪除</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- end Modal -->
+          </div>
+          {% endif %}
+          <h2><a href="#">[{{ event.get_status_display() }}]&nbsp;{{ prop.title }}</a></h2>
+          <div class="post-meta">
+            <ul>
+              <li>
+                <i class="tf-ion-ios-calendar"></i> {{ event.created_at_str }}
+              </li>
+              <li>
+                <i class="tf-ion-android-person"></i> {{ event.created_by.username }}
+              </li>
+              <li>
+                <i class="tf-ion-edit"></i> {{ event.updated_at_str }}
+              </li>
+            </ul>
+          </div>
+          <br>
+          <div class="post-content">
+            <div class="row">
+              <div class="col-md-2">
+                <p><b>活動日期</b>:&nbsp;</p>
+              </div>
+              <div class="col-md-10">
+                <p>{{ prop.start_date_str }}&nbsp;～&nbsp;{{ prop.end_date_str }}</p>
+              </div>
+              <div class="col-md-2">
+                <p><b>留守</b>:&nbsp;</p>
+              </div>
+              <div class="col-md-10">
+                <p>{{ prop.supporter }}</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <p><b>活動人員</b>:&nbsp;</p>
+              </div>
+              <div class="col-md-10">
+                <p>
+                  領隊:&nbsp;{{ prop.leader.display_name }}&nbsp;&nbsp;&nbsp;&nbsp;嚮導:&nbsp;{{ prop.guide.display_name }}
+                </p>
+                <p>{% for a in prop.attendees %}{{ a.attendee_display }}、{% endfor %}</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <p><b>人員結構</b>:&nbsp;</p>
+              </div>
+              <div class="col-md-10">
+                <p>
+                  總人數： {{ prop.total_number }} <br>
+                  幹/隊/新： {{ prop.level_ratio }} <br>
+                  男女比： {{ prop.gender_ratio }} <br></p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <p><b>預定行程</b>:&nbsp;</p>
+              </div>
+              <div class="col-md-10">
+                <p>
+                  {% for i in prop.itinerary_list %}
+                  <b>{{ i.date_str }}&nbsp;D{{ i.day_number }}: &nbsp;</b>
+                  {{ i.content }}
+                  <br>
+                  {% endfor %}
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <p><b>撤退路線</b>:&nbsp;</p>
+              </div>
+              <div class="col-md-10">
+                <p style="white-space: pre-wrap;">{{ prop.return_plan }}</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <p><b>預備天</b>:&nbsp;</p>
+              </div>
+              <div class="col-md-10">
+                <p>{{ prop.buffer_days }}天</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <p><b>交通方式</b>:&nbsp;</p>
+              </div>
+              <div class="col-md-10">
+                <p style="white-space: pre-wrap;">{{ prop.approach_way }}</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <p><b>無線電頻率/台號</b>:&nbsp;</p>
+              </div>
+              <div class="col-md-10">
+                <p>{{ prop.radio }}</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <p><b>衛星電話</b>:&nbsp;</p>
+              </div>
+              <div class="col-md-10">
+                {% if prop.satellite_telephone %}<p>{{ prop.satellite_telephone[13] }}號機</p>{% endif %}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <p><b>開機時間</b>:&nbsp;</p>
+              </div>
+              <div class="col-md-10">
+                <p>{{ prop.open_time }}</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <p><b>出發時間</b>:&nbsp;</p>
+              </div>
+              <div class="col-md-10">
+                <p>{{ event.gathering_time_str }}</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <p><b>集合地點</b>:&nbsp;</p>
+              </div>
+              <div class="col-md-10">
+                <p>{{ event.gathering_point }}，歡迎送行</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block footer %}{% include "footer.html" %}{% endblock %}

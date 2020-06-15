@@ -14,6 +14,11 @@ class Event(RecordModel):
     feedback = db.StringField()
     gathering_time = db.DateTimeField()
     gathering_point = db.StringField()
-    status = db.StringField(choices=EventStatus.get_choices(False), default="NORM")
+    status = db.StringField(choices=EventStatus.get_choices(False), 
+                            default=EventStatus.get_map()[EventStatus.NORM])
 
     meta = {'ordering': ['-created_at']}
+
+    @property
+    def gathering_time_str(self):
+        return self.gathering_time.strftime("%Y/%m/%d %H:%M")

@@ -78,5 +78,5 @@ class Position(Choice):
 
 class EventStatus(Choice):
     BACK = "已下山"  # 包含撤退，就是會有re出隊文的情況
-    CANCEL = "倒隊"
-    NORM = ""
+    CANCEL = "已倒隊"
+    NORM = "出隊"

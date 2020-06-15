@@ -7,13 +7,7 @@
 <div class="post">
   {% set prop = event.proposal %}
   <a href="{{ url_for('event.detail', event_id=event.id) }}">
-    {% if event.status == "back" %}
-    <h2 class="post-title">[已下山]{{ prop.title }}</h2>
-    {% elif event.status == "cancel" %}
-    <h2 class="post-title">[已取消]{{ prop.title }}</h2>
-    {% else %}
-    <h2 class="post-title">{{ prop.title }}</h2>
-    {% endif %}
+    <h2 class="post-title">[{{ event.get_status_display() }}]&nbsp;{{ prop.title }}</h2>
   </a>
   <div class="post-meta">
     <ul>

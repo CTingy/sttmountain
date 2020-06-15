@@ -55,6 +55,8 @@ def create(prop_id):
         gathering_point=request.form.get("gathering_point"),
         gathering_time=dt
     )
+    e.updated_at = e.created_at
+    e.updated_by = e.created_by
     try:
         e.save()
     except NotUniqueError:
@@ -127,7 +129,7 @@ def detail(event_id):
         level_dict[Level.get_map()[Level.CADRE]],
         level_dict[Level.get_map()[Level.MEDIUM]],
         level_dict[Level.get_map()[Level.NEWBIE]],
-    )  
+    )
     # give every itinerary obj a date str
     for i in prop.itinerary_list:
         i.date_str = (prop.start_date + datetime.timedelta(
@@ -144,11 +146,11 @@ def events():
 
 @bp.route('/not_back_events/')
 def not_back():
-    events = Event.objects.filter(status=EventStatus.NORM)
+    events = Event.objects.filter(status=EventStatus.get_map()[EventStatus.NORM])
     return render_template('events/events.html', events=events, page_name="出隊文（即將上山、進行中）")
 
 
 @bp.route('/back_events/')
 def is_back():
-    events = Event.objects.filter(status=EventStatus.BACK)
+    events = Event.objects.filter(status=EventStatus.get_map()[EventStatus.BACK])
     return render_template('events/events.html', events=events, page_name="出隊文（已下山）")

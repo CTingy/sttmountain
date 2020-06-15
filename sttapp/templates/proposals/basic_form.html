@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% macro render_field(label, field_name, width=6, placeholder="", required=False) %}
-<div class="form-group col-md-{{ width }}">
+<div class="form-group col-md-{{ width }} col-sm-12 col-xs-12">
   <label>{{ label }}</label>
   <input {% if required %}required{% endif %} type="text" class="form-control" name="{{ field_name }}"
     value="{% if prop|attr(field_name) %}{{ prop|attr(field_name) }}{% endif %}" placeholder="{{ placeholder }}">
@@ -35,7 +35,7 @@
             <p class="text-center">
               必填為：<b>隊伍名稱、上山日期、預計天數、領隊</b>，表格內容均可再更改</p>
             <div class="row">
-              <div class="col-md-12">
+              <div class="col-md-12 col-sm-12 col-x-12">
                 {{ render_field("隊伍名稱*", "title", 10, "必填欄位", True) }}
                 <div class="form-group col-md-2">
                   <label for="FormControlSelect">隊伍類型</label>
@@ -52,7 +52,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-md-12">
+              <div class="col-md-12 col-sm-12 col-x-12">
                 <div class="form-group col-md-4">
                   <label>上山日期*(不含交通天)</label>
                   <input required type="text" class="form-control" name="start_date" value="{{ prop.start_date_str }}"
@@ -73,19 +73,21 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-md-12">
-                <div class="form-group col-md-4 col-sm-4 col-xs-12">
+              <div class="col-md-12 col-sm-12 col-x-12">
+                <div class="form-group col-md-4 col-sm-12 col-xs-12">
                   <label for="leader">領隊</label>
                   <br>
                   <input required name="leader" type="text" class="searchMember form-control"
-                    value="{{ prop.leader.selected_name }}" placeholder="必填欄位，請輸入姓名" />
+                    value="{% if for_updating and prop.leader %}{{ prop.leader.selected_name }}{% endif %}"
+                    placeholder="必填欄位，請輸入姓名" />
                   {% if errors.leader %}<span style="color: red; font-size: 10px;">{{ errors.leader }}</span>{% endif %}
                 </div>
-                <div class="form-group col-md-4 col-sm-4 col-xs-12">
+                <div class="form-group col-md-4 col-sm-12 col-xs-12">
                   <label for="guide">嚮導</label>
                   <br>
                   <input name="guide" type="text" class="searchMember form-control"
-                    value="{% if prop.guide %}{{ prop.guide.selected_name }}{% endif %}" placeholder="請輸入姓名" />
+                    value="{% if for_updating and prop.guide %}{{ prop.guide.selected_name }}{% endif %}"
+                    placeholder="請輸入姓名" />
                   {% if errors.guide %}<span style="color: red; font-size: 10px;">{{ errors.guide }}</span>{% endif %}
                 </div>
                 {{ render_field("留守", "supporter", 4, "填入留守姓名或綽號") }}
@@ -95,19 +97,19 @@
               <label for="attendees">成員</label>
               <br>
               <input id="attendees" class="searchMultiMember form-control" type="text" name="attendees"
-                value="{{ prop.attendees_display }}">
+                value="{% if for_updating %}{{ prop.attendees_display }}{% endif %}">
               {% if errors.attendees %}<span
                 style="color: red; font-size: 10px;">{{ errors.attendees }}</span>{% endif %}
             </div>
             <div class="row">
-              <div class="col-md-12">
+              <div class="col-md-12 col-sm-12 col-x-12">
                 {{ render_field("無線電頻率/台號", "radio", 4, "例如：144.28/藍天藍") }}
                 {{ render_field("衛星電話號碼", "satellite_telephone", 4, "例如：+8821234567890") }}
                 {{ render_field("開機時間", "open_time", 4, "例如：18:30") }}
               </div>
             </div>
             <div class="row">
-              <div class="col-md-12">
+              <div class="col-md-12 col-sm-12 col-x-12">
                 <div class=" form-group col-md-4 col-sm-12 col-xs-12">
                   <label for="approach_way">交通方式＆司機姓名/電話</label>
                   <br>
@@ -124,7 +126,7 @@
                 </div>
               </div>
             </div>
-            <div class=" text-center col-md-12">
+            <div class=" text-center col-md-12 col-sm-12 col-x-12">
               <br>
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
               <button type="submit" class="btn btn-main text-center">
