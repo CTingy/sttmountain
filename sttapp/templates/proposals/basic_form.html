@@ -38,8 +38,8 @@
                 <div class="form-group col-md-2">
                   <label for="FormControlSelect">隊伍類型</label>
                   <select class="form-control" id="FormControlSelect" name="event_type">
-                    {% for display, type in types.items() %}
-                    <option {% if prop.event_type == type %}selected{% endif %}>
+                    {% for type, display in types %}
+                    <option value="{{ type }}" {% if prop.event_type==type %}selected{% endif %}>
                       {{ display }}
                     </option>
                     {% endfor %}
@@ -92,14 +92,14 @@
             <div class="row">
               <div class="col-md-12">
                 {{ render_field("無線電頻率/台號", "radio", 4, "例如：144.28/藍天藍") }}
-                {{ render_field("衛星電話號碼", "satellite_telephone", 4, "例如：6號機、+882314657982") }}
+                {{ render_field("衛星電話號碼", "satellite_telephone", 4, "例如：+8821234567890") }}
                 {{ render_field("開機時間", "open_time", 4, "例如：18:30") }}
               </div>
             </div>
             <div class="row">
               <div class="col-md-12">
                 <div class=" form-group col-md-4 col-sm-12 col-xs-12">
-                  <label for="approach_way">交通方式</label>
+                  <label for="approach_way">交通方式＆司機姓名/電話</label>
                   <br>
                   <textarea class="form-control" name="approach_way" id="approach_way" rows="5" value=""></textarea>
                   {% if errors.approach_way %}<span

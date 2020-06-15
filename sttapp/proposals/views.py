@@ -24,7 +24,7 @@ def proposals():
 @login_required
 def create():
 
-    types = EventType.get_map(True)
+    types = EventType.get_choices(True)
     
     if request.method == "GET":
         return render_template("proposals/basic_form.html", prop=None, 
@@ -45,7 +45,9 @@ def create():
         prop.leader = form.leader_id
         prop.guide = form.guide_id
         prop.attendees = form.attendees_ids
-        prop.event_type = EventType.get_map()[form.event_type.data]
+        prop.event_type = form.event_type.data
+        prop.approach_way = form.approach_way.data
+        prop.return_plan = form.return_plan.data
 
         # generate itinerary_list
         prop.itinerary_list = [
@@ -73,8 +75,8 @@ def detail(prop_id):
     gender_dict = prop.gender_structure
     level_dict = prop.level_structure
     prop.gender_ratio = "{} / {}".format(
-        gender_dict[Gender.get_map()[Gender.MALE]], 
-        gender_dict[Gender.get_map()[Gender.FEMALE]]
+        gender_dict[Gender.MALE], 
+        gender_dict[Gender.FEMALE]
     )
     prop.level_ratio = "{} / {} / {}".format(
         level_dict[Level.get_map()[Level.CADRE]],

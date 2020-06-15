@@ -32,7 +32,7 @@
       <td class="text-center">{{ a.department_and_grade }}{% if a.student_id %}<br>{{ a.student_id }}{% endif %}</td>
       <td class="text-center">{{ a.name }}<br>{{ a.cellphone_number }}</td>
       <td class="text-center">
-        {% if a.highest_difficulty %}{{ a.highest_difficulty }}{% endif %}<br>
+        {% if a.highest_difficulty %}{{ a.get_highest_difficulty_display() }}{% endif %}<br>
         {% if a.highest_difficulty_experience %}{{ a.highest_difficulty_experience }}{% endif %}</td>
       <td class="text-center">{{ a.security_number }}<br>{{ a.birthday_str }}</td>
       <td class="text-center">

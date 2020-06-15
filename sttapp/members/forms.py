@@ -4,7 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms import ValidationError, IntegerField, StringField, SelectField, PasswordField, validators
 
 from sttapp.members.models import Member
-from sttapp.base.enums import Level, Gender, Difficulty
+from sttapp.base.enums import Level, Gender, Difficulty, Group
 from .models import Member
 
 
@@ -18,7 +18,7 @@ class MemberForm(FlaskForm):
     cellphone_number = StringField("手機號碼", validators=[
         validators.DataRequired("此為必填欄位"), 
         validators.Regexp("09[0-9]{8}$", message="電話格式錯誤，需為09開頭之數字共10碼")])
-    gender = StringField("性別", validators=[validators.Optional()])
+    group = StringField("嚮導隊", validators=[validators.Optional()])
 
     # 進階資料
     # email = EmailField()
@@ -54,19 +54,19 @@ class MemberForm(FlaskForm):
         except ValueError:
             raise ValidationError("出生日期格式錯誤，應為：YYYY/MM/DD")
 
-    def validate_gender(self, field):
-        keys = Gender.get_map(False).keys()
-        if field.data not in keys:
-            raise ValidationError("性別需為{}的其中一個，或是不填寫".format("、".join(keys)))
+    def validate_group(self, field):
+        keys = Group.get_map(False).keys()
+        if field.data not in Group.get_map(False).values():
+            raise ValidationError("嚮導隊需為{}的其中一個，或是不填寫".format("、".join(keys)))
        
     def validate_level(self, field):
         keys = Level.get_map(False).keys()
-        if field.data not in keys:
+        if field.data not in Level.get_map(False).values():
             raise ValidationError("等級需為{}的其中一個".format("、".join(keys)))
 
     def validate_highest_difficulty(self, field):
         if not field.data:
             return None
         keys = Difficulty.get_map(False).keys()
-        if field.data not in keys:
+        if field.data not in Difficulty.get_map(False).values():
             raise ValidationError("最高級數需為{}的其中一個".format("、".join(keys)))

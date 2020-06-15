@@ -16,9 +16,15 @@
 </div>
 <div class="row">
   <div class="col-md-2">
+    <p><b>隊伍類型</b>:&nbsp;</p>
+  </div>
+  <div class="col-md-3">
+    {{ prop.get_event_type_display() }}
+  </div>
+  <div class="col-md-2">
     <p><b>留守</b>:&nbsp;</p>
   </div>
-  <div class="col-md-8">
+  <div class="col-md-3">
     {{ prop.supporter }}
   </div>
 </div>
@@ -68,7 +74,7 @@
     <p><b>交通方式</b>:&nbsp;</p>
   </div>
   <div class="col-md-8">
-    {{ prop.approach_way }}
+    <span style="white-space: pre-wrap;">{{ prop.approach_way }}</span>
   </div>
 </div>
 <div class="row">

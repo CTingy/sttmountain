@@ -58,12 +58,12 @@ class Proposal(RecordModel):
     
     @property
     def gender_structure(self):
-        gender_dict = {field: 0 for field, display in Gender.get_choices()}
+        gender_dict = {display: 0 for field, display in Gender.get_choices(False)}
         for a in self.attendees:
-            if not getattr(a, 'gender'):
+            if not a.gender:
                 continue
-            gender_dict[getattr(a, 'gender')] += 1
-        return gender_dict       
+            gender_dict[a.gender] += 1
+        return gender_dict
 
     @property
     def level_structure(self):

@@ -4,7 +4,7 @@ from flask import flash, Blueprint, session, request, jsonify, url_for, render_t
 from flask_login import login_user, current_user, login_required
 # from mongoengine.queryset.visitor import Q
 
-from sttapp.base.enums import FlashCategory, Level, Difficulty, Gender
+from sttapp.base.enums import FlashCategory, Level, Difficulty, Gender, Group
 from .models import Member
 from .forms import MemberForm
 
@@ -13,6 +13,13 @@ import iso8601
 
 
 bp = Blueprint('member', __name__, url_prefix='/member')
+
+
+CHOICES = {
+    "group": Group.get_choices(), 
+    "difficulty": Difficulty.get_choices(),
+    "level": Level.get_choices(),
+}
 
 
 @bp.route('/search/')
@@ -32,7 +39,7 @@ def search():
 @login_required
 def search_for_updating():
     return render_template("members/members.html", member=None, 
-                            for_updating=True, errors=None)
+                            for_updating=True, errors=None, choices=CHOICES)
 
 
 @bp.route('/search_one/', methods=["POST"])
@@ -63,7 +70,6 @@ def update(member_id):
     
     member = Member.objects.get_or_404(id=member_id)
     errors = dict()
-
     if request.method == "POST":
         info_dict = dict(request.form)
         info_dict.pop('csrf_token', None)
@@ -73,9 +79,9 @@ def update(member_id):
         if form.validate_on_submit():
             member.created_by = current_user.id
             member.birthday = form.birthday_dt
-            member.gender = Gender.get_map().get(form.gender.data)
-            member.level = Level.get_map().get(form.level.data)
-            member.highest_difficulty = Level.get_map().get(form.highest_difficulty.data)
+            member.group = form.group.data
+            member.level = form.level.data
+            member.highest_difficulty = form.highest_difficulty.data
             member.save()
             flash("修改成功，請檢查", FlashCategory.SUCCESS)
             return redirect(url_for('member.update', member_id=member_id))
@@ -84,7 +90,7 @@ def update(member_id):
                 errors[field] = errs[0]    
             flash("表單格式有誤，請重新填寫", FlashCategory.ERROR)
     return render_template("members/members.html", member=member, 
-                            for_updating=True, errors=errors)        
+                            for_updating=True, errors=errors, choices=CHOICES)      
 
 
 @bp.route('/create/', methods=["GET", "POST"])
@@ -92,7 +98,7 @@ def update(member_id):
 def create():
     if request.method == "GET":
         return render_template("members/members.html", member=None, 
-                                for_updating=False, errors=None)
+                                for_updating=False, errors=None, choices=CHOICES)
     
     info_dict = dict(request.form)
     info_dict.pop('csrf_token', None)
@@ -102,7 +108,7 @@ def create():
     if form.validate_on_submit():
         member.created_by = current_user.id
         member.birthday = form.birthday_dt
-        member.gender = Gender.get_map().get(form.gender.data)
+        member.group = Group.get_map().get(form.group.data)
         member.level = Level.get_map().get(form.level.data)
         member.highest_difficulty = Level.get_map().get(form.highest_difficulty.data)
         member.save()
@@ -113,7 +119,8 @@ def create():
         for field, errs in form.errors.items():
             errors[field] = errs[0]    
         flash("表單格式有誤，請重新填寫", FlashCategory.ERROR)
-        return render_template("members/members.html", member=member, errors=errors, for_updating=False)
+        return render_template("members/members.html", member=member, errors=errors, 
+                               for_updating=False, choices=CHOICES)
     
 
 @bp.route('/delete/<string:member_id>', methods=["POST"])

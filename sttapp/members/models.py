@@ -2,7 +2,7 @@ import datetime
 
 from sttapp.db import db
 from sttapp.base.models import RecordModel
-from sttapp.base.enums import Level, Gender, Difficulty
+from sttapp.base.enums import Level, Gender, Difficulty, Group
 
 
 class Member(RecordModel):
@@ -20,6 +20,7 @@ class Member(RecordModel):
     # home_address = db.StringField()
     blood_type = db.StringField()
     level = db.StringField(choices=Level.get_choices())  # 新生、隊員、幹部等
+    group = db.StringField(choices=Group.get_choices())
 
     # 學校資訊
     student_id = db.StringField()
@@ -45,6 +46,15 @@ class Member(RecordModel):
     def selected_name(self):
         return "{}|{}".format(self.name, self.security_number)
 
+    @property
+    def gender(self):
+        if self.security_number[1] == "1":
+            return Gender.MALE
+        elif self.security_number[1] == "2":
+            return Gender.FEMALE
+        else:
+            return ""
+    
     @property
     def birthday_str(self):
         if not self.birthday:

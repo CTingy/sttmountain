@@ -113,9 +113,9 @@ class ProposalForm(FlaskForm):
         return None
 
     def validate_event_type(self, field):
-        types = [i[1] for i in EventType.get_choices()]
-        if field.data not in types:
-            raise ValidationError("隊伍類型錯誤")
+        keys = EventType.get_map(False).keys()
+        if field.data not in EventType.get_map(False).values():
+            raise ValidationError("隊伍類型需為{}的其中一個".format("、".join(keys)))
 
     def validate_buffer_days(self, field):
         return self._validate_int(field)
