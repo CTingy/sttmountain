@@ -23,13 +23,13 @@
         <button title="修改基本資料" type="button" class="btn btn-default"><a
             href="{{ url_for('proposal.update', prop_id=prop.id) }}"><i class="tf-pencil2"
               aria-hidden="true"></i></a></button>
-        <button title="刪除整個出隊提案" type="button" data-toggle="modal" data-target="#Modal" class="btn btn-default"><i
+        <button title="刪除整個出隊提案" type="button" data-toggle="modal" data-target="#ModalDelete" class="btn btn-default"><i
             class="tf-ion-close" aria-hidden="true"></i></button>
         {% endif %}
       </div>
     </div>
     <!-- Modal -->
-    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    <div class="modal fade" id="ModalDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
       aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">

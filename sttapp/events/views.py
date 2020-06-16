@@ -31,9 +31,9 @@ def check_before_create_event(prop):
 def create(prop_id):
 
     prop = Proposal.objects.get_or_404(id=prop_id)
-    if prop.created_by.id != current_user.id:
-        flash("只有張貼者能夠發佈出隊文", FlashCategory.WARNING)
-        return redirect(url_for('proposal.proposals'))
+    # if prop.created_by.id != current_user.id:
+    #     flash("只有張貼者能夠發佈出隊文", FlashCategory.WARNING)
+    #     return redirect(url_for('proposal.proposals'))
     
     if not check_before_create_event(prop):
         return redirect(url_for('proposal.update', prop_id=prop_id))
@@ -45,8 +45,11 @@ def create(prop_id):
         return redirect(url_for('proposal.proposals'))
     else:
         if dt > prop.start_date + datetime.timedelta(days=1):
-            flash("集合時間格式錯誤，不可比出發日期晚", FlashCategory.ERROR)
-            return redirect(url_for('proposal.proposals'))
+            flash("集合時間{}比上山日期({})晚，請重新填寫集合時間".format(
+                request.form.get("gathering_time"), 
+                prop.start_date_str
+            ), FlashCategory.ERROR)
+            return redirect(url_for('proposal.detail', prop_id=prop_id))
 
     e = Event(
         proposal=prop_id,
@@ -69,7 +72,7 @@ def create(prop_id):
     return redirect(url_for('event.events'))
 
 
-@bp.route('/mark_back/<string:prop_id>', methods=["POST", "GET"])
+@bp.route('/mark_back/<string:prop_id>', methods=["POST"])
 @login_required
 def mark_back(prop_id):
 
@@ -155,3 +158,17 @@ def not_back():
 def is_back():
     events = Event.objects.filter(status=EventStatus.get_map()[EventStatus.BACK])
     return render_template('events/events.html', events=events, page_name="出隊文（已下山）")
+
+
+@bp.route('/delete/<string:event_id>', methods=["POST"])
+@login_required
+def delete(event_id):
+    event = Event.objects.get_or_404(id=event_id)
+    if event.created_by.id != current_user.id:
+        flash("只有張貼者能夠刪除出隊文", FlashCategory.WARNING)
+        return redirect(url_for('event.detail', event_id=event_id))
+    event.delete()
+    Proposal.objects(event=event).update_one(
+        event=None, updated_at=datetime.datetime.utcnow(), updated_by=current_user.id)
+    flash("已經為您刪除出隊文，請繼續編輯企劃書再重新發佈：{}".format(event.proposal.title), FlashCategory.SUCCESS)
+    return redirect(url_for("proposal.detail", prop_id=event.proposal.id))

@@ -1,4 +1,47 @@
-<h2 class="text-center">{{ prop.title }}</h2>
+{% if not prop.event and current_user.is_authenticated %}
+<h2 class="text-center">{{ prop.title }}&nbsp;&nbsp;
+  <button title="發佈為出隊文" type="button" data-toggle="modal" data-target="#Modal{{ prop_id }}"
+    class="btn btn-default btn-round-full"><i class="tf-upload2" aria-hidden="true"></i></button></h2>
+<!-- Modal -->
+<div class="modal fade" id="Modal{{ prop_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form action="{{ url_for('event.create', prop_id=prop.id) }}" method="POST">
+        <div class="modal-body">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h3 class="text-center">發佈為出隊文</h3>
+          <p class="text-center">請填寫下表</p>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <div class="col-md-12">
+            <br><br>
+            <div class="form-group">
+              <label>出發時間 (不可晚於上山時間：{{ prop.start_date_str }})</label>
+              <input required type="text" class="form-control" name="gathering_time" placeholder="ex: 2020/04/15 15:30">
+            </div>
+            <div class="form-group">
+              <label>集合地點</label>
+              <input required type="text" class="form-control" name="gathering_point" placeholder="ex:光口">
+            </div>
+            <br>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+          <button type="submit" class="btn btn-primary">確定發佈</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- end modal -->
+{% else %}
+<h2 class="text-center">{{ prop.title }}
+  <a href="{{ url_for('event.detail', event_id=prop.event.id) }}" title="查看出隊文" type="button"
+    class="btn btn-default btn-round-full"><i class="tf-ion-eye"></i></a></h2>
+{% endif %}
 <br><br>
 <div class="row">
   <div class="col-md-2">

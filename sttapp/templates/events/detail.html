@@ -27,12 +27,12 @@
         <div class="post">
           <div class="post-media post-thumb">
             {% if event.img_url %}
-            <a href="">
+            <a href="#">
               <img src="{{ event.img_url }}" alt="{{ prop.title }}">
             </a>
             {% endif %}
           </div>
-          {% if current_user.id == event.created_by.id %}
+          {% if current_user.is_authenticated %}
           <div style="display: -webkit-inline-box; float:right;">
             <div class="btn-group" role="group">
               <button title="修改" type="button" class="btn btn-default"><a
@@ -53,7 +53,7 @@
                     <h4>你確定要刪除？刪除後將無法復原喔！</h4>
                   </div>
                   <div class="modal-footer">
-                    <form action="{{ url_for('proposal.delete', prop_id=prop.id)}}" method="POST">
+                    <form action="{{ url_for('event.delete', event_id=event.id)}}" method="POST">
                       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
                       <button type="submit" class="btn btn-danger">確定刪除</button>
