@@ -84,6 +84,24 @@ class Proposal(RecordModel):
         else:
             return Difficulty.LEVEL_A
 
+    @property
+    def attendees_display(self):
+        if not self.attendees:
+            return ""
+        return ", ".join(att.selected_name for att in self.attendees) + ", "
+
+    @property
+    def leader_display(self):
+        if not self.leader:
+            return ""
+        return self.leader.selected_name
+
+    @property
+    def guide_display(self):
+        if not self.guide:
+            return ""
+        return self.guide.selected_name
+
     def validate_for_publishing(self):
         required_fields = {
             "title": "隊伍名稱", 

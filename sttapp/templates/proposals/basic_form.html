@@ -55,8 +55,8 @@
               <div class="col-md-12 col-sm-12 col-x-12">
                 <div class="form-group col-md-4">
                   <label>上山日期*(不含交通天)</label>
-                  <input required type="text" class="form-control" name="start_date" value="{{ prop.start_date_str }}"
-                    placeholder="必填欄位">
+                  <input required type="text" class="form-control" name="start_date"
+                    value="{{ prop.inputted_start_date or prop.start_date_str }}" placeholder="必填欄位">
                   {% if errors.start_date %}
                   <span style="color: red; font-size: 10px;">{{ errors.start_date }}</span>
                   {% endif %}
@@ -78,16 +78,14 @@
                   <label for="leader">領隊</label>
                   <br>
                   <input required name="leader" type="text" class="searchMember form-control"
-                    value="{% if for_updating and prop.leader %}{{ prop.leader.selected_name }}{% endif %}"
-                    placeholder="必填欄位，請輸入姓名" />
+                    value="{{ prop.inputted_leader or prop.leader_display }}" placeholder="必填欄位，請輸入姓名" />
                   {% if errors.leader %}<span style="color: red; font-size: 10px;">{{ errors.leader }}</span>{% endif %}
                 </div>
                 <div class="form-group col-md-4 col-sm-12 col-xs-12">
                   <label for="guide">嚮導</label>
                   <br>
                   <input name="guide" type="text" class="searchMember form-control"
-                    value="{% if for_updating and prop.guide %}{{ prop.guide.selected_name }}{% endif %}"
-                    placeholder="請輸入姓名" />
+                    value="{{ prop.inputted_guide or prop.guide_display }}" placeholder="請輸入姓名" />
                   {% if errors.guide %}<span style="color: red; font-size: 10px;">{{ errors.guide }}</span>{% endif %}
                 </div>
                 {{ render_field("留守", "supporter", 4, "填入留守姓名或綽號") }}
@@ -97,7 +95,7 @@
               <label for="attendees">成員</label>
               <br>
               <input id="attendees" class="searchMultiMember form-control" type="text" name="attendees"
-                value="{% if for_updating %}{{ prop.attendees_display }}{% endif %}">
+                value="{{ prop.inputted_attendees or prop.attendees_display }}">
               {% if errors.attendees %}<span
                 style="color: red; font-size: 10px;">{{ errors.attendees }}</span>{% endif %}
             </div>
