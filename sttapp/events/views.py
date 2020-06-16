@@ -62,6 +62,7 @@ def create(prop_id):
     except NotUniqueError:
         flash("此企劃已經發佈過出隊文，請勿重複發佈", FlashCategory.ERROR)
         return redirect(url_for('event.events'))
+    
     Proposal.objects(id=prop_id).update_one(event=e.id, updated_at=datetime.datetime.utcnow(),
                                             updated_by=current_user.id)
     flash("發佈成功！", FlashCategory.SUCCESS)

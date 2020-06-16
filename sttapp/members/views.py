@@ -3,6 +3,7 @@ import datetime
 from flask import flash, Blueprint, session, request, jsonify, url_for, render_template, redirect, current_app
 from flask_login import login_user, current_user, login_required
 # from mongoengine.queryset.visitor import Q
+from mongoengine.errors import NotUniqueError
 
 from sttapp.base.enums import FlashCategory, Level, Difficulty, Gender, Group
 from .models import Member
@@ -87,15 +88,21 @@ def update(member_id):
         member.updated_by = current_user.id
         member.updated_at = datetime.datetime.utcnow()
         member.birthday = form.birthday_dt
-        member.save()
-        flash("修改成功，請檢查", FlashCategory.SUCCESS)
-        return redirect(url_for('member.update', member_id=member_id))
+
+        try:
+            member.save()
+        except NotUniqueError:
+            flash("此身份證字號已經被建立過成員資料", FlashCategory.ERROR)
+        else:
+            flash("修改成功，請檢查", FlashCategory.SUCCESS)
+            return redirect(url_for('member.update', member_id=member_id))
 
     errors = dict()
+    
     for field, errs in form.errors.items():
         errors[field] = errs[0]    
     flash("表單格式有誤，請重新填寫", FlashCategory.ERROR)
-
+    member.inputted_birthday = info_dict.get('birthday')
     return render_template("members/members.html", member=member, 
                             for_updating=True, errors=errors, choices=CHOICES)      
 
@@ -113,19 +120,26 @@ def create():
     form = MemberForm(request.form)
     
     if form.validate_on_submit():
+
         member.created_by = member.updated_by = current_user.id
         member.created_at = member.updated_at = datetime.datetime.utcnow()
         member.birthday = form.birthday_dt
-        member.save()
-        flash("出隊人員資料新增成功", FlashCategory.SUCCESS)
-        return redirect(url_for('member.update', member_id=member.id))
-    else:
-        errors = dict()
-        for field, errs in form.errors.items():
-            errors[field] = errs[0]    
-        flash("表單格式有誤，請重新填寫", FlashCategory.ERROR)
-        return render_template("members/members.html", member=member, errors=errors, 
-                               for_updating=False, choices=CHOICES)
+        try:
+            member.save()
+        except NotUniqueError:
+            flash("此身份證字號已經被建立過成員資料", FlashCategory.ERROR)
+        else:
+            flash("出隊人員資料新增成功", FlashCategory.SUCCESS)
+            return redirect(url_for('member.update', member_id=member.id))
+
+    flash("表單格式有誤，請重新填寫", FlashCategory.ERROR)
+    errors = dict()
+    for field, errs in form.errors.items():
+        errors[field] = errs[0]
+
+    member.inputted_birthday = info_dict.get('birthday')
+    return render_template("members/members.html", member=member, errors=errors, 
+                            for_updating=False, choices=CHOICES)
     
 
 @bp.route('/delete/<string:member_id>', methods=["POST"])

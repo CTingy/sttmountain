@@ -57,12 +57,7 @@ class Member(RecordModel):
     
     @property
     def birthday_str(self):
-        if not self.birthday:
-            return ""
-        if type(self.birthday) == datetime.datetime:
-            return self.birthday.strftime("%Y/%m/%d")
-        # not save to DB yet, return the birthday directly
-        return str(self.birthday)
+        return self.birthday.strftime("%Y/%m/%d")
 
     @property
     def is_adult(self):
