@@ -28,7 +28,7 @@ def create():
     if request.method == "GET":
         return render_template("proposals/basic_form.html", prop=None, 
                                 for_updating=False, errors=None, types=EventType.get_choices())
-    
+
     info_dict = dict(request.form)
     # extract user inputs that needs to be returned after fail form validation
     _, inputted_leader, inputted_guide, inputted_attendees, inputted_start_date = (

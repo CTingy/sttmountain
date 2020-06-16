@@ -72,11 +72,30 @@ def create(prop_id):
     return redirect(url_for('event.events'))
 
 
-@bp.route('/mark_back/<string:prop_id>', methods=["POST"])
+@bp.route('/cancel/<string:event_id>', methods=["POST"])
 @login_required
-def mark_back(prop_id):
+def cancel(event_id):
 
-    prop = Proposal.objects.get_or_404(id=prop_id)
+    event = Event.objects.get_or_404(id=event_id)
+
+    if current_user.id != event.created_by.id:
+        flash("只有出隊文創建者可以標注倒隊", FlashCategory.ERROR)
+        redirect(url_for("event.detail", event_id=event_id))
+    
+    Event.objects(id=event_id).update_one(
+        status=EventStatus.get_map()[EventStatus.CANCEL],
+        updated_at=datetime.datetime.utcnow(),
+        updated_by=current_user.id
+    )
+    flash("已標注為倒隊", FlashCategory.SUCCESS)
+    return redirect(url_for("event.events"))
+
+
+@bp.route('/mark_back/<string:event_id>', methods=["POST"])
+@login_required
+def mark_back(event_id):
+
+    prop = Proposal.objects.get_or_404(id=event_id)
 
     if request.method == "GET":
         itinerary_list = prop.itinerary_list

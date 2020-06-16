@@ -36,21 +36,21 @@
           <div style="display: -webkit-inline-box; float:right;">
             <div class="btn-group" role="group">
               <button title="修改" type="button" class="btn btn-default"><a
-                  href="{{ url_for('proposal.update', prop_id=prop.id) }}"><i class="tf-pencil2"
+                  href="{{ url_for('proposal.detail', prop_id=prop.id) }}"><i class="tf-pencil2"
                     aria-hidden="true"></i></a></button>
-              <button title="刪除此出隊文" type="button" data-toggle="modal" data-target="#Modal" class="btn btn-default"><i
-                  class="tf-ion-close" aria-hidden="true"></i></button>
+              <button title="刪除此出隊文" type="button" data-toggle="modal" data-target="#DeleteModal"
+                class="btn btn-default"><i class="tf-ion-close" aria-hidden="true"></i></button>
             </div>
             <!-- Modal -->
-            <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-              aria-hidden="true">
+            <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog"
+              aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                   <div class="modal-body">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
-                    <h4>你確定要刪除？刪除後將無法復原喔！</h4>
+                    <h4>確定要刪除？刪除後仍可再由企劃頁面發佈出隊文</h4>
                   </div>
                   <div class="modal-footer">
                     <form action="{{ url_for('event.delete', event_id=event.id)}}" method="POST">
@@ -65,7 +65,38 @@
             <!-- end Modal -->
           </div>
           {% endif %}
-          <h2><a href="#">[{{ event.get_status_display() }}]&nbsp;{{ prop.title }}</a></h2>
+          <h2><a href="#">[{{ event.get_status_display() }}]&nbsp;{{ prop.title }}&nbsp;&nbsp;</a>
+            {% if current_user.id == event.created_by.id and event.status == "NORM" %}
+            <a href="" title="回報下山或徹退" type="button" class="btn btn-primary btn-round-full"><i
+                class="tf-ion-android-checkmark-circle"></i>&nbsp;&nbsp;回報已下山</a>
+            <button title="標注已倒隊" type="button" data-toggle="modal" data-target="#CancelModal"
+              class="btn btn-success btn-round-full"><i class="tf-ion-sad-outline"
+                aria-hidden="true"></i>&nbsp;&nbsp;倒隊了，哭</button>
+            <!-- Modal -->
+            <div class="modal fade" id="CancelModal" tabindex="-1" role="dialog"
+              aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4>確定標注為倒隊？</h4>
+                    <p><b>注意！！！</b>此功能僅適用於完全未出發之隊，如果是撤退的話請使用"回報下山"功能。標注為倒隊後不可再更改，請確認是否繼續？</p>
+                  </div>
+                  <div class="modal-footer">
+                    <form action="{{ url_for('event.cancel', event_id=event.id)}}" method="POST">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                      <button type="submit" class="btn btn-danger">確定倒隊</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- end Modal -->
+            {% endif %}
+          </h2>
           <div class="post-meta">
             <ul>
               <li>
