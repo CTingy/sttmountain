@@ -1520,7 +1520,7 @@ input[type="email"]:focus, input[type="password"]:focus, input[type="text"]:focu
 .dashboard-menu .active {
   background: #000;
   color: #fff;
-  border: 1px solid #000;
+  /* border: 1px solid #000; */
 }
 
 .dashboard-menu li {
@@ -1554,11 +1554,11 @@ input[type="email"]:focus, input[type="password"]:focus, input[type="text"]:focu
   }
 }
 
-.dashboard-wrapper {
+/* .dashboard-wrapper {
   border: 1px solid #dedede;
   margin-top: 30px;
   padding: 20px;
-}
+} */
 
 .dashboard-wrapper h2 {
   font-size: 18px;

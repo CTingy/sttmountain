@@ -9,7 +9,7 @@ from .events import bp as event_bp
 
 def register_bps(app):
 
-    app.register_blueprint(user_bp)
+    app.register_blueprint(user_bp, url_prefix="/user")
     app.register_blueprint(home_bp)
     app.register_blueprint(proposal_bp, url_prefix="/proposal")
     app.register_blueprint(auth_bp, url_prefix='/auth')
