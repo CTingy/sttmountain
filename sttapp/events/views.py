@@ -91,51 +91,40 @@ def cancel(event_id):
     return redirect(url_for("event.events"))
 
 
-@bp.route('/mark_back/<string:event_id>', methods=["POST"])
+@bp.route('/update_as_back/<string:event_id>', methods=["GET", "POST"])
 @login_required
-def mark_back(event_id):
+def update_as_back(event_id):
 
-    prop = Proposal.objects.get_or_404(id=event_id)
+    event = Event.objects.get_or_404(id=event_id)
+    itinerary_list = event.real_itinerary_list or event.proposal.itinerary_list
 
     if request.method == "GET":
-        itinerary_list = prop.itinerary_list
-    else:
-        form = request.form
-        max_itinerary_num = int(form.get("itinerary_len"))
-        itinerary_list = []
+        return render_template('events/update.html', itinerary_list=itinerary_list, 
+                                max_day=itinerary_list[-1].day_number, event=event)
 
-        for i in range(max_itinerary_num+1):
-            itinerary = Itinerary(
-                day_number=i,
-                content=form.get("content{}".format(i)),
-                water_info=form.get("water_info{}".format(i)),
-                communication_info=form.get("communication_info{}".format(i))
-            )
-            itinerary_list.append(itinerary)
-        
-        event = Event(
-            proposal=prop_id,
-            itinerary_list=itinerary_list,
-            feedback=form.get("feedback"),
-            created_by=current_user.id
+    form = request.form
+    max_itinerary_num = int(form.get("itinerary_len"))
+    inputted_itinerary_list = []
+
+    for i in range(max_itinerary_num+1):
+        itinerary = Itinerary(
+            day_number=i,
+            content=form.get("content{}".format(i)),
+            water_info=form.get("water_info{}".format(i)),
+            communication_info=form.get("communication_info{}".format(i))
         )
-        try:
-            event.save()
-        except NotUniqueError:
-            if not prop.is_back and Event.objects.get(proposal=prop_id):
-                Proposal.objects(id=prop_id).update_one(is_back=True)
-            flash("該出隊文已經回報下山囉，請勿重複回報", FlashCategory.WARNING)
-            return redirect(url_for('event.events'))
-        
-        Proposal.objects(id=prop_id).update_one(
-            is_back=True,
-            updated_at=datetime.datetime.utcnow(),
-            updated_by=current_user.id
-        )
-        flash("RE：出隊文建立完成！", FlashCategory.SUCCESS)
-        return redirect(url_for('event.events'))
-    return render_template('events/create.html', itinerary_list=itinerary_list, 
-                            max_day=prop.itinerary_list[-1].day_number)
+        inputted_itinerary_list.append(itinerary)
+    
+    Event.objects(id=event_id).update_one(
+        status=EventStatus.get_map()[EventStatus.BACK],
+        real_itinerary_list=inputted_itinerary_list,
+        feedback=form.get("feedback"),
+        updated_by=current_user.id,
+        updated_at=datetime.datetime.utcnow()
+    )
+
+    flash("修改成功！請檢查", FlashCategory.SUCCESS)
+    return redirect(url_for('event.detail', event_id=event_id))
 
 
 @bp.route('/detail/<string:event_id>')
@@ -155,6 +144,9 @@ def detail(event_id):
     )
     # give every itinerary obj a date str
     for i in prop.itinerary_list:
+        i.date_str = (prop.start_date + datetime.timedelta(
+            days=i.day_number-1)).strftime("%m/%d")
+    for i in event.real_itinerary_list:
         i.date_str = (prop.start_date + datetime.timedelta(
             days=i.day_number-1)).strftime("%m/%d")
 

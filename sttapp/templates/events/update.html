@@ -4,56 +4,53 @@
 <section class="signin-page account">
   <div class="container">
     <div class="row">
-      <div class="col-md-8 col-md-offset-2">
+      <div class="col-md-10 col-md-offset-1">
         <div class="block text-center">
-          <a class="logo" href="/">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="">
-          </a>
           <form class="text-left clearfix" action="" method="POST">
-            <h4 class="text-center">填入每日實際行程，若無交通天，D0不需要填</h4>
+            <h3 class="text-center">編輯每日實際行程、出隊心得/感想</h3>
+            <br>
+            <a href="{{ url_for('event.detail', event_id=event.id) }}">
+              <p style="color: blue;" class="text-center">回出隊文</p>
+            </a>
             {% include 'alerts.html' %}
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <input id="itinerary_num" type="hidden" name="itinerary_len" value="{{ max_day }}">
             <div id="unit">
               {% for itinerary in itinerary_list %}
-              <div id="{{ itinerary.day_number }}" class="form-group row">
-                <br>
-                <label class="col-sm-1 col-form-label">D{{ itinerary.day_number }} </label>
-                <div class="col-sm-11">
+              <div id="{{ itinerary.day_number }}" class="form-row">
+                <div class="col-md-8">
+                  <label class="col-form-label">D{{ itinerary.day_number }}</label>
                   <input type="text" name="content{{ itinerary.day_number }}"
                     value="{% if itinerary.content %}{{ itinerary.content }}{% endif %}" class="form-control content"
                     placeholder=""><br>
                 </div>
-                <br>
-                <label class="col-sm-1 col-form-label">水源</label>
-                <div class="col-sm-5">
+                <div class="col-md-2">
+                  <label class="col-form-label">水源</label>
                   <input type="text" name="water_info{{ itinerary.day_number }}"
                     value="{% if itinerary.water_info %}{{ itinerary.water_info }}{% endif %}"
-                    class="form-control water_info" placeholder="例：2568鞍部西下水源，不穩">
+                    class="form-control water_info" placeholder="ex:大陸池，不穩">
                 </div>
-                <label class="col-sm-1 col-form-label">通訊</label>
-                <div class="col-sm-5">
+                <div class="col-md-2">
+                  <label class="col-form-label">通訊</label>
                   <input type="text" name="communication_info{{ itinerary.day_number }}"
                     value="{% if itinerary.communication_info %}{{ itinerary.communication_info }}{% endif %}"
-                    class="form-control communication_info" placeholder="例：中華電信、衛星">
+                    class="form-control communication_info" placeholder="ex:中華、衛星">
                 </div>
-                <br>
               </div>
               {% endfor %}
             </div>
             <br>
-            <div class="text-center form-group row">
+            <div class="text-center col-md-12">
               <a id="addInput" onclick="addFormRow()" class="btn btn-default btn-round-full"><i
                   class="tf-ion-android-add"></i> 增加</a>
               <a id="minusInput" onclick="minusFormRow()" class="btn btn-default btn-round-full"><i
                   class="tf-ion-minus"></i> 減少</a>
             </div>
             <hr>
-            <div class="form-group row">
-              <label class="col-md-1 col-form-label" for="Textarea1">評語</label>
-              <div class="col-md-11">
-                <textarea class="form-control" name="feedback" value="" id="Textarea1" rows="10"
-                  placeholder="填入感想/心得/路況..."></textarea></div>
+            <div class="form-group col-md-12">
+              <label class="col-form-label" for="Textarea1">評語</label>
+              <textarea class="form-control" name="feedback" id="Textarea1" rows="10"
+                placeholder="填入感想/心得/路況...">{% if event.feedback %}{{ event.feedback }}{% endif %}</textarea>
             </div>
             <br>
             <div class="text-center col-md-12">

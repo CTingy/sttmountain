@@ -48,22 +48,6 @@
         {% endfor %}
       </p>
     </div>
-    <p>
-      <a class="btn btn-default btn-round-full" data-toggle="collapse" href="#{{ prop.id }}" aria-expanded="false"
-        aria-controls="collapseExample">
-        預定行程...&nbsp;<i class="tf-ion-chevron-down"></i>
-      </a>
-    </p>
-    <div class="collapse" id="{{ prop.id }}">
-      <div class="card card-body">
-        {% for i in prop.itinerary_list %}
-        D{{ i.day_number}}: {{ i.content }}<br>
-        {% endfor %}
-        <br>
-        <p style="white-space: pre-wrap;">撤退路線：<br>{{ prop.return_plan }}</p><br>
-        預備天：{{ prop.buffer_days }}天&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-      </div>
-    </div>
   </div>
 </div>
 </a>

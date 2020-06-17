@@ -32,7 +32,7 @@
             </a>
             {% endif %}
           </div>
-          {% if current_user.is_authenticated %}
+          {% if current_user.is_authenticated and event.status == "NORM" %}
           <div style="display: -webkit-inline-box; float:right;">
             <div class="btn-group" role="group">
               <button title="修改" type="button" class="btn btn-default"><a
@@ -65,9 +65,10 @@
             <!-- end Modal -->
           </div>
           {% endif %}
-          <h2><a href="#">[{{ event.get_status_display() }}]&nbsp;{{ prop.title }}&nbsp;&nbsp;</a>
+          <h2><a href="#">&nbsp;&nbsp;[{{ event.get_status_display() }}]&nbsp;{{ prop.title }}&nbsp;&nbsp;</a>
             {% if current_user.id == event.created_by.id and event.status == "NORM" %}
-            <a href="" title="回報下山或徹退" type="button" class="btn btn-primary btn-round-full"><i
+            <a href="{{ url_for('event.update_as_back', event_id=event.id) }}" title="回報下山或徹退" type="button"
+              class="btn btn-primary btn-round-full"><i
                 class="tf-ion-android-checkmark-circle"></i>&nbsp;&nbsp;回報已下山</a>
             <button title="標注已倒隊" type="button" data-toggle="modal" data-target="#CancelModal"
               class="btn btn-success btn-round-full"><i class="tf-ion-sad-outline"
@@ -112,6 +113,20 @@
           </div>
           <br>
           <div class="post-content">
+            {# if event.status == "BACK" #}
+            {% if event.status == "BACK" or event.feedback %}
+            <div class="row">
+              <div class="col-md-12">
+                <p style="white-space: pre-wrap; color: black; font-size: 16px;">{{ event.feedback }}</p>
+              </div>
+            </div>
+            {# if current_user.id == event.created_by.id and event.status == "BACK" #}
+            {% if current_user.id == event.created_by.id %}
+            <a type="button" class="btn btn-main btn-sm"
+              href="{{ url_for('event.update_as_back', event_id=event.id) }}">編輯下山心得與實際行程</a>
+            {% endif %}
+            <hr>
+            {% endif %}
             <div class="row">
               <div class="col-md-2">
                 <p><b>活動日期</b>:&nbsp;</p>
@@ -162,68 +177,93 @@
                 </p>
               </div>
             </div>
+            {% if event.real_itinerary_list %}
             <div class="row">
               <div class="col-md-2">
-                <p><b>撤退路線</b>:&nbsp;</p>
+                <p style="color: green;"><b>實際行程</b>:&nbsp;</p>
               </div>
               <div class="col-md-10">
-                <p style="white-space: pre-wrap;">{{ prop.return_plan }}</p>
+                <p style="color: green;">
+                  {% for i in event.real_itinerary_list %}
+                  <b>{{ i.date_str }}&nbsp;D{{ i.day_number }}: &nbsp;</b>
+                  {{ i.content }}
+                  <br>
+                  {% endfor %}
+                </p>
               </div>
             </div>
-            <div class="row">
-              <div class="col-md-2">
-                <p><b>預備天</b>:&nbsp;</p>
+            {% endif %}
+            <!-- collapse -->
+            <p class="text-center">
+              <a class="btn btn-default btn-round-full" data-toggle="collapse" href="#MoreDetail" aria-expanded="false"
+                aria-controls="collapseExample">
+                點我看更多...&nbsp;<i class="tf-ion-chevron-down"></i>
+              </a>
+            </p>
+            <div class="collapse" id="MoreDetail">
+              <div class="row">
+                <div class="col-md-2">
+                  <p><b>撤退路線</b>:&nbsp;</p>
+                </div>
+                <div class="col-md-10">
+                  <p style="white-space: pre-wrap;">{{ prop.return_plan }}</p>
+                </div>
               </div>
-              <div class="col-md-10">
-                <p>{{ prop.buffer_days }}天</p>
+              <div class="row">
+                <div class="col-md-2">
+                  <p><b>預備天</b>:&nbsp;</p>
+                </div>
+                <div class="col-md-10">
+                  <p>{{ prop.buffer_days }}天</p>
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div class="col-md-2">
-                <p><b>交通方式</b>:&nbsp;</p>
+              <div class="row">
+                <div class="col-md-2">
+                  <p><b>交通方式</b>:&nbsp;</p>
+                </div>
+                <div class="col-md-10">
+                  <p style="white-space: pre-wrap;">{{ prop.approach_way }}</p>
+                </div>
               </div>
-              <div class="col-md-10">
-                <p style="white-space: pre-wrap;">{{ prop.approach_way }}</p>
+              <div class="row">
+                <div class="col-md-2">
+                  <p><b>無線電頻率/台號</b>:&nbsp;</p>
+                </div>
+                <div class="col-md-10">
+                  <p>{{ prop.radio }}</p>
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div class="col-md-2">
-                <p><b>無線電頻率/台號</b>:&nbsp;</p>
+              <div class="row">
+                <div class="col-md-2">
+                  <p><b>衛星電話</b>:&nbsp;</p>
+                </div>
+                <div class="col-md-10">
+                  {% if prop.satellite_telephone %}<p>{{ prop.satellite_telephone[13] }}號機</p>{% endif %}
+                </div>
               </div>
-              <div class="col-md-10">
-                <p>{{ prop.radio }}</p>
+              <div class="row">
+                <div class="col-md-2">
+                  <p><b>開機時間</b>:&nbsp;</p>
+                </div>
+                <div class="col-md-10">
+                  <p>{{ prop.open_time }}</p>
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div class="col-md-2">
-                <p><b>衛星電話</b>:&nbsp;</p>
+              <div class="row">
+                <div class="col-md-2">
+                  <p><b>出發時間</b>:&nbsp;</p>
+                </div>
+                <div class="col-md-10">
+                  <p>{{ event.gathering_time_str }}</p>
+                </div>
               </div>
-              <div class="col-md-10">
-                {% if prop.satellite_telephone %}<p>{{ prop.satellite_telephone[13] }}號機</p>{% endif %}
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-2">
-                <p><b>開機時間</b>:&nbsp;</p>
-              </div>
-              <div class="col-md-10">
-                <p>{{ prop.open_time }}</p>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-2">
-                <p><b>出發時間</b>:&nbsp;</p>
-              </div>
-              <div class="col-md-10">
-                <p>{{ event.gathering_time_str }}</p>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-2">
-                <p><b>集合地點</b>:&nbsp;</p>
-              </div>
-              <div class="col-md-10">
-                <p>{{ event.gathering_point }}，歡迎送行</p>
+              <div class="row">
+                <div class="col-md-2">
+                  <p><b>集合地點</b>:&nbsp;</p>
+                </div>
+                <div class="col-md-10">
+                  <p>{{ event.gathering_point }}，歡迎送行</p>
+                </div>
               </div>
             </div>
           </div>
