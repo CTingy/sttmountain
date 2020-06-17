@@ -100,20 +100,23 @@ def update_as_back(event_id):
 
     if request.method == "GET":
         return render_template('events/update.html', itinerary_list=itinerary_list, 
-                                max_day=itinerary_list[-1].day_number, event=event)
+                               max_day=itinerary_list[-1].day_number, event=event)
 
     form = request.form
     max_itinerary_num = int(form.get("itinerary_len"))
     inputted_itinerary_list = []
 
-    for i in range(max_itinerary_num+1):
-        itinerary = Itinerary(
-            day_number=i,
-            content=form.get("content{}".format(i)),
-            water_info=form.get("water_info{}".format(i)),
-            communication_info=form.get("communication_info{}".format(i))
-        )
-        inputted_itinerary_list.append(itinerary)
+    print(request.form.get("same_check"), "11111111")
+    
+    if request.form.get("same_check") != "y":
+        for i in range(max_itinerary_num+1):
+            itinerary = Itinerary(
+                day_number=i,
+                content=form.get("content{}".format(i)),
+                water_info=form.get("water_info{}".format(i)),
+                communication_info=form.get("communication_info{}".format(i))
+            )
+            inputted_itinerary_list.append(itinerary)
     
     Event.objects(id=event_id).update_one(
         status=EventStatus.get_map()[EventStatus.BACK],
@@ -122,8 +125,6 @@ def update_as_back(event_id):
         updated_by=current_user.id,
         updated_at=datetime.datetime.utcnow()
     )
-
-    flash("修改成功！請檢查", FlashCategory.SUCCESS)
     return redirect(url_for('event.detail', event_id=event_id))
 
 

@@ -65,7 +65,7 @@
             <!-- end Modal -->
           </div>
           {% endif %}
-          <h2><a href="#">&nbsp;&nbsp;[{{ event.get_status_display() }}]&nbsp;{{ prop.title }}&nbsp;&nbsp;</a>
+          <h2><a href="#">[{{ event.get_status_display() }}]&nbsp;{{ prop.title }}&nbsp;&nbsp;</a>
             {% if current_user.id == event.created_by.id and event.status == "NORM" %}
             <a href="{{ url_for('event.update_as_back', event_id=event.id) }}" title="回報下山或徹退" type="button"
               class="btn btn-primary btn-round-full"><i
@@ -177,18 +177,20 @@
                 </p>
               </div>
             </div>
-            {% if event.real_itinerary_list %}
+            {% if event.status == "BACK" %}
             <div class="row">
               <div class="col-md-2">
                 <p style="color: green;"><b>實際行程</b>:&nbsp;</p>
               </div>
               <div class="col-md-10">
                 <p style="color: green;">
+                  {% if event.real_itinerary_list %}
                   {% for i in event.real_itinerary_list %}
                   <b>{{ i.date_str }}&nbsp;D{{ i.day_number }}: &nbsp;</b>
                   {{ i.content }}
                   <br>
                   {% endfor %}
+                  {% else %}同預定行程{% endif %}
                 </p>
               </div>
             </div>

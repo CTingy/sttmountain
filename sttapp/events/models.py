@@ -22,3 +22,9 @@ class Event(RecordModel):
     @property
     def gathering_time_str(self):
         return self.gathering_time.strftime("%Y/%m/%d %H:%M")
+
+    @property
+    def itinerary_same_check(self):
+        if self.status == EventStatus.get_map()[EventStatus.BACK] and not self.real_itinerary_list:
+            return True
+        return False

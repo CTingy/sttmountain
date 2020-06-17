@@ -7,14 +7,19 @@
       <div class="col-md-10 col-md-offset-1">
         <div class="block text-center">
           <form class="text-left clearfix" action="" method="POST">
-            <h3 class="text-center">編輯每日實際行程、出隊心得/感想</h3>
+            <h3 class="text-center">RE出隊文：<a href="{{ url_for('event.detail', event_id=event.id) }}"><u
+                  style="color: blue;">{{ event.proposal.title }}</u></a></h3>
             <br>
-            <a href="{{ url_for('event.detail', event_id=event.id) }}">
-              <p style="color: blue;" class="text-center">回出隊文</p>
-            </a>
             {% include 'alerts.html' %}
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <input id="itinerary_num" type="hidden" name="itinerary_len" value="{{ max_day }}">
+            <div class="form-check text-center">
+              <input {% if event.itinerary_same_check %}checked{% endif %} class="form-check-input" name="same_check"
+                type="checkbox" value="y" id="defaultCheck1" onchange="lockItinerary(this)">
+              <label class="form-check-label" for="defaultCheck1">
+                實際行程同預定行程
+              </label>
+            </div>
             <div id="unit">
               {% for itinerary in itinerary_list %}
               <div id="{{ itinerary.day_number }}" class="form-row">
@@ -41,10 +46,10 @@
             </div>
             <br>
             <div class="text-center col-md-12">
-              <a id="addInput" onclick="addFormRow()" class="btn btn-default btn-round-full"><i
-                  class="tf-ion-android-add"></i> 增加</a>
-              <a id="minusInput" onclick="minusFormRow()" class="btn btn-default btn-round-full"><i
-                  class="tf-ion-minus"></i> 減少</a>
+              <button type="button" id="addInput" onclick="addFormRow()" class="btn btn-default btn-round-full"><i
+                  class="tf-ion-android-add"></i> 增加</button>
+              <button type="button" id="minusInput" onclick="minusFormRow()" class="btn btn-default btn-round-full"><i
+                  class="tf-ion-minus"></i> 減少</button>
             </div>
             <hr>
             <div class="form-group col-md-12">
@@ -71,7 +76,7 @@
     var presentNumber = document.getElementById("itinerary_num");
     var dayNumber = parseInt(presentNumber.value);
 
-    var div = document.getElementById("0");
+    var div = document.getElementById("1");
     div = div.cloneNode(true);
 
     var newDayNumber = dayNumber + 1;
@@ -101,11 +106,36 @@
     var presentNumber = document.getElementById("itinerary_num");
     var dayNumber = parseInt(presentNumber.value);
 
+    if (dayNumber == 1) {
+      return alert("不可刪除第一天行程！！！");
+    }
+
     document.getElementById(dayNumber).remove();
 
     var newDayNumber = dayNumber - 1;
     // set new dayNumber
     presentNumber.setAttribute("value", newDayNumber);
   }
+
+  function lockItinerary(checkboxElem) {
+    inputs = document.getElementById("unit").getElementsByTagName("INPUT");
+    addInput = document.getElementById("addInput");
+    minusInput = document.getElementById("minusInput");
+    console.log(inputs);
+    if (checkboxElem.checked) {
+      for (let i = 0; i < inputs.length; i++) {
+        inputs[i].readOnly = true;
+      }
+      addInput.disabled = true;
+      minusInput.disabled = true;
+    } else {
+      for (let i = 0; i < inputs.length; i++) {
+        inputs[i].readOnly = false;
+      }
+      addInput.disabled = false;
+      minusInput.disabled = false;
+    }
+  }
+  lockItinerary(document.getElementById("defaultCheck1"));
 </script>
 {% endblock %}
