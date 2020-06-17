@@ -38,7 +38,9 @@
                 class="tf-ion-ios-search-strong"></i>&nbsp搜尋</a>
             <ul class="dropdown-menu search-dropdown">
               <li>
-                <form action="post"><input type="search" class="form-control" placeholder="Search..."></form>
+                <form action="{{ url_for('event.search') }}"><input type="search" name="keyword" class="form-control"
+                    placeholder="搜尋隊伍、出隊心得">
+                </form>
               </li>
             </ul>
           </li><!-- / Search -->

@@ -35,8 +35,8 @@
           {% if current_user.is_authenticated and event.status == "NORM" %}
           <div style="display: -webkit-inline-box; float:right;">
             <div class="btn-group" role="group">
-              <button title="修改" type="button" class="btn btn-default"><a
-                  href="{{ url_for('proposal.detail', prop_id=prop.id) }}"><i class="tf-pencil2"
+              <button title="檢視/編輯此出隊文的企劃書" type="button" class="btn btn-default"><a
+                  href="{{ url_for('proposal.detail', prop_id=prop.id) }}"><i class="tf-document3"
                     aria-hidden="true"></i></a></button>
               <button title="刪除此出隊文" type="button" data-toggle="modal" data-target="#DeleteModal"
                 class="btn btn-default"><i class="tf-ion-close" aria-hidden="true"></i></button>
@@ -65,7 +65,7 @@
             <!-- end Modal -->
           </div>
           {% endif %}
-          <h2><a href="#">[{{ event.get_status_display() }}]&nbsp;{{ prop.title }}&nbsp;&nbsp;</a>
+          <h2>[{{ event.get_status_display() }}]&nbsp;{{ prop.title }}&nbsp;&nbsp;
             {% if current_user.id == event.created_by.id and event.status == "NORM" %}
             <a href="{{ url_for('event.update_as_back', event_id=event.id) }}" title="回報下山或徹退" type="button"
               class="btn btn-primary btn-round-full"><i

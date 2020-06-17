@@ -178,9 +178,27 @@ def delete(event_id):
     event = Event.objects.get_or_404(id=event_id)
     if event.created_by.id != current_user.id:
         flash("只有張貼者能夠刪除出隊文", FlashCategory.WARNING)
-        return redirect(url_for('event.detail', event_id=event_id))
+        return redirect(url_for('event.events'))
+    if event.status in ("CANCEL", "BACK"):
+        flash("不可刪除已回報下山/已標注撤退之出隊文", FlashCategory.WARNING)
+        return redirect(url_for('event.events'))
     event.delete()
     Proposal.objects(event=event).update_one(
         event=None, updated_at=datetime.datetime.utcnow(), updated_by=current_user.id)
     flash("已經為您刪除出隊文，請繼續編輯企劃書再重新發佈：{}".format(event.proposal.title), FlashCategory.SUCCESS)
     return redirect(url_for("proposal.detail", prop_id=event.proposal.id))
+
+
+@bp.route('/search/')
+def search():
+
+    kw = request.args.get("keyword")
+    if not kw:
+        flash("請輸入搜尋關鍵字", FlashCategory.WARNING)
+        return redirect("/")
+    events = []
+    for kw in kw.split(" "):
+        events.extend(Event.objects(feedback__contains=kw) or [])
+        events.extend([p.event for p in Proposal.objects(title__contains=kw)] or [])
+
+    return render_template('events/events.html', events=set(events), page_name="出隊文搜尋結果")
