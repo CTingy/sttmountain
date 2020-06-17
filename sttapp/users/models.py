@@ -56,6 +56,12 @@ class SttUser(User):
     invitation_info = db.EmbeddedDocumentField(InvitationInfo)
 
     @property
+    def birthday_str(self):
+        if self.birthday:
+            return self.birthday.strftime("%Y/%m/%d")
+        return ""
+    
+    @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
 

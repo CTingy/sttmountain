@@ -11,7 +11,7 @@ bp = Blueprint('user', __name__, url_prefix="/user")
 
 
 @bp.route('/detail/<string:user_id>')
-# @login_required
+@login_required
 def detail(user_id):
 
     user = SttUser.objects.get_or_404(id=user_id)

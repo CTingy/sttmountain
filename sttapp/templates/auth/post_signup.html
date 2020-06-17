@@ -26,11 +26,11 @@
       <div class="col-md-8 col-md-offset-2">
         <div class="block text-center">
           <a class="logo" href="/">
-            <img src={{ url_for("static", filename="images/stt_logo.png") }} alt="">
+            <img src="{{ url_for('static', filename='images/stt_logo.png') }}" alt="">
           </a>
           <form class="text-left clearfix" action="" method="post">
             {% include 'alerts.html' %}
-            <h4 class="text-center">填寫進階資料</h4>
+            <h4 class="text-center">進階資料</h4>
             <br>
             <p class="text-center">
               隱藏資料為：<b>真實姓名、生日、手機</b>，這些資料僅顯示於個人頁面，不會顯示於網站，
