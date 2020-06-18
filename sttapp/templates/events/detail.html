@@ -32,14 +32,16 @@
             </a>
             {% endif %}
           </div>
-          {% if current_user.is_authenticated and event.status == "NORM" %}
+          {% if current_user.is_authenticated %}
           <div style="display: -webkit-inline-box; float:right;">
             <div class="btn-group" role="group">
               <button title="檢視/編輯此出隊文的企劃書" type="button" class="btn btn-default"><a
                   href="{{ url_for('proposal.detail', prop_id=prop.id) }}"><i class="tf-document3"
                     aria-hidden="true"></i></a></button>
+              {% if current_user.id == event.created_by and event.status == "NORM" %}
               <button title="刪除此出隊文" type="button" data-toggle="modal" data-target="#DeleteModal"
                 class="btn btn-default"><i class="tf-ion-close" aria-hidden="true"></i></button>
+              {% endif %}
             </div>
             <!-- Modal -->
             <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog"
@@ -113,15 +115,13 @@
           </div>
           <br>
           <div class="post-content">
-            {# if event.status == "BACK" #}
-            {% if event.status == "BACK" or event.feedback %}
+            {% if event.status == "BACK" %}
             <div class="row">
               <div class="col-md-12">
                 <p style="white-space: pre-wrap; color: black; font-size: 16px;">{{ event.feedback }}</p>
               </div>
             </div>
-            {# if current_user.id == event.created_by.id and event.status == "BACK" #}
-            {% if current_user.id == event.created_by.id %}
+            {% if current_user.id == event.created_by.id and event.status == "BACK" %}
             <a type="button" class="btn btn-main btn-sm"
               href="{{ url_for('event.update_as_back', event_id=event.id) }}">編輯下山心得與實際行程</a>
             {% endif %}

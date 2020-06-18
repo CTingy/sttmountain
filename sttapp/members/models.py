@@ -3,6 +3,7 @@ import datetime
 from sttapp.db import db
 from sttapp.base.models import RecordModel
 from sttapp.base.enums import Level, Gender, Difficulty, Group
+from sttapp.base.utils import get_local_dt
 
 
 class Member(RecordModel):
@@ -61,7 +62,7 @@ class Member(RecordModel):
 
     @property
     def is_adult(self):
-        today = (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).date()
+        today = get_local_dt(datetime.datetime.utcnow()).date()
         return today.replace(year=today.year-20) >= self.birthday.date()
 
     @property

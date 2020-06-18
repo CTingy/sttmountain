@@ -5,6 +5,7 @@ from flask_login import login_user, current_user, login_required
 from mongoengine.queryset.visitor import Q
 
 from sttapp.base.enums import FlashCategory, Level, Gender, EventType
+from sttapp.base.utils import get_local_dt
 from sttapp.events.models import Event
 from .forms import ProposalForm
 from .models import Proposal, Itinerary
@@ -102,7 +103,7 @@ def update(prop_id):
         flash("僅隊伍企劃創建者可編輯", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
 
-    if ori_prop.start_date.date() <= (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).date():
+    if ori_prop.start_date.date() <= get_local_dt(datetime.datetime.utcnow()).date():
         flash("已開始之隊伍企劃不可編輯", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
 
@@ -178,7 +179,7 @@ def update(prop_id):
 def update_itinerary(prop_id):
 
     prop = Proposal.objects.get_or_404(id=prop_id)
-    if prop.start_date.date() < (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).date():
+    if prop.start_date.date() < get_local_dt(datetime.datetime.utcnow()).date():
         flash("已開始之隊伍企劃不可編輯", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
     if current_user.id != prop.created_by.id:

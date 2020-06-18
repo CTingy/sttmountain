@@ -2,6 +2,7 @@ import datetime
 import pytz
 
 from sttapp.db import db
+from .utils import get_local_dt
 
 
 class RecordModel(db.Document):
@@ -15,10 +16,7 @@ class RecordModel(db.Document):
     meta = {'abstract': True, }
 
     def _dt_to_str(self, dt):
-        tz = pytz.timezone('Asia/Taipei')
-        utc = pytz.timezone('UTC')
-        utc_dt = utc.localize(dt)
-        tz_dt = utc_dt.astimezone(tz)
+        tz_dt = get_local_dt(dt)
         return tz_dt.strftime("%Y/%m/%d %H:%M")
 
     @property
