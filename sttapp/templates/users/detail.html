@@ -186,8 +186,14 @@
                 <div class="media-body">
                   {% if not user.member_id %}
                   <span>尚未連結站內出隊用資料，是否<a style="color: blue;" href="">查詢並匯入</a>？
-                    或是<a style="color: blue;" href="">新增出隊用資料</a>。
+                    或是<a href="{{ url_for('user.create_member') }}" style="color: blue;" href="">新增出隊用資料</a>。
                   </span>
+                  {% else %}
+                  <div style="display: -webkit-inline-box; float:right;">
+                    <a href="{{ url_for('member.update', member_id=user.member_id) }}" type="button"
+                      class="btn btn-default btn-sm">編輯我的出隊用資料</a>&nbsp;&nbsp;&nbsp;
+                  </div>
+                  {{ member }}
                   {% endif %}
                 </div>
               </div>

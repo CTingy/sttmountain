@@ -262,7 +262,7 @@ def login():
             #     return redirect('/')
 
             flash('登入成功！歡迎光臨', FlashCategory.SUCCESS)
-            return redirect(next_ or '/')
+            return redirect(next_ or url_for("user.detail", user_id=user.id))
         else:
             flash('登入表格有誤，請重新登入', FlashCategory.ERROR)
     return render_template('auth/login.html', form=form)

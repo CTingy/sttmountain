@@ -181,7 +181,7 @@ def delete(event_id):
     if event.status in ("CANCEL", "BACK"):
         flash("不可刪除已回報下山/已標注撤退之出隊文", FlashCategory.WARNING)
         return redirect(url_for('event.detail', event_id=event_id))
-    Proposal.objects(event_id=event.id).update_one(
+    Proposal.objects(id=event.proposal.id).update_one(
         event_id=None, updated_at=datetime.datetime.utcnow(), updated_by=current_user.id)
     event.delete()
     flash("已經為您刪除出隊文，請繼續編輯企劃書再重新發佈：{}".format(event.proposal.title), FlashCategory.SUCCESS)

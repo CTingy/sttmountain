@@ -6,7 +6,7 @@ from flask_login import login_user, current_user, login_required
 from mongoengine.errors import NotUniqueError
 
 from sttapp.base.enums import FlashCategory, Level, Difficulty, Gender, Group
-from .models import Member
+from .models import Member, CHOICES
 from .forms import MemberForm
 
 
@@ -14,13 +14,6 @@ import iso8601
 
 
 bp = Blueprint('member', __name__, url_prefix='/member')
-
-
-CHOICES = {
-    "group": Group.get_choices(), 
-    "difficulty": Difficulty.get_choices(),
-    "level": Level.get_choices(),
-}
 
 
 @bp.route('/search/')
@@ -148,6 +141,7 @@ def delete(member_id):
     member = Member.objects.get_or_404(id=member_id)
     if member_id.created_by.id != current_user.id:
         flash("只有此筆資料創建者能夠刪除", FlashCategory.ERROR)
+
     member.delete()
     flash("已經為您刪除人員：{}".format(member.name), FlashCategory.SUCCESS)
     return redirect(url_for('member.search_for_updating'))
