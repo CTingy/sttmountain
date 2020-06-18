@@ -25,7 +25,7 @@
       <div class="col-xs-12">
         {% if not current_user.is_authenticated %}
         <p>您無權瀏覽此頁面</p>
-        {% else %}
+        {% endif %}
         {% include 'alerts.html' %}
         <div class="tabCommon mt-20">
           <ul class="nav nav-tabs justify-content-center list-inline dashboard-menu">
@@ -92,6 +92,100 @@
                     <li><span>註冊邀請人：</span>{{ invited_by }}</li>
                   </ul>
                   <br>
+                </div>
+              </div>
+            </div>
+            <div id="member" class="tab-pane fade dashboard-user-profile dashboard-wrapper">
+              <div class="media">
+                <div class="media-body">
+                  {% if not user.member_id %}
+                  <span>尚未連結站內出隊用資料，是否<a style="color: blue;" data-toggle="modal" href=""
+                      data-target="#ModalMemberConnection">查詢並匯入</a>？
+                    或是<a href="{{ url_for('user.create_member') }}" style="color: blue;" href="">新增出隊用資料</a>。
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="ModalMemberConnection" tabindex="-1" role="dialog"
+                      aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                          <form action="{{ url_for('user.connect_member') }}" method="POST">
+                            <div class="modal-body">
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                              <h3 class="text-center">查詢與匯入出隊用資料</h3>
+                              <p class="text-center">請填寫身份證字號</p>
+                              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                              <div class="col-md-12">
+                                <br><br>
+                                <div class="form-group">
+                                  <input required type="text" class="form-control" name="security_number"
+                                    placeholder="首字母大寫，共10碼">
+                                </div>
+                                <br>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                              <button type="submit" class="btn btn-primary">送出</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- end modal -->
+                  </span>
+                  {% else %}
+                  <ul class="user-profile-list">
+                    <div style="display: -webkit-inline-box; float:right;">
+                      <a href="{{ url_for('member.update', member_id=user.member_id) }}" type="button"
+                        class="btn btn-default btn-sm">編輯我的出隊用資料</a>&nbsp;&nbsp;&nbsp;
+                    </div>
+                    <p class="text-center">此區資料與個人資料並未連動，若以下資訊有誤請修改</p>
+                    <hr>
+                    <div class="col-sm-4 col-xs-6">
+                      <br>
+                      <p>基本資料</p>
+                      <li><span>姓名：</span>{{ member.name }}</li>
+                      <li><span>網站顯示名稱：</span>{{ member.nickname }}</li>
+                      <li><span>身份證字號：</span>{{ member.security_number }}</li>
+                      <li><span>生日：</span>{{ member.birthday_str }}</li>
+                      <li><span>手機：</span>{{ member.cellphone_number }}</li>
+                      <br>
+                    </div>
+                    <div class="col-sm-4 col-xs-6">
+                      <br>
+                      <p>學校資料</p>
+                      <li><span>學號：</span>{{ member.student_id or "校外或OB不填寫" }}</li>
+                      <li><span>系所與年級：</span>{{ member.department_and_grade }}</li>
+                      <br>
+                    </div>
+                    <div class="col-sm-4 col-xs-6">
+                      <br>
+                      <p>山協資料</p>
+                      <li><span>等級：</span>{{ member.get_level_display() }}</li>
+                      <li><span>嚮導隊：</span>{{ member.get_group_display() }}</li>
+                      <li><span>最高資歷路線：</span>{{ member.highest_difficulty_experience or "" }}</li>
+                      <li><span>最高資歷難度：</span>{{ member.get_highest_difficulty_display() }}</li>
+                      <br>
+                    </div>
+                    <div class="col-sm-4 col-xs-6">
+                      <br>
+                      <p>醫藥相關</p>
+                      <li><span>藥物過敏：</span>{{ member.drug_allergy }}</li>
+                      <li><span>血型：</span>{{ member.blood_type }}</li>
+                      <br>
+                    </div>
+                    <div class="col-sm-4 col-xs-6">
+                      <br>
+                      <p>緊急聯絡人</p>
+                      <li><span>聯絡人姓名：</span>{{ member.emergency_contact }}</li>
+                      <li><span>聯絡人關係：</span>{{ member.emergency_contact_relationship }}</li>
+                      <li><span>聯絡人電話：</span>{{ member.emergency_contact_phone }}</li>
+                      <br>
+                    </div>
+                  </ul>
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -181,62 +275,8 @@
                 </div>
               </div>
             </div>
-            {% if current_user.id == user.id %}
-            <div id="member" class="tab-pane fade dashboard-user-profile dashboard-wrapper">
-              <div class="media">
-                <div class="media-body">
-                  {% if not user.member_id %}
-                  <span>尚未連結站內出隊用資料，是否<a style="color: blue;" data-toggle="modal" href=""
-                      data-target="#ModalMemberConnection">查詢並匯入</a>？
-                    或是<a href="{{ url_for('user.create_member') }}" style="color: blue;" href="">新增出隊用資料</a>。
-
-                    <!-- Modal -->
-                    <div class="modal fade" id="ModalMemberConnection" tabindex="-1" role="dialog"
-                      aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                      <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                          <form action="{{ url_for('user.connect_member') }}" method="POST">
-                            <div class="modal-body">
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                              </button>
-                              <h3 class="text-center">查詢與匯入出隊用資料</h3>
-                              <p class="text-center">請填寫身份證字號</p>
-                              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                              <div class="col-md-12">
-                                <br><br>
-                                <div class="form-group">
-                                  <input required type="text" class="form-control" name="security_number"
-                                    placeholder="首字母大寫，共10碼">
-                                </div>
-                                <br>
-                              </div>
-                            </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                              <button type="submit" class="btn btn-primary">送出</button>
-                            </div>
-                          </form>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- end modal -->
-
-                  </span>
-                  {% else %}
-                  <div style="display: -webkit-inline-box; float:right;">
-                    <a href="{{ url_for('member.update', member_id=user.member_id) }}" type="button"
-                      class="btn btn-default btn-sm">編輯我的出隊用資料</a>&nbsp;&nbsp;&nbsp;
-                  </div>
-                  {{ member }}
-                  {% endif %}
-                </div>
-              </div>
-            </div>
-            {% endif %}
           </div>
         </div>
-        {% endif %}
       </div>
     </div>
   </div>
