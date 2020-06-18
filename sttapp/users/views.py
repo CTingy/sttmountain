@@ -9,6 +9,7 @@ from .models import SttUser
 from sttapp.base.enums import FlashCategory, Position, Group, Level, Identity
 from sttapp.auth.forms import PostSignupForm
 from sttapp.members.models import CHOICES, Member
+from .models import MyHistory
 
 
 bp = Blueprint('user', __name__, url_prefix="/user")
@@ -103,14 +104,22 @@ def create_member():
 def connect_member():
 
     security_number = request.form.get("security_number").strip()
+    cellphone_number = request.form.get("cellphone_number").strip()
     if not re.match("[A-Z][0-9]{9}", security_number):
         flash("身份證字號輸入格式錯誤，請再試一次", FlashCategory.ERROR)
         return redirect(url_for("user.detail", user_id=current_user.id))
     try:
         member = Member.objects.get(security_number=security_number)
     except Member.DoesNotExist:
-        flash("找不到此身份證字號的出隊資料，請重新建立一個", FlashCategory.WARNING)
+        flash("找不到此身份證字號，請新建立一個", FlashCategory.WARNING)
         return redirect(url_for("user.create_member"))
+    else:
+        if member.cellphone_number != cellphone_number:
+            flash("身份證字號與手機號碼不相符，請檢查是否輸入錯誤後再操作一次", FlashCategory.ERROR)
+            return redirect(url_for("user.detail", user_id=current_user.id))
+        if member.user_id:
+            flash("已經有人連結此身份證字號&手機的出隊資料了，請聯絡系統管理員", FlashCategory.ERROR)
+            return redirect(url_for("user.detail", user_id=current_user.id))
     
     Member.objects(security_number=security_number).update_one(
         updated_at=datetime.datetime.utcnow(),
@@ -124,3 +133,23 @@ def connect_member():
     )
     flash("連結出隊用資料完成！", FlashCategory.SUCCESS)
     return redirect(url_for("user.detail", user_id=current_user.id))
+
+
+@bp.route('/my_history/create/', methods=["POST"])
+@login_required
+def create_my_history():
+
+    form = request.form
+    h.save()
+
+
+
+
+# @bp.route('/my_history/update/', methods=["POST"])
+# @login_required
+# def update_my_history():
+
+
+# @bp.route('/my_history/delete/', methods=["POST"])
+# @login_required
+# def delete_my_history():

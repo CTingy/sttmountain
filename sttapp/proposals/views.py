@@ -101,11 +101,12 @@ def update(prop_id):
 
     if current_user.id != ori_prop.created_by.id:
         flash("僅隊伍企劃創建者可編輯", FlashCategory.WARNING)
-        return redirect(url_for('proposal.proposals'))
+        return redirect(url_for('proposal.detail', prop_id=prop_id))
 
-    if ori_prop.start_date.date() < get_local_dt(datetime.datetime.utcnow()).date():
-        flash("已上山之隊伍企劃不可編輯", FlashCategory.WARNING)
-        return redirect(url_for('proposal.proposals'))
+    if ori_prop.event_id and Event.objects.filter(
+        id=ori_prop.event_id, status__in=("BACK", "CANCEL")):
+        flash("已下山或倒隊之隊伍企劃不可編輯", FlashCategory.WARNING)
+        return redirect(url_for('proposal.detail', prop_id=prop_id))
 
     if request.method == "GET":
         return render_template("proposals/basic_form.html", prop=ori_prop,

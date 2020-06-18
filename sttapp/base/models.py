@@ -19,6 +19,10 @@ class RecordModel(db.Document):
         tz_dt = get_local_dt(dt)
         return tz_dt.strftime("%Y/%m/%d %H:%M")
 
+    def _d_to_str(self, dt):
+        # 不可進行時區轉換
+        return dt.strftime("%Y/%m/%d")
+
     @property
     def created_at_str(self):
         return self._dt_to_str(self.created_at)

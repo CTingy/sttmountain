@@ -57,7 +57,7 @@
                     <li><span>信箱：</span>{{ user.email }}</li>
                     <li><span>系級：</span>{{ user.department or "" }}{{ user.graduation_year or "" }}</li>
                     {% if user.group %}<li><span>嚮導隊：</span>{{ user.get_group_display() }}</li>{% endif %}
-                    <li><span>狀態：</span>{{ user.get_identity_display() }}</li>
+                    <li><span>在校狀態：</span>{{ user.get_identity_display() }}</li>
                     {% if user.position %}
                     <li><span>工作組：</span>{{ user.get_position_display() }}</li>{% endif %}
                     {% if user.level %}<li><span>級數：</span>{{ user.get_level_display() }}</li>{% endif %}
@@ -114,13 +114,16 @@
                                 <span aria-hidden="true">&times;</span>
                               </button>
                               <h3 class="text-center">查詢與匯入出隊用資料</h3>
-                              <p class="text-center">請填寫身份證字號</p>
+                              <p class="text-center">請填寫身份證字號與手機號碼</p>
                               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                               <div class="col-md-12">
                                 <br><br>
                                 <div class="form-group">
                                   <input required type="text" class="form-control" name="security_number"
-                                    placeholder="首字母大寫，共10碼">
+                                    placeholder="身份證字號：首字母大寫，共10碼">
+                                  <br>
+                                  <input required type="text" class="form-control" name="cellphone_number""
+                                    placeholder=" 手機號碼：09開頭數字共10碼">
                                 </div>
                                 <br>
                               </div>
@@ -142,26 +145,32 @@
                         class="btn btn-default btn-sm">編輯我的出隊用資料</a>&nbsp;&nbsp;&nbsp;
                     </div>
                     <p class="text-center">此區資料與個人資料並未連動，若以下資訊有誤請修改</p>
-                    <hr>
+
                     <div class="col-sm-4 col-xs-6">
-                      <br>
+                      <hr>
                       <p>基本資料</p>
                       <li><span>姓名：</span>{{ member.name }}</li>
                       <li><span>網站顯示名稱：</span>{{ member.nickname }}</li>
                       <li><span>身份證字號：</span>{{ member.security_number }}</li>
                       <li><span>生日：</span>{{ member.birthday_str }}</li>
                       <li><span>手機：</span>{{ member.cellphone_number }}</li>
+                      <hr>
+                      <p>系統資料</p>
+                      <li><span>建立者：</span>{{ member.created_by.username }}</li>
+                      <li><span>建立時間：</span>{{ member.created_at_str }}</li>
+                      <li><span>最後修改：</span>{{ member.updated_at_str }}</li>
+                      <li><span>最後修改人：</span>{{ member.updated_by.username }}</li>
                       <br>
                     </div>
                     <div class="col-sm-4 col-xs-6">
-                      <br>
+                      <hr>
                       <p>學校資料</p>
-                      <li><span>學號：</span>{{ member.student_id or "校外或OB不填寫" }}</li>
+                      <li><span>學號：</span>{{ member.student_id or "(校外或OB不用填寫)" }}</li>
                       <li><span>系所與年級：</span>{{ member.department_and_grade }}</li>
                       <br>
                     </div>
                     <div class="col-sm-4 col-xs-6">
-                      <br>
+                      <hr>
                       <p>山協資料</p>
                       <li><span>等級：</span>{{ member.get_level_display() }}</li>
                       <li><span>嚮導隊：</span>{{ member.get_group_display() }}</li>
@@ -170,14 +179,14 @@
                       <br>
                     </div>
                     <div class="col-sm-4 col-xs-6">
-                      <br>
+                      <hr>
                       <p>醫藥相關</p>
                       <li><span>藥物過敏：</span>{{ member.drug_allergy }}</li>
                       <li><span>血型：</span>{{ member.blood_type }}</li>
                       <br>
                     </div>
                     <div class="col-sm-4 col-xs-6">
-                      <br>
+                      <hr>
                       <p>緊急聯絡人</p>
                       <li><span>聯絡人姓名：</span>{{ member.emergency_contact }}</li>
                       <li><span>聯絡人關係：</span>{{ member.emergency_contact_relationship }}</li>
@@ -194,7 +203,11 @@
               <div class="media">
                 <div class="media-body">
                   <div class="table-responsive">
-                    <p>這只是個示意圖，詳細功能即將上線～</p>
+                    {% if not user.my_history_ids %}
+                    <br>
+                    <p class="text-center">目前尚無出隊資料，請新增</p><br>
+                    {% else %}
+                    <p>出隊紀錄，與站內出隊文資料並未直接連動，可自行新增與修改</p>
                     <table class="table table-hover">
                       <thead>
                         <tr>
@@ -209,16 +222,16 @@
                         </tr>
                       </thead>
                       <tbody>
+                        {% for h in user.my_history_ids %}
                         <tr>
-                          <td>1</td>
-                          <td>2020/3/9~2020/3/24</td>
-                          <td>15</td>
-                          <td>泡個丹大東稜伊巴厚</td>
-                          <td>探勘</td>
-                          <td>A</td>
-                          <td><a type="button" class="btn btn-default btn-round-full"
-                              href="https://www.ptt.cc/bbs/sttmountain/M.1585704435.A.3AF.html" target="_blank"><i
-                                class="tf-attachment"></i></a>
+                          <td>{{ h.order }}</td>
+                          <td>{{ h.start_date_str }}~{{ h.end_date_str }}</td>
+                          <td>{{ h.days }}天</td>
+                          <td>{{ h.title }}</td>
+                          <td>{{ h.event_type }}</td>
+                          <td>{{ h.difficulty }}</td>
+                          <td><a type="button" class="btn btn-default btn-round-full" href="{{ h.link }}"
+                              target="_blank"><i class="tf-attachment"></i></a>
                           </td>
                           <td>
                             <div class="btn-group" role="group">
@@ -229,48 +242,10 @@
                             </div>
                           </td>
                         </tr>
-                        <tr>
-                          <td>2</td>
-                          <td>2020/3/27~2020/4/7</td>
-                          <td>11</td>
-                          <td>西內本鹿</td>
-                          <td>探勘</td>
-                          <td>A</td>
-                          <td><a type="button" class="btn btn-default btn-round-full"
-                              href="https://www.ptt.cc/bbs/sttmountain/M.1585704435.A.3AF.html" target="_blank"><i
-                                class="tf-attachment"></i></a>
-                          </td>
-                          <td>
-                            <div class="btn-group" role="group">
-                              <button type="button" class="btn btn-default"><i class="tf-pencil2"
-                                  aria-hidden="true"></i></button>
-                              <button type="button" class="btn btn-default"><i class="tf-ion-close"
-                                  aria-hidden="true"></i></button>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>3</td>
-                          <td>2020/1/1~2020/1/5</td>
-                          <td>5</td>
-                          <td>金崙溪嘔吐隊</td>
-                          <td>逸樂</td>
-                          <td>C</td>
-                          <td><a type="button" class="btn btn-default btn-round-full"
-                              href="https://www.ptt.cc/bbs/sttmountain/M.1585704435.A.3AF.html" target="_blank"><i
-                                class="tf-attachment"></i></a>
-                          </td>
-                          <td>
-                            <div class="btn-group" role="group">
-                              <button type="button" class="btn btn-default"><i class="tf-pencil2"
-                                  aria-hidden="true"></i></button>
-                              <button type="button" class="btn btn-default"><i class="tf-ion-close"
-                                  aria-hidden="true"></i></button>
-                            </div>
-                          </td>
-                        </tr>
+                        {% endfor %}
                       </tbody>
                     </table>
+                    {% endif %}
                   </div>
                 </div>
               </div>

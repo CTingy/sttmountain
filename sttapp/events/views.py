@@ -118,6 +118,7 @@ def update_as_back(event_id):
             inputted_itinerary_list.append(itinerary)
     
     #TODO: 確認為狀態由"出隊"變為"已下山"時，匯出到member的歷史中，這個應該要放到job裡面
+    #TODO: 還要再加個加到我的頁面裡
     if event.status == EventStatus.get_map()[EventStatus.NORM]:
         for a in Proposal.objects.get(id=event.proposal.id).attendees:
             event_ids = a.event_ids

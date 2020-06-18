@@ -5,7 +5,7 @@ from flask_login import UserMixin
 
 from sttapp.db import db
 from sttapp.login import login_manager
-from sttapp.base.enums import Group, Position, Level, Identity
+from sttapp.base.enums import Group, Position, Level, Identity, Difficulty
 from sttapp.base.models import RecordModel
 
 
@@ -15,6 +15,42 @@ class InvitationInfo(db.EmbeddedDocument):
     invited_at = db.DateTimeField()
     email = db.EmailField()
     token = db.StringField()
+
+
+class MyHistory(RecordModel):
+    
+    order = db.IntField()
+    title = db.StringField()
+    start_date = db.DateTimeField()
+    end_date = db.DateTimeField()
+    days = db.IntField()
+    event_type = db.StringField()
+    link = db.URLField()
+
+    meta = {'ordering': ['order']}
+
+    @property
+    def start_date_str(self):
+        if self.start_date:
+            return super()._d_to_str(self.start_date)
+        return ""
+
+    @property
+    def end_date_str(self):
+        if self.end_date:
+            return super()._d_to_str(self.end_date)
+        return ""
+
+    @property
+    def difficulty(self):
+        if self.days <= 3:
+            return Difficulty.LEVEL_D
+        if self.days <= 5:
+            return Difficulty.LEVEL_C
+        if self.days <= 8:
+            return Difficulty.LEVEL_B
+        else:
+            return Difficulty.LEVEL_A
 
 
 class User(UserMixin, RecordModel):
@@ -49,12 +85,11 @@ class SttUser(User):
     level = db.StringField(choices=Level.get_choices())  # 新生、隊員、幹部等
     member_id = db.ObjectIdField()
     identity = db.StringField(choices=Identity.get_choices())  # 在校狀態
-    # experiences_list =
-    # stt_experiences_list =
 
     # 系統紀錄
     updated_at = db.DateTimeField()
     invitation_info = db.EmbeddedDocumentField(InvitationInfo)
+    my_history_ids = db.ListField(db.ObjectIdField(), default=list)
 
     @property
     def birthday_str(self):

@@ -227,7 +227,7 @@ def signup():
             session.pop("invitation_token", None)
 
             flash("恭喜註冊完成，已登入", FlashCategory.SUCCESS)
-            flash('重要提醒：若您為在校生，請盡速填寫出隊資訊以利領隊開隊', FlashCategory.WARNING)
+            flash('重要提醒：若您為在校生，請盡速至個人頁面的"出隊用資料"填寫/匯入出隊資訊，以利領隊開隊', FlashCategory.WARNING)
             login_user(user, remember=True,
                        duration=datetime.timedelta(days=Expiration.remember_cookie_duration_days))
             SttUser.objects(id=user.id).update_one(
@@ -262,7 +262,7 @@ def login():
             #     return redirect('/')
 
             if not user.member_id and user.identity == Identity.get_map()[Identity.IN_NCKU]:
-                flash("您尚未連結/建立出隊用資料，請盡速至個人頁面操作，以利領隊開隊", FlashCategory.WARNING)
+                flash('您尚未連結/建立出隊用資料，請盡速至個人頁面的"出隊用資料"操作，以利領隊開隊', FlashCategory.WARNING)
 
             flash('登入成功！歡迎光臨', FlashCategory.SUCCESS)
             return redirect(next_ or url_for("user.detail", user_id=user.id))

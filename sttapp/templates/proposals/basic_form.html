@@ -17,12 +17,12 @@
     <div class="row">
       <div class="col-md-10 col-md-offset-1">
         <div class="block text-center">
-          <a class="logo" href="{{ url_for('proposal.proposals') }}">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="">
-          </a>
           <form class="text-left clearfix"
             action="{% if for_updating %}{{ url_for('proposal.update', prop_id=prop.id) }}{% else %}{{ url_for('proposal.create') }}{% endif %}"
             method="post">
+            <h2 class="text-center"><a style="color: darkcyan;" href="{{ url_for('proposal.proposals') }}">開隊企劃書總覽</a>
+            </h2>
+            <hr>
             {% include 'alerts.html' %}
             <h4 class="text-center">
               {% if not for_updating %}
