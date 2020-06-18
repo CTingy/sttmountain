@@ -7,7 +7,7 @@
 <div class="post">
   {% set prop = event.proposal %}
   <a href="{{ url_for('event.detail', event_id=event.id) }}">
-    <h2 class="post-title">[{{ event.get_status_display() }}]&nbsp;{{ prop.title }}</h2>
+    <h2 class="post-title">[{{ event.get_status_display() }}]&nbsp;{{ event.title }}</h2>
   </a>
   <div class="post-meta">
     <ul>

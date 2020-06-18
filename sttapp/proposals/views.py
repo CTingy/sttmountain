@@ -156,6 +156,7 @@ def update(prop_id):
 
         prop.itinerary_list = itinerary_list
         prop.save()
+
         flash("修改成功，請檢查", FlashCategory.SUCCESS)
         return redirect(url_for('proposal.{}'.format(
                 "update_itinerary" if update_itinerary else "detail"), prop_id=prop_id))

@@ -119,6 +119,7 @@ def update_as_back(event_id):
     Event.objects(id=event_id).update_one(
         status=EventStatus.get_map()[EventStatus.BACK],
         real_itinerary_list=inputted_itinerary_list,
+        real_title=form.get("real_title") or None,  # None 為沿用舊名: proposal.title
         feedback=form.get("feedback"),
         updated_by=current_user.id,
         updated_at=datetime.datetime.utcnow()
@@ -197,7 +198,9 @@ def search():
         return redirect("/")
     event_ids = []
     for kw in kw.split(" "):
-        event_ids.extend([e.id for e in Event.objects(feedback__contains=kw)])
+        event_ids.extend([e.id for e in Event.objects.filter(
+            Q(feedback__contains=kw) | Q(real_title__contains=kw))
+        ])
         event_ids.extend([p.event_id for p in Proposal.objects(title__contains=kw)])
 
     return render_template(

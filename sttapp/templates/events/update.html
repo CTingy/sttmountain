@@ -8,16 +8,21 @@
         <div class="block text-center">
           <form class="text-left clearfix" action="" method="POST">
             <h3 class="text-center">RE出隊文：<a href="{{ url_for('event.detail', event_id=event.id) }}"><u
-                  style="color: blue;">{{ event.proposal.title }}</u></a></h3>
+                  style="color: blue;">{{ event.title }}</u></a></h3>
             <br>
             {% include 'alerts.html' %}
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <input id="itinerary_num" type="hidden" name="itinerary_len" value="{{ max_day }}">
             <div class="form-check text-center">
+              <div class="col-md-12">
+                <label class="col-form-label">新的隊伍名：(若留白則使用舊名)</label>
+                <input type="text" name="real_title" value="{{ event.real_title or '' }}" class="form-control content"
+                  placeholder="想取個新的名稱的話再寫"><br>
+              </div>
               <input {% if event.itinerary_same_check %}checked{% endif %} class="form-check-input" name="same_check"
                 type="checkbox" value="y" id="defaultCheck1" onchange="lockItinerary(this)">
               <label class="form-check-label" for="defaultCheck1">
-                實際行程同預定行程
+                實際行程同預定行程，如果一樣，一定要打勾！
               </label>
             </div>
             <div id="unit">

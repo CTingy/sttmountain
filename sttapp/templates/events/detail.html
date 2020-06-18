@@ -28,7 +28,7 @@
           <div class="post-media post-thumb">
             {% if event.img_url %}
             <a href="#">
-              <img src="{{ event.img_url }}" alt="{{ prop.title }}">
+              <img src="{{ event.img_url }}" alt="{{ event.title }}">
             </a>
             {% endif %}
           </div>
@@ -67,7 +67,7 @@
             <!-- end Modal -->
           </div>
           {% endif %}
-          <h2>[{{ event.get_status_display() }}]&nbsp;{{ prop.title }}&nbsp;&nbsp;
+          <h2>[{{ event.get_status_display() }}]&nbsp;{{ event.title }}&nbsp;&nbsp;
             {% if current_user.id == event.created_by.id and event.status == "NORM" %}
             <a href="{{ url_for('event.update_as_back', event_id=event.id) }}" title="回報下山或徹退" type="button"
               class="btn btn-primary btn-round-full"><i

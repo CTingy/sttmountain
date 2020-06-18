@@ -25,6 +25,10 @@
           <h1 class="page-name">
             {% block page_name %}
             {% endblock %}
+            <ol class="breadcrumb">
+              <li><a href="{{ url_for('user.detail', user_id=current_user.id) }}">個人頁面</a></li>
+              <li class="active">發文紀錄</li>
+            </ol>
           </h1>
         </div>
       </div>
