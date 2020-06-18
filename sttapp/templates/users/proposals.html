@@ -3,6 +3,7 @@
 我的企劃書
 {% endblock%}
 {% block sub_content %}
+{% if not events %}您尚未使用開隊功能、尚未新增任何企劃書{% endif %}
 {% for prop in proposals %}
 
 <div class="post">

@@ -106,7 +106,8 @@
                 <i class="tf-ion-ios-calendar"></i> {{ event.created_at_str }}
               </li>
               <li>
-                <i class="tf-ion-android-person"></i> {{ event.created_by.username }}
+                <i class="tf-ion-android-person"></i> <b><a style="color: cadetblue;"
+                    href="{{ url_for('user.detail', user_id=prop.created_by.id ) }}">{{ prop.created_by.username }}</a></b>
               </li>
               <li>
                 <i class="tf-ion-edit"></i> {{ event.updated_at_str }}
@@ -149,7 +150,15 @@
                 <p>
                   領隊:&nbsp;{{ prop.leader.display_name }}&nbsp;&nbsp;&nbsp;&nbsp;嚮導:&nbsp;{{ prop.guide.display_name }}
                 </p>
-                <p>{% for a in prop.attendees %}{{ a.attendee_display }}、{% endfor %}</p>
+                <p>
+                  {% for a in prop.attendees %}
+                  {% if a.user_id %}<b><a style="color: cadetblue;"
+                      href="{{ url_for('user.detail', user_id=a.user_id ) }}">{{ a.attendee_display }}</a></b>
+                  {% else %}
+                  {{ a.attendee_display }}
+                  {% endif %}
+                  、{% endfor %}
+                </p>
               </div>
             </div>
             <div class="row">

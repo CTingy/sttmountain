@@ -3,6 +3,7 @@
 我的出隊文
 {% endblock%}
 {% block sub_content %}
+{% if not events %}您尚未發佈任何出隊文{% endif %}
 {% for event in events %}
 <div class="post">
   {% set prop = event.proposal %}

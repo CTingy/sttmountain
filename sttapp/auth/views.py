@@ -9,7 +9,7 @@ from flask_login import login_user, current_user, login_required, logout_user
 # from mongoengine.queryset.visitor import Q
 
 from sttapp.users.models import SttUser, InvitationInfo
-from sttapp.base.enums import FlashCategory
+from sttapp.base.enums import FlashCategory, Identity
 from .forms import SttSignupForm, InvitationForm, LoginForm, PostSignupForm
 from .services.mail import send_mail
 from .services.google import get_request_uri, callback, google_signup_action, google_login_action
@@ -260,6 +260,9 @@ def login():
             next_ = request.args.get('next')
             # if not is_safe_url(next_):
             #     return redirect('/')
+
+            if not user.member_id and user.identity == Identity.get_map()[Identity.IN_NCKU]:
+                flash("您尚未連結/建立出隊用資料，請盡速至個人頁面操作，以利領隊開隊", FlashCategory.WARNING)
 
             flash('登入成功！歡迎光臨', FlashCategory.SUCCESS)
             return redirect(next_ or url_for("user.detail", user_id=user.id))
