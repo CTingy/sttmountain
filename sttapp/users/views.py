@@ -1,4 +1,5 @@
 import datetime
+import re
 
 from flask import flash, Blueprint, session, request, url_for, render_template, redirect, current_app
 from flask_login import login_user, current_user, login_required
@@ -97,10 +98,14 @@ def create_member():
                             for_updating=False, errors=None, choices=CHOICES)
 
 
-@bp.route('/connect_member/<string:security_number>/', methods=["POST"])
+@bp.route('/connect_member/', methods=["POST"])
 @login_required
-def connect_member(security_number):
+def connect_member():
 
+    security_number = request.form.get("security_number").strip()
+    if not re.match("[A-Z][0-9]{9}", security_number):
+        flash("身份證字號輸入格式錯誤，請再試一次", FlashCategory.ERROR)
+        return redirect(url_for("user.detail", user_id=current_user.id))
     try:
         member = Member.objects.get(security_number=security_number)
     except Member.DoesNotExist:
@@ -112,7 +117,7 @@ def connect_member(security_number):
         updated_by=current_user.id,
         user_id=current_user.id
     )
-    SttUser.objects(security_number=security_number).update_one(
+    SttUser.objects(id=current_user.id).update_one(
         updated_at=datetime.datetime.utcnow(),
         updated_by=current_user.id,
         member_id=member.id

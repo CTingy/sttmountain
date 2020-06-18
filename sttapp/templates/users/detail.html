@@ -74,10 +74,10 @@
                 </div>
               </div>
             </div>
+            {% if current_user.id == user.id %}
             <div id="advanced" class="tab-pane fade dashboard-user-profile dashboard-wrapper">
               <div class="media">
                 <div class="media-body">
-                  {% if current_user.id == user.id %}
                   <ul class="user-profile-list">
                     <div style="display: -webkit-inline-box; float:right;">
                       <a href="{{ url_for('user.update') }}" type="button"
@@ -91,11 +91,11 @@
                     <li><span>註冊時間：</span>{{ user.created_at_str }}</li>
                     <li><span>註冊邀請人：</span>{{ invited_by }}</li>
                   </ul>
-                  {% endif %}
                   <br>
                 </div>
               </div>
             </div>
+            {% endif %}
             <div id="experience" class="tab-pane fade dashboard-user-profile dashboard-wrapper">
               <div class="media">
                 <div class="media-body">
@@ -181,12 +181,47 @@
                 </div>
               </div>
             </div>
+            {% if current_user.id == user.id %}
             <div id="member" class="tab-pane fade dashboard-user-profile dashboard-wrapper">
               <div class="media">
                 <div class="media-body">
                   {% if not user.member_id %}
-                  <span>尚未連結站內出隊用資料，是否<a style="color: blue;" href="">查詢並匯入</a>？
+                  <span>尚未連結站內出隊用資料，是否<a style="color: blue;" data-toggle="modal" href=""
+                      data-target="#ModalMemberConnection">查詢並匯入</a>？
                     或是<a href="{{ url_for('user.create_member') }}" style="color: blue;" href="">新增出隊用資料</a>。
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="ModalMemberConnection" tabindex="-1" role="dialog"
+                      aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                          <form action="{{ url_for('user.connect_member') }}" method="POST">
+                            <div class="modal-body">
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                              <h3 class="text-center">查詢與匯入出隊用資料</h3>
+                              <p class="text-center">請填寫身份證字號</p>
+                              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                              <div class="col-md-12">
+                                <br><br>
+                                <div class="form-group">
+                                  <input required type="text" class="form-control" name="security_number"
+                                    placeholder="首字母大寫，共10碼">
+                                </div>
+                                <br>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                              <button type="submit" class="btn btn-primary">送出</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- end modal -->
+
                   </span>
                   {% else %}
                   <div style="display: -webkit-inline-box; float:right;">
@@ -198,6 +233,7 @@
                 </div>
               </div>
             </div>
+            {% endif %}
           </div>
         </div>
         {% endif %}

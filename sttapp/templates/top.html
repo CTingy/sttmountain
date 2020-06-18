@@ -60,9 +60,11 @@
               <li><a href="#">
                   <h5><i class="tf-ion-paper-airplane"></i>&nbsp&nbsp發文紀錄</h5>
                 </a></li>
-              <li><a href="{{ url_for('user.detail', user_id=current_user.id) }}">
+              {% if current_user.member_id %}
+              <li><a href="{{ url_for('member.update', member_id=current_user.member_id) }}">
                   <h5><i class="tf-ion-earth"></i>&nbsp&nbsp出隊用資料</h5>
                 </a></li>
+              {% endif %}
               <li><a href="{{ url_for('user.update') }}">
                   <h5><i class="tf-ion-paintbrush"></i>&nbsp&nbsp帳號管理</h5>
                 </a></li>
