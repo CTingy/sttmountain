@@ -65,6 +65,10 @@ class User(UserMixin, RecordModel):
 
     meta = {'abstract': True, }
 
+    @property
+    def last_login_at_str(self):
+        return super()._dt_to_str(self.last_login_at)
+
 
 class SttUser(User):
 

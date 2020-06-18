@@ -62,7 +62,7 @@
                 </a></li>
               {% if current_user.member_id %}
               <li><a href="{{ url_for('event.member_history', member_id=current_user.member_id) }}">
-                  <h5><i class="tf-ion-earth"></i>&nbsp&nbsp出隊文紀錄</h5>
+                  <h5><i class="tf-ion-earth"></i>&nbsp&nbsp出隊紀錄</h5>
                 </a></li>
               {% endif %}
               <li><a href="{{ url_for('user.update') }}">

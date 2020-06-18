@@ -54,7 +54,7 @@
                     </div>
                     {% endif %}
                     <li><span>綽號：</span>{{ user.username }}</li>
-                    <li><span>信箱：</span>{{ user.email }}</li>
+                    <li><span>註冊信箱：</span>{{ user.email }}</li>
                     <li><span>系級：</span>{{ user.department or "" }}{{ user.graduation_year or "" }}</li>
                     {% if user.group %}<li><span>嚮導隊：</span>{{ user.get_group_display() }}</li>{% endif %}
                     <li><span>在校狀態：</span>{{ user.get_identity_display() }}</li>
@@ -83,13 +83,25 @@
                       <a href="{{ url_for('user.update') }}" type="button"
                         class="btn btn-default btn-sm">編輯進階資料</a>&nbsp;&nbsp;&nbsp;
                     </div>
-                    <p class="text-center" style="font-size: 18px;">隱藏資料</p>
-                    <li><span>姓名：</span>{{ user.name or "" }}</li>
-                    <li><span>生日：</span>{{ user.birthday_str }}</li>
-                    <li><span>手機：</span>{{ user.cellphone_number or "" }}</li>
-                    <li><span>登入方式：</span>{{ user.social_login_with or "山協網站" }}</li>
-                    <li><span>註冊時間：</span>{{ user.created_at_str }}</li>
-                    <li><span>註冊邀請人：</span>{{ invited_by }}</li>
+                    <p class="text-center">此區為隱藏資料，僅所有者可見</p>
+                    <hr>
+                    <div class="col-sm-6 col-xs-6">
+                      <p>進階資料</p>
+                      <li><span>姓名：</span>{{ user.name or "" }}</li>
+                      <li><span>生日：</span>{{ user.birthday_str }}</li>
+                      <li><span>手機：</span>{{ user.cellphone_number or "" }}</li>
+                      <li><span>登入方式：</span>{{ user.social_login_with or "山協網站" }}</li>
+                      <li><span>最近登入：</span>{{ user.last_login_at_str }}</li>
+                      <br>
+                    </div>
+                    <div class="col-sm-6 col-xs-6">
+                      <p>註冊資料</p>
+                      <li><span>註冊時間：</span>{{ user.created_at_str }}</li>
+                      <li><span>註冊邀請人：</span>{{ invited_by }}</li>
+                      <li><span>加入信箱：</span>{{ user.invitation_info.email }}</li>
+                      <li><span>最後修改：</span>{{ user.updated_at_str }}</li>
+                      <br>
+                    </div>
                   </ul>
                   <br>
                 </div>
@@ -145,7 +157,6 @@
                         class="btn btn-default btn-sm">編輯我的出隊用資料</a>&nbsp;&nbsp;&nbsp;
                     </div>
                     <p class="text-center">此區資料與個人資料並未連動，若以下資訊有誤請修改</p>
-
                     <div class="col-sm-4 col-xs-6">
                       <hr>
                       <p>基本資料</p>
