@@ -162,6 +162,7 @@ def google_callback():
 def post_signup():
 
     form = PostSignupForm(request.form)
+    form.username.data = current_user.username
 
     if request.method == "POST":
         if form.validate_on_submit():

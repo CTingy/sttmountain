@@ -19,7 +19,6 @@
     </div>
   </div>
 </section>
-{% include 'alerts.html' %}
 <section class="user-dashboard page-wrapper">
   <div class="container">
     <div class="row">
@@ -27,6 +26,7 @@
         {% if not current_user.is_authenticated %}
         <p>您無權瀏覽此頁面</p>
         {% else %}
+        {% include 'alerts.html' %}
         <div class="tabCommon mt-20">
           <ul class="nav nav-tabs justify-content-center list-inline dashboard-menu">
             <li class="active"><a data-toggle="tab" href="#basic" aria-expanded="true">基本資料</a></li>
@@ -62,16 +62,15 @@
                     <li><span>工作組：</span>{{ user.get_position_display() }}</li>{% endif %}
                     {% if user.level %}<li><span>級數：</span>{{ user.get_level_display() }}</li>{% endif %}
                     <br>
-                    <div>
+                    <!-- <div>
                       {% if user.id == current_user.id %}
                       <div style="display: -webkit-inline-box; float:right;">
                         <button class="btn btn-default btn-sm">編輯自我介紹</button>&nbsp;&nbsp;&nbsp;
                       </div>
                       {% endif %}
-                      <p style="white-space: pre-wrap;">{{ user.introduction or "" }}</p>
-                    </div>
+                      <p style="white-space: pre-wrap;">{{ user.introduction or "" }}</p><br>
+                    </div> -->
                   </ul>
-                  <br>
                 </div>
               </div>
             </div>
@@ -84,11 +83,12 @@
                       <a href="{{ url_for('user.update') }}" type="button"
                         class="btn btn-default btn-sm">編輯進階資料</a>&nbsp;&nbsp;&nbsp;
                     </div>
-                    <p>隱藏資料</p>
+                    <p class="text-center" style="font-size: 18px;">隱藏資料</p>
                     <li><span>姓名：</span>{{ user.name or "" }}</li>
                     <li><span>生日：</span>{{ user.birthday_str }}</li>
                     <li><span>手機：</span>{{ user.cellphone_number or "" }}</li>
                     <li><span>登入方式：</span>{{ user.social_login_with or "山協網站" }}</li>
+                    <li><span>註冊時間：</span>{{ user.created_at_str }}</li>
                     <li><span>註冊邀請人：</span>{{ invited_by }}</li>
                   </ul>
                   {% endif %}

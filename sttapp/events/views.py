@@ -42,7 +42,7 @@ def create(prop_id):
         dt = datetime.datetime.strptime(request.form.get("gathering_time"), "%Y/%m/%d %H:%M")
     except ValueError:
         flash("集合時間格式錯誤，需為: YYYY/MM/DD hh:mm", FlashCategory.ERROR)
-        return redirect(url_for('proposal.proposals'))
+        return redirect(url_for('proposal.detail', prop_id=prop_id))
     else:
         if dt > prop.start_date + datetime.timedelta(days=1):
             flash("集合時間{}比上山日期({})晚，請重新填寫集合時間".format(
@@ -80,7 +80,7 @@ def cancel(event_id):
 
     if current_user.id != event.created_by.id:
         flash("只有出隊文創建者可以標注倒隊", FlashCategory.ERROR)
-        redirect(url_for("event.detail", event_id=event_id))
+        return redirect(url_for("event.detail", event_id=event_id))
     
     Event.objects(id=event_id).update_one(
         status=EventStatus.get_map()[EventStatus.CANCEL],
@@ -88,7 +88,7 @@ def cancel(event_id):
         updated_by=current_user.id
     )
     flash("已標注為倒隊", FlashCategory.SUCCESS)
-    return redirect(url_for("event.events"))
+    return redirect(url_for("event.detail", event_id=event_id))
 
 
 @bp.route('/update_as_back/<string:event_id>', methods=["GET", "POST"])
@@ -177,10 +177,10 @@ def delete(event_id):
     event = Event.objects.get_or_404(id=event_id)
     if event.created_by.id != current_user.id:
         flash("只有張貼者能夠刪除出隊文", FlashCategory.WARNING)
-        return redirect(url_for('event.events'))
+        return redirect(url_for('event.detail', event_id=event_id))
     if event.status in ("CANCEL", "BACK"):
         flash("不可刪除已回報下山/已標注撤退之出隊文", FlashCategory.WARNING)
-        return redirect(url_for('event.events'))
+        return redirect(url_for('event.detail', event_id=event_id))
     Proposal.objects(event_id=event.id).update_one(
         event_id=None, updated_at=datetime.datetime.utcnow(), updated_by=current_user.id)
     event.delete()
