@@ -33,7 +33,7 @@ class Proposal(RecordModel):
     satellite_telephone = db.StringField()
     attendees = db.ListField(db.ReferenceField('sttapp.members.models.Member'))
     open_time=db.StringField()
-    event = db.ReferenceField('sttapp.events.models.Event')
+    event_id = db.ObjectIdField()
 
     meta = {'ordering': ['-created_at']}
 

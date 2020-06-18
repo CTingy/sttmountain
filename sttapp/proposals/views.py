@@ -215,7 +215,7 @@ def update_itinerary(prop_id):
 def delete(prop_id):
     prop = Proposal.objects.get_or_404(id=prop_id)
 
-    if prop.event:
+    if prop.event_id:
         flash("已產生出隊文之隊伍企劃不可刪除", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
     if prop.created_by.id != current_user.id:

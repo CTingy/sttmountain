@@ -196,9 +196,10 @@ def search():
     if not kw:
         flash("請輸入搜尋關鍵字", FlashCategory.WARNING)
         return redirect("/")
-    events = []
+    event_ids = []
     for kw in kw.split(" "):
-        events.extend(Event.objects(feedback__contains=kw) or [])
-        events.extend([p.event for p in Proposal.objects(title__contains=kw)] or [])
+        event_ids.extend([e.id for e in Event.objects(feedback__contains=kw)])
+        event_ids.extend([p.event_id for p in Proposal.objects(title__contains=kw)])
 
-    return render_template('events/events.html', events=set(events), page_name="出隊文搜尋結果")
+    return render_template(
+        'events/events.html', events=Event.objects.filter(id__in=set(event_ids)), page_name="出隊文搜尋結果")
