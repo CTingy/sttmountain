@@ -40,7 +40,11 @@
 {% if member %}
 <h4>修改人員資料&nbsp;&nbsp;&nbsp;&nbsp;
   <button type="button" data-toggle="modal" data-target="#Modal" class="btn btn-danger inline"><i class="tf-ion-close"
-      aria-hidden="true"></i>&nbsp;&nbsp;刪除此筆</button></h4>
+      aria-hidden="true"></i>&nbsp;&nbsp;刪除此筆</button>
+  <a type="button" class="btn btn-primary inline" href="{{ url_for('event.member_history', member_id=member.id )}}">
+    檢視該員出隊資料
+  </a>
+</h4>
 <!-- Modal -->
 <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
   aria-hidden="true">

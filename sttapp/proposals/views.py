@@ -103,8 +103,8 @@ def update(prop_id):
         flash("僅隊伍企劃創建者可編輯", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
 
-    if ori_prop.start_date.date() <= get_local_dt(datetime.datetime.utcnow()).date():
-        flash("已開始之隊伍企劃不可編輯", FlashCategory.WARNING)
+    if ori_prop.start_date.date() < get_local_dt(datetime.datetime.utcnow()).date():
+        flash("已上山之隊伍企劃不可編輯", FlashCategory.WARNING)
         return redirect(url_for('proposal.proposals'))
 
     if request.method == "GET":

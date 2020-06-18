@@ -8,7 +8,9 @@
 <div class="post">
   {% set prop = event.proposal %}
   <a href="{{ url_for('event.detail', event_id=event.id) }}">
-    <h2 class="post-title">[{{ event.get_status_display() }}]&nbsp;{{ event.title }}</h2>
+    <h2 class="post-title">[{{ event.get_status_display() }}]&nbsp;{{ event.title }}&nbsp;
+      {% if prop.event_type %}({{ prop.difficulty }}{{ prop.get_event_type_display() }}){% endif %}
+    </h2>
   </a>
   <div class="post-meta">
     <ul>
@@ -35,10 +37,13 @@
         天數：{{ prop.days }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       </p>
       <p>
-        人員：
         {% for a in prop.attendees %}
-        {{ a.attendee_display }},&nbsp;
-        {% endfor %}
+        {% if a.user_id %}<b><a style="color: cadetblue;"
+            href="{{ url_for('user.detail', user_id=a.user_id ) }}">{{ a.attendee_display }}</a></b>
+        {% else %}
+        {{ a.attendee_display }}
+        {% endif %}
+        、{% endfor %}
       </p>
     </div>
   </div>

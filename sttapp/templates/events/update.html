@@ -20,7 +20,7 @@
                   placeholder="想取個新的名稱的話再寫"><br>
               </div>
               <input {% if event.itinerary_same_check %}checked{% endif %} class="form-check-input" name="same_check"
-                type="checkbox" value="y" id="defaultCheck1" onchange="lockItinerary(this)">
+                checked type="checkbox" value="y" id="defaultCheck1" onchange="lockItinerary(this)">
               <label class="form-check-label" for="defaultCheck1">
                 實際行程同預定行程，如果一樣，一定要打勾！
               </label>

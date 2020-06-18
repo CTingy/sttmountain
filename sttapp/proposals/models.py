@@ -112,6 +112,7 @@ class Proposal(RecordModel):
             "attendees": "成員", 
             "return_plan": "撤退計畫",
             "approach_way": "交通方式", 
+            "event_type": "隊伍類型", 
         }
         failed_fields = []
         for field, name in required_fields.items():

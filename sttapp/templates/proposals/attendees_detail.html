@@ -44,8 +44,12 @@
         <td class="text-center">{{ a.drug_allergy }}</td>
         <td class="text-center">{% if not a.is_adult %}V{% endif%}</td>
         <td class="text-center"></td>
-        <td class="text-center"><a href="{{ url_for('member.update', member_id=a.id) }}" title="修改該人員資料內容" type="button"
-            class="btn btn-default btn-round-full"><i class="tf-ion-edit" aria-hidden="true"></i></a></td>
+        <td class="text-center">
+          <a target="_blank" href="{{ url_for('event.member_history', member_id=a.id) }}" title="搜尋該人員出隊紀錄"
+            type="button" class="btn btn-default btn-round-full"><i class="tf-search3" aria-hidden="true"></i></a>
+          <a target="_blank" href="{{ url_for('member.update', member_id=a.id) }}" title="修改該人員資料內容" type="button"
+            class="btn btn-default btn-round-full"><i class="tf-ion-edit" aria-hidden="true"></i></a>
+        </td>
       </tr>
       {% endfor %}
     </tbody>

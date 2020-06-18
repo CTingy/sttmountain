@@ -44,6 +44,7 @@ class Member(RecordModel):
     emergency_contact_relationship = db.StringField()  # ex: 父子、母子
 
     user_id = db.ObjectIdField()
+    event_ids = db.ListField(db.ObjectIdField(), default=list)
 
     @property
     def display_name(self):

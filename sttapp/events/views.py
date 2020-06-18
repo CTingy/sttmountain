@@ -7,6 +7,7 @@ from mongoengine.errors import NotUniqueError
 
 from sttapp.base.enums import FlashCategory, EventStatus, Level, Gender
 from sttapp.proposals.models import Itinerary, Proposal
+from sttapp.members.models import Member
 from .models import Event
 
 
@@ -116,6 +117,17 @@ def update_as_back(event_id):
             )
             inputted_itinerary_list.append(itinerary)
     
+    #TODO: 確認為狀態由"出隊"變為"已下山"時，匯出到member的歷史中，這個應該要放到job裡面
+    if event.status == EventStatus.get_map()[EventStatus.NORM]:
+        for a in Proposal.objects.get(id=event.proposal.id).attendees:
+            event_ids = a.event_ids
+            event_ids.append(event_id)
+            Member.objects(id=a.id).update_one(
+                updated_at=datetime.datetime.utcnow(),
+                updated_by=current_user.id,
+                event_ids=event_ids
+            )
+    
     Event.objects(id=event_id).update_one(
         status=EventStatus.get_map()[EventStatus.BACK],
         real_itinerary_list=inputted_itinerary_list,
@@ -124,7 +136,8 @@ def update_as_back(event_id):
         updated_by=current_user.id,
         updated_at=datetime.datetime.utcnow()
     )
-    flash("已回報下山", FlashCategory.SUCCESS)
+
+    flash("已修改成功！", FlashCategory.SUCCESS)
     return redirect(url_for('event.detail', event_id=event_id))
 
 
@@ -213,3 +226,12 @@ def user_posts():
 
     events = Event.objects.filter(created_by=current_user.id)
     return render_template('users/events.html', events=events)
+
+
+@bp.route('/member_history/<string:member_id>/')
+@login_required
+def member_history(member_id):
+
+    member = Member.objects.get_or_404(id=member_id)
+    events = Event.objects.filter(id__in=member.event_ids)
+    return render_template('events/events.html', events=events, page_name=member.display_name+"的站內出隊紀錄")
