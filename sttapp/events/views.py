@@ -202,3 +202,11 @@ def search():
 
     return render_template(
         'events/events.html', events=Event.objects.filter(id__in=set(event_ids)), page_name="出隊文搜尋結果")
+
+
+@bp.route('/user_posts/')
+@login_required
+def user_posts():
+
+    events = Event.objects.filter(created_by=current_user.id)
+    return render_template('users/events.html', events=events)

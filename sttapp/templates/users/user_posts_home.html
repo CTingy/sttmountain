@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+<!-- Start Top Header Bar -->
+{% block top %}
+{% include "top.html" %}
+{% endblock %}
+
+<!-- Main Menu Section -->
+{% block menu %}
+{% include "menu.html" %}
+{% endblock %}
+
+{% block alerts %}
+<div class="container">
+
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="content">
+          <h1 class="page-name">
+            {% block page_name %}
+            {% endblock %}
+          </h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container">
+  {% include "alerts.html" %}
+</div>
+<div class="page-wrapper">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <aside class="sidebar">
+          <!-- Widget Category -->
+          <div class="widget widget-category">
+            <h4 class="widget-title">分類</h4>
+            <ul class="widget-category-list">
+              <li><a href="{{ url_for('event.user_posts') }}">出隊文</a>
+              </li>
+              <li><a href="{{ url_for('proposal.user_posts') }}">企劃書</a>
+              </li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+      <div class="col-md-9">
+        {% block sub_content %}
+        {% endblock %}
+        <!-- <div class="text-center">
+          <ul class="pagination post-pagination">
+            <li><a href="#">Prev</a>
+            </li>
+            <li class="active"><a href="#">1</a>
+            </li>
+            <li><a href="#">2</a>
+            </li>
+            <li><a href="#">3</a>
+            </li>
+            <li><a href="#">4</a>
+            </li>
+            <li><a href="#">5</a>
+            </li>
+            <li><a href="#">Next</a>
+            </li>
+          </ul>
+        </div> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+{% include "footer.html" %}
+{% endblock %}
+
+{% block script %}
+{% endblock %}

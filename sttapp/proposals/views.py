@@ -225,3 +225,11 @@ def delete(prop_id):
     prop.delete()
     flash("已經為您刪除隊伍企劃：{}".format(prop.title), FlashCategory.SUCCESS)
     return redirect(url_for("proposal.proposals"))
+
+
+@bp.route('/user_posts/')
+@login_required
+def user_posts():
+
+    proposals = Proposal.objects.filter(created_by=current_user.id)
+    return render_template('users/proposals.html', proposals=proposals)

@@ -1,0 +1,47 @@
+{% extends "users/user_posts_home.html" %}
+{% block page_name %}
+我的出隊文
+{% endblock%}
+{% block sub_content %}
+{% for event in events %}
+<div class="post">
+  {% set prop = event.proposal %}
+  <a href="{{ url_for('event.detail', event_id=event.id) }}">
+    <h2 class="post-title">[{{ event.get_status_display() }}]&nbsp;{{ prop.title }}</h2>
+  </a>
+  <div class="post-meta">
+    <ul>
+      <li>
+        <i class="tf-ion-ios-calendar"></i> 建立時間： {{ prop.created_at_str }}
+      </li>
+      <li>
+        <i class="tf-ion-android-person"></i> 建立者： {{ prop.created_by.username }}
+      </li>
+      {% if prop.updated_at %}
+      <li>
+        <i class="tf-ion-edit"></i> 最後修改： {{ prop.updated_at_str }}
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+
+  <div class="post-content">
+    <div>
+      <p>
+        時間：{{ prop.start_date_str }}&nbsp;～&nbsp;{{ prop.end_date_str }}
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        領隊：{{ prop.leader.display_name }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;嚮導：{{ prop.guide.display_name }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        天數：{{ prop.days }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </p>
+      <p>
+        人員：
+        {% for a in prop.attendees %}
+        {{ a.attendee_display }},&nbsp;
+        {% endfor %}
+      </p>
+    </div>
+  </div>
+</div>
+</a>
+{% endfor %}
+{% endblock %}
