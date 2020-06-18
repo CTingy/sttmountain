@@ -26,6 +26,13 @@ class Choice:
         }
 
 
+class Identity(Choice):
+
+    OB = "OB"
+    IN_NCKU = "在校生"
+    OUT_NCKU = "校外" 
+
+
 class Difficulty(Choice):
 
     LEVEL_A = "A"
@@ -69,7 +76,7 @@ class Position(Choice):
     EQUIPMENT = '裝備組'
     ROCK = '岩推組'
     TECH = '技推組'
-    IT = '資訊組'
+    IT = '資料組'
     MEDICINE = '醫藥箱組'
     CHIEF = '山防組長'
     CADRE_LEAD = '幹部群長'

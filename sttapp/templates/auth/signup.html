@@ -15,7 +15,6 @@
   <span style="color: red; font-size: 10px;">{{ error }}</span>
   {% endfor %}
   {% endif %}
-  <br>
 </div>
 {% endmacro %}
 
@@ -45,15 +44,32 @@
               <input id="email" class="form-control" type="text" name="email" value="{{ email }}" readonly>
               <br>
             </div>
-            {{ render_field(form.username, 6, "登入後顯示名稱，例如：豆子") }}
-            {{ render_field(form.name) }}
-            {{ render_field(form.birthday, 6, "格式為：YYYY/MM/DD") }}
-            {{ render_field(form.cellphone_number, 6, "格式為：09XXXXXXXX") }}
-            {{ render_field(form.department, 6, "例如：物理、水利、中文") }}
-            {{ render_field(form.graduation_year, 6, "例如：110、64、96") }}
-            {{ render_field(form.group, 4) }}
-            {{ render_field(form.position, 4) }}
-            {{ render_field(form.level, 4) }}
+            <div class="row">
+              <div class="col-md-12">
+                {{ render_field(form.username, 6, "登入後顯示名稱，例如：豆子") }}
+                {{ render_field(form.name) }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                {{ render_field(form.birthday, 6, "格式為：YYYY/MM/DD") }}
+                {{ render_field(form.cellphone_number, 6, "格式為：09XXXXXXXX") }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                {{ render_field(form.department, 6, "例如：物理、水利、中文") }}
+                {{ render_field(form.graduation_year, 6, "例如：110、64、96") }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                {{ render_field(form.group, 3) }}
+                {{ render_field(form.position, 3) }}
+                {{ render_field(form.level, 3) }}
+                {{ render_field(form.identity, 3) }}
+              </div>
+            </div>
             <div class="form-group col-md-12 col-sm-12 col-xs-12">
               <hr>
             </div>

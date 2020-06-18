@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms.fields.html5 import EmailField
 from wtforms import ValidationError, StringField, SelectField, PasswordField, validators
 
-from sttapp.base.enums import Group, Level, Position
+from sttapp.base.enums import Group, Level, Position, Identity
 from sttapp.users.models import SttUser
 
 
@@ -29,12 +29,15 @@ class SignupForm(FlaskForm):
         validators=[validators.Length(max=10, message="太長了呦，最多10個字")]
     )
     birthday = StringField("生日（隱藏）")
-    cellphone_number = StringField("手機（隱藏）")
+    cellphone_number = StringField("手機（隱藏）", validators=[
+        validators.Optional(), 
+        validators.Regexp("09[0-9]{8}$", message="電話格式錯誤，需為09開頭之數字共10碼")])
     department = StringField("系所")
     graduation_year = StringField("畢業年份")
     group = SelectField("嚮導隊", choices=Group.get_choices())
     position = SelectField("工作組", choices=Position.get_choices())
     level = SelectField("最高位階", choices=Level.get_choices())
+    identity = SelectField("在校狀態", choices=Identity.get_choices())
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -55,14 +58,6 @@ class SignupForm(FlaskForm):
             raise ValidationError('日期不合理')
         
         self.birthday_dt = dt
-
-    def validate_cellphone_number(self, field):
-        if not field.data:
-            return None
-        if not field.data.startswith("09"):
-            raise ValidationError('手機號碼必須為09開頭')
-        if len(field.data) != 10:
-            raise ValidationError('手機號碼必須為10碼')
 
     def validate_graduation_year(self, field):
         

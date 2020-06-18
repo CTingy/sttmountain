@@ -19,7 +19,7 @@
     </div>
   </div>
 </section>
-
+{% include 'alerts.html' %}
 <section class="user-dashboard page-wrapper">
   <div class="container">
     <div class="row">
@@ -29,15 +29,16 @@
         {% else %}
         <div class="tabCommon mt-20">
           <ul class="nav nav-tabs justify-content-center list-inline dashboard-menu">
-            <li class="active"><a data-toggle="tab" href="#info" aria-expanded="true">帳號資料</a></li>
+            <li class="active"><a data-toggle="tab" href="#basic" aria-expanded="true">基本資料</a></li>
             {% if current_user.id == user.id %}
-            <li class=""><a data-toggle="tab" href="#experience" aria-expanded="false">隊伍經歷</a></li>
+            <li class=""><a data-toggle="tab" href="#advanced" aria-expanded="true">進階資料</a></li>
             <li class=""><a data-toggle="tab" href="#member" aria-expanded="false">出隊用資料</a></li>
             {% endif %}
+            <li class=""><a data-toggle="tab" href="#experience" aria-expanded="false">隊伍經歷</a></li>
           </ul>
           <br>
           <div class="tab-content">
-            <div id="info" class="tab-pane fade active in dashboard-user-profile dashboard-wrapper">
+            <div id="basic" class="tab-pane fade active in dashboard-user-profile dashboard-wrapper">
               <div class="media">
                 <div class="pull-left text-center" href="#">
                   <img class="media-object user-img"
@@ -46,32 +47,52 @@
                 </div>
                 <div class="media-body">
                   <ul class="user-profile-list">
+                    {% if user.id == current_user.id %}
+                    <div style="display: -webkit-inline-box; float:right;">
+                      <a href="{{ url_for('user.update') }}" type="button"
+                        class="btn btn-default btn-sm">編輯基本資料</a>&nbsp;&nbsp;&nbsp;
+                    </div>
+                    {% endif %}
+                    <li><span>綽號：</span>{{ user.username }}</li>
+                    <li><span>信箱：</span>{{ user.email }}</li>
+                    <li><span>系級：</span>{{ user.department or "" }}{{ user.graduation_year or "" }}</li>
+                    {% if user.group %}<li><span>嚮導隊：</span>{{ user.get_group_display() }}</li>{% endif %}
+                    <li><span>狀態：</span>{{ user.get_identity_display() }}</li>
+                    {% if user.position %}
+                    <li><span>工作組：</span>{{ user.get_position_display() }}</li>{% endif %}
+                    {% if user.level %}<li><span>級數：</span>{{ user.get_level_display() }}</li>{% endif %}
+                    <br>
                     <div>
                       {% if user.id == current_user.id %}
                       <div style="display: -webkit-inline-box; float:right;">
                         <button class="btn btn-default btn-sm">編輯自我介紹</button>&nbsp;&nbsp;&nbsp;
                       </div>
                       {% endif %}
-                      <p style="white-space: pre-wrap;">{{ user.introduction or "" }}123</p>
+                      <p style="white-space: pre-wrap;">{{ user.introduction or "" }}</p>
                     </div>
-                    <br>
-                    <li><span>綽號：</span>{{ user.username }}</li>
-                    <li><span>Email：</span>{{ user.email }}</li>
-                    <li><span>系級：</span>{{ user.department or "" }}{{ user.graduation_year or "" }}</li>
-                    <li><span>嚮導隊：</span>{{ user.group or "" }}</li>
-                    {% if user.position %}
-                    <li><span>工作組：</span>{{ user.position }}</li>{% endif %}
-                    {% if user.level %}<li><span>級數：</span>{{ user.level }}</li>{% endif %}
                   </ul>
+                  <br>
+                </div>
+              </div>
+            </div>
+            <div id="advanced" class="tab-pane fade dashboard-user-profile dashboard-wrapper">
+              <div class="media">
+                <div class="media-body">
                   {% if current_user.id == user.id %}
                   <ul class="user-profile-list">
-                    <hr>
+                    <div style="display: -webkit-inline-box; float:right;">
+                      <a href="{{ url_for('user.update') }}" type="button"
+                        class="btn btn-default btn-sm">編輯進階資料</a>&nbsp;&nbsp;&nbsp;
+                    </div>
                     <p>隱藏資料</p>
                     <li><span>姓名：</span>{{ user.name or "" }}</li>
                     <li><span>生日：</span>{{ user.birthday_str }}</li>
                     <li><span>手機：</span>{{ user.cellphone_number or "" }}</li>
+                    <li><span>登入方式：</span>{{ user.social_login_with or "山協網站" }}</li>
+                    <li><span>註冊邀請人：</span>{{ invited_by }}</li>
                   </ul>
                   {% endif %}
+                  <br>
                 </div>
               </div>
             </div>
@@ -79,6 +100,7 @@
               <div class="media">
                 <div class="media-body">
                   <div class="table-responsive">
+                    <p>這只是個示意圖，詳細功能即將上線～</p>
                     <table class="table table-hover">
                       <thead>
                         <tr>
@@ -87,6 +109,7 @@
                           <th>天數</th>
                           <th>名稱</th>
                           <th>類型</th>
+                          <th>級數</th>
                           <th class="col-md-2 col-sm-3">外部連結</th>
                           <th></th>
                         </tr>
@@ -95,9 +118,10 @@
                         <tr>
                           <td>1</td>
                           <td>2020/3/9~2020/3/24</td>
-                          <td>15天</td>
+                          <td>15</td>
                           <td>泡個丹大東稜伊巴厚</td>
                           <td>探勘</td>
+                          <td>A</td>
                           <td><a type="button" class="btn btn-default btn-round-full"
                               href="https://www.ptt.cc/bbs/sttmountain/M.1585704435.A.3AF.html" target="_blank"><i
                                 class="tf-attachment"></i></a>
@@ -112,11 +136,16 @@
                           </td>
                         </tr>
                         <tr>
-                          <td>Samsung</td>
-                          <td>Adam Smith</td>
-                          <td>9/4 C Babor Road, Mohammad Pur, Dhaka</td>
-                          <td>Bangladesh</td>
-                          <td>+884 5452 6452</td>
+                          <td>2</td>
+                          <td>2020/3/27~2020/4/7</td>
+                          <td>11</td>
+                          <td>西內本鹿</td>
+                          <td>探勘</td>
+                          <td>A</td>
+                          <td><a type="button" class="btn btn-default btn-round-full"
+                              href="https://www.ptt.cc/bbs/sttmountain/M.1585704435.A.3AF.html" target="_blank"><i
+                                class="tf-attachment"></i></a>
+                          </td>
                           <td>
                             <div class="btn-group" role="group">
                               <button type="button" class="btn btn-default"><i class="tf-pencil2"
@@ -127,11 +156,16 @@
                           </td>
                         </tr>
                         <tr>
-                          <td>Motorola</td>
-                          <td>Adam Smith</td>
-                          <td>9/4 C Babor Road, Mohammad Pur, Dhaka</td>
-                          <td>Bangladesh</td>
-                          <td>+884 5452 6452</td>
+                          <td>3</td>
+                          <td>2020/1/1~2020/1/5</td>
+                          <td>5</td>
+                          <td>金崙溪嘔吐隊</td>
+                          <td>逸樂</td>
+                          <td>C</td>
+                          <td><a type="button" class="btn btn-default btn-round-full"
+                              href="https://www.ptt.cc/bbs/sttmountain/M.1585704435.A.3AF.html" target="_blank"><i
+                                class="tf-attachment"></i></a>
+                          </td>
                           <td>
                             <div class="btn-group" role="group">
                               <button type="button" class="btn btn-default"><i class="tf-pencil2"
@@ -150,7 +184,7 @@
             <div id="member" class="tab-pane fade dashboard-user-profile dashboard-wrapper">
               <div class="media">
                 <div class="media-body">
-                  {% if not user.member %}
+                  {% if not user.member_id %}
                   <span>尚未連結站內出隊用資料，是否<a style="color: blue;" href="">查詢並匯入</a>？
                     或是<a style="color: blue;" href="">新增出隊用資料</a>。
                   </span>

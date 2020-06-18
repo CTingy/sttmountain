@@ -66,10 +66,10 @@ def create(prop_id):
         flash("此企劃已經發佈過出隊文，請勿重複發佈", FlashCategory.ERROR)
         return redirect(url_for('event.events'))
     
-    Proposal.objects(id=prop_id).update_one(event=e.id, updated_at=datetime.datetime.utcnow(),
+    Proposal.objects(id=prop_id).update_one(event_id=e.id, updated_at=datetime.datetime.utcnow(),
                                             updated_by=current_user.id)
     flash("發佈成功！", FlashCategory.SUCCESS)
-    return redirect(url_for('event.events'))
+    return redirect(url_for('event.detail', event_id=e.id))
 
 
 @bp.route('/cancel/<string:event_id>', methods=["POST"])
@@ -105,8 +105,6 @@ def update_as_back(event_id):
     form = request.form
     max_itinerary_num = int(form.get("itinerary_len"))
     inputted_itinerary_list = []
-
-    print(request.form.get("same_check"), "11111111")
     
     if request.form.get("same_check") != "y":
         for i in range(max_itinerary_num+1):
@@ -125,6 +123,7 @@ def update_as_back(event_id):
         updated_by=current_user.id,
         updated_at=datetime.datetime.utcnow()
     )
+    flash("已回報下山", FlashCategory.SUCCESS)
     return redirect(url_for('event.detail', event_id=event_id))
 
 
@@ -182,9 +181,9 @@ def delete(event_id):
     if event.status in ("CANCEL", "BACK"):
         flash("不可刪除已回報下山/已標注撤退之出隊文", FlashCategory.WARNING)
         return redirect(url_for('event.events'))
+    Proposal.objects(event_id=event.id).update_one(
+        event_id=None, updated_at=datetime.datetime.utcnow(), updated_by=current_user.id)
     event.delete()
-    Proposal.objects(event=event).update_one(
-        event=None, updated_at=datetime.datetime.utcnow(), updated_by=current_user.id)
     flash("已經為您刪除出隊文，請繼續編輯企劃書再重新發佈：{}".format(event.proposal.title), FlashCategory.SUCCESS)
     return redirect(url_for("proposal.detail", prop_id=event.proposal.id))
 

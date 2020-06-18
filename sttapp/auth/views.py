@@ -165,8 +165,7 @@ def post_signup():
 
     if request.method == "POST":
         if form.validate_on_submit():
-            current_user.update(
-                id=current_user.id,
+            SttUser.objects(id=current_user.id).update_one(
                 username=form.username.data,
                 name=form.name.data or None,
                 birthday=form.birthday_dt or None,
@@ -175,6 +174,7 @@ def post_signup():
                 graduation_year=form.graduation_year.data or None,
                 group=form.group.data,
                 position=form.position.data,
+                identity=form.identity.data,
                 level=form.level.data,
                 updated_at=datetime.datetime.utcnow()
             )
@@ -208,6 +208,7 @@ def signup():
                 group=form.group.data,
                 position=form.position.data,
                 level=form.level.data,
+                identity=form.identity.data,
                 email=invitation_info_dict['email'],
                 created_at=datetime.datetime.utcnow(),
                 updated_at=datetime.datetime.utcnow(),

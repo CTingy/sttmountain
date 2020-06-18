@@ -5,13 +5,13 @@ from flask_login import UserMixin
 
 from sttapp.db import db
 from sttapp.login import login_manager
-from sttapp.base.enums import Group, Position, Level
+from sttapp.base.enums import Group, Position, Level, Identity
 from sttapp.base.models import RecordModel
 
 
 class InvitationInfo(db.EmbeddedDocument):
 
-    invited_by = db.ReferenceField('sttapp.members.models.SttUser')
+    invited_by = db.ObjectIdField()
     invited_at = db.DateTimeField()
     email = db.EmailField()
     token = db.StringField()
@@ -47,7 +47,8 @@ class SttUser(User):
     group = db.StringField(choices=Group.get_choices())  # 嚮導隊
     position = db.StringField(choices=Position.get_choices())  # 工作組，總務、教學
     level = db.StringField(choices=Level.get_choices())  # 新生、隊員、幹部等
-    member_info = db.ReferenceField('sttapp.members.models.Member')
+    member_id = db.ObjectIdField()
+    identity = db.StringField(choices=Identity.get_choices())  # 在校狀態
     # experiences_list =
     # stt_experiences_list =
 
