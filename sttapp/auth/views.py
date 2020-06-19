@@ -177,6 +177,7 @@ def post_signup():
                 position=form.position.data,
                 identity=form.identity.data,
                 level=form.level.data,
+                introduction=form.introduction.data,
                 updated_at=datetime.datetime.utcnow()
             )
             flash("恭喜註冊完成，已登入", FlashCategory.SUCCESS)

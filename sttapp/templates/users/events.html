@@ -9,7 +9,7 @@
   {% set prop = event.proposal %}
   <a href="{{ url_for('event.detail', event_id=event.id) }}">
     <h2 class="post-title">[{{ event.get_status_display() }}]&nbsp;{{ event.title }}&nbsp;
-      {% if prop.event_type %}({{ prop.difficulty }}{{ prop.get_event_type_display() }}){% endif %}
+      ({{ prop.difficulty }}{% if prop.event_type %}{{ prop.get_event_type_display() }}{% else %}級隊{% endif %})
     </h2>
   </a>
   <div class="post-meta">

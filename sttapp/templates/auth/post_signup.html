@@ -30,7 +30,7 @@
           </a>
           <form class="text-left clearfix" action="" method="post">
             {% include 'alerts.html' %}
-            <h4 class="text-center">編輯資料</h4>
+            <h4 class="text-center">帳戶資料</h4>
             <br>
             <p class="text-center">
               隱藏資料為：<b>真實姓名、生日、手機</b>，這些資料僅顯示於個人頁面，不會顯示於網站，
@@ -63,6 +63,14 @@
                 {{ render_field(form.position, 3) }}
                 {{ render_field(form.level, 3) }}
                 {{ render_field(form.identity, 3) }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group col-md-12">
+                  <label>自我介紹</label>
+                  <textarea name="introduction" class="form-control" rows="7">{{ form.introduction.data }}</textarea>
+                </div>
               </div>
             </div>
             <div class="text-center col-md-12">

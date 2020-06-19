@@ -5,11 +5,11 @@ from flask import flash, Blueprint, session, request, url_for, render_template, 
 from flask_login import login_user, current_user, login_required
 from mongoengine.queryset.visitor import Q
 
-from .models import SttUser
+from .models import SttUser, MyHistory
+from .forms import MyHistoryForm
 from sttapp.base.enums import FlashCategory, Position, Group, Level, Identity
 from sttapp.auth.forms import PostSignupForm
 from sttapp.members.models import CHOICES, Member
-from .models import MyHistory
 
 
 bp = Blueprint('user', __name__, url_prefix="/user")
@@ -71,6 +71,7 @@ def update():
             level=form.level.data,
             identity=form.identity.data,
             updated_at=datetime.datetime.utcnow(),
+            introduction=form.introduction.data,
             updated_by=current_user.id
         )
         flash("更新成功！", FlashCategory.SUCCESS)

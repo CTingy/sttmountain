@@ -1,7 +1,7 @@
 import datetime
 from flask_wtf import FlaskForm
 from wtforms.fields.html5 import EmailField
-from wtforms import ValidationError, StringField, SelectField, PasswordField, validators
+from wtforms import ValidationError, StringField, SelectField, PasswordField, TextAreaField, validators
 
 from sttapp.base.enums import Group, Level, Position, Identity
 from sttapp.users.models import SttUser
@@ -38,6 +38,7 @@ class SignupForm(FlaskForm):
     position = SelectField("工作組", choices=Position.get_choices())
     level = SelectField("最高位階", choices=Level.get_choices())
     identity = SelectField("在校狀態", choices=Identity.get_choices())
+    introduction = TextAreaField("自我介紹", validators=[validators.Optional()])
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
