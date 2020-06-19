@@ -3,6 +3,15 @@
 {% block menu %}{% include "menu.html" %}{% endblock %}
 
 {% block content %}
+<style>
+  td>input {
+    width: 100%;
+    box-sizing: border-box;
+    /* 使元素的寬度包括padding margin, border*/
+    -moz-box-sizing: border-box;
+  }
+
+</style>
 
 <section class="page-header">
   <div class="container">
@@ -219,14 +228,14 @@
                     <table class="table table-hover">
                       <thead>
                         <tr>
-                          <th scope="col">#</th>
-                          <th>日期</th>
-                          <th>天數</th>
-                          <th>名稱</th>
-                          <th>類型</th>
-                          <th>級數</th>
-                          <th class="col-md-2 col-sm-3">外部連結</th>
-                          <th></th>
+                          <th class=""></th>
+                          <th style="width: 190px;">日期</th>
+                          <th class="">天數</th>
+                          <th class="">名稱</th>
+                          <th class="">類型</th>
+                          <th class="">級數</th>
+                          <th class="">超連結</th>
+                          <th class="col-md-1 col-sm-1"></th>
                         </tr>
                       </thead>
                       <tbody>
@@ -237,8 +246,8 @@
                           <td class="days">{{ h.days }}天</td>
                           <td class="title">{{ h.title }}</td>
                           <td class="event_type">{{ h.event_type }}</td>
-                          <td>{{ h.difficulty }}</td>
-                          <td><a type="button" class="btn btn-default btn-round-full link" href="{{ h.link }}"
+                          <td class="difficulty">{{ h.difficulty }}</td>
+                          <td class="link"><a type="button" class="btn btn-default btn-round-full" href="{{ h.link }}"
                               target="_blank"><i class="tf-attachment"></i></a>
                           </td>
                           <td>
@@ -251,53 +260,28 @@
                           </td>
                         </tr>
                         {% endfor %}
+                        <tr class="collapse" id="addHistory">
+                          <td class="order"><input style="width: 40px;" class="form-control"></td>
+                          <td class="date">
+                            <div class="form-inline"> <input style="width: 70px;"
+                                class="form-control">&nbsp;~&nbsp;<input style="width: 70px;" class="form-control">
+                            </div>
+                          </td>
+                          <td class="days"><input style="width: 40px;" class="form-control"></td>
+                          <td class="title"><input class="form-control"></td>
+                          <td class="event_type"><input style="width: 60px;" class="form-control"></td>
+                          <td class="difficulty"></td>
+                          <td class="link"><input style="width: 100px;" class="form-control"></td>
+                          <td><button class="btn btn-main btn-small btn-round-full">送出</button>
+                          </td>
+                        </tr>
                       </tbody>
                     </table>
-                    <br>
                     <!-- collapse -->
                     <div class="text-center">
-                      <a type="button" class="btn btn-default btn-round-full" data-toggle="collapse" href="#history"
+                      <a type="button" class="btn btn-default btn-round-full" data-toggle="collapse" href="#addHistory"
                         aria-expanded="false" aria-controls="collapseExample"><i class="tf-ion-android-add"></i> 新增</a>
                       <br><br>
-                    </div>
-                    <div class="collapse" id="history">
-                      <form class="" action="" method="post">
-                        <div class="form-row">
-                          <div class="form-group col-md-1">
-                            <input id="order" name="order" type="text" class="form-control col-md-2" placeholder="排序">
-                          </div>
-                          <div class="form-group col-md-3">
-                            <input required id="start_date" name="start_date" type="text" class="form-control"
-                              placeholder="起始日期">
-                          </div>
-                          <div class="form-group col-md-3">
-                            <input required id="end_date" name="end_date" type="text" class="form-control"
-                              placeholder="結束日期">
-                          </div>
-                          <div class="form-group col-md-1">
-                            <input required id="end_date" name="end_date" type="text" class="form-control"
-                              placeholder="天數">
-                          </div>
-                          <div class="form-group col-md-4">
-                            <input required id="event_type" name="event_type" type="text" class="form-control"
-                              placeholder="類型（探勘、溯溪、玩水烤肉）">
-                          </div>
-                        </div>
-                        <div class="form-row">
-                          <div class="form-group col-md-6">
-                            <input required id="title" name="title" type="text" class="form-control" placeholder="名稱">
-                          </div>
-                          <div class="form-group col-md-6">
-                            <input required id="link" name="link" type="text" class="form-control"
-                              placeholder="連結網址（出隊/紀錄/相簿網址...等）">
-                          </div>
-                        </div>
-                        <br><br>
-                        <div class="text-center">
-                          <button type="submit" class="btn btn-small btn-main">送出</button>
-                          <br>
-                        </div>
-                      </form>
                     </div>
                     <br>
                   </div>
