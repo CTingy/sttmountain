@@ -245,12 +245,13 @@
                           <tr id="{{ h.id }}">
                             <td class="order">{{ h.order }}</td>
                             <td class="date">{{ h.start_date_str }}~{{ h.end_date_str }}</td>
-                            <td class="days">{{ h.days }}天</td>
+                            <td class="days">{{ h.days }}</td>
                             <td class="title">{{ h.title }}</td>
-                            <td class="event_type">{{ h.event_type }}</td>
+                            <td class="event_type">{{ h.event_type or "" }}</td>
                             <td class="difficulty">{{ h.difficulty }}</td>
-                            <td class="link"><a type="button" class="btn btn-default btn-round-full" href="{{ h.link }}"
-                                target="_blank"><i class="tf-attachment"></i></a>
+                            <td class="link">
+                              {% if h.link %}<a type="button" class="btn btn-default btn-round-full" href="{{ h.link }}"
+                                target="_blank"><i class="tf-attachment"></i></a>{% endif %}
                             </td>
                             <td>
                               <div class="btn-group" role="group">
@@ -263,25 +264,25 @@
                           </tr>
                           {% endfor %}
                           <tr class="collapse" id="addHistory">
-                            <td class="order"><input id="addOrder" style="width: 40px;" class="form-control"><span
-                                id="errAddOrder" style="color: red; font-size: 10px;"></span></td>
+                            <td class="order"><input id="add_order" style="width: 40px;" class="form-control"><span
+                                id="errAdd_order" style="color: red; font-size: 10px;"></span></td>
                             <td class="date">
-                              <div class="form-inline"> <input id="addStart" style="width: 70px;"
-                                  class="form-control">&nbsp;~&nbsp;<input id="addEnd" style="width: 70px;"
+                              <div class="form-inline"> <input id="add_start_date" style="width: 70px;"
+                                  class="form-control">&nbsp;~&nbsp;<input id="add_end_date" style="width: 70px;"
                                   class="form-control">
                               </div>
-                              <span id="errAddStart" style="color: red; font-size: 10px;"></span>&nbsp;&nbsp;<span
-                                id="errEndStart" style="color: red; font-size: 10px;"></span>
+                              <span id="errAdd_start_date" style="color: red; font-size: 10px;"></span><br><span
+                                id="errAdd_end_date" style="color: red; font-size: 10px;"></span>
                             </td>
-                            <td class="days"><input id="addDays" style="width: 40px;" class="form-control"><span
-                                id="errAddDays" style="color: red; font-size: 10px;"></span></td>
-                            <td class="title"><input id="addTitle" class="form-control"><span id="errAddTitle"
+                            <td class="days"><input id="add_days" style="width: 40px;" class="form-control"><span
+                                id="errAdd_days" style="color: red; font-size: 10px;"></span></td>
+                            <td class="title"><input id="add_title" class="form-control"><span id="errAdd_title"
                                 style="color: red; font-size: 10px;"></span></td>
-                            <td class="event_type"><input id="addEvent" style="width: 60px;" class="form-control"><span
-                                id="errAddEvent" style="color: red; font-size: 10px;"></span></td>
+                            <td class="event_type"><input id="add_event" style="width: 60px;" class="form-control"><span
+                                id="errAdd_event" style="color: red; font-size: 10px;"></span></td>
                             <td class="difficulty"></td>
-                            <td class="link"><input id="addLink" style="width: 100px;" class="form-control"><span
-                                id="errAddLink" style="color: red; font-size: 10px;"></span></td>
+                            <td class="link"><input id="add_link" style="width: 100px;" class="form-control"><span
+                                id="errAdd_link" style="color: red; font-size: 10px;"></span></td>
                             <td><button id="addHistoryBtn" type="button"
                                 class="btn btn-main btn-small btn-round-full">送出</button>
                             </td>
@@ -313,39 +314,48 @@
 <script>
   $(function () {
     $("#addHistoryBtn").on("click", function () {
+      // clean all err msg
+      var inputField = ["order", "start_date", "end_date", "days", "title", "event_type", "link"]
+      for (let i = 0; i < inputField.length; i++) {
+        $("#errAdd_" + inputField[i]).text("");
+      }
+
       var inputData = {
-        "Order": $("#addOrder").val(),
-        "Start": $("#addStart").val(),
-        "End": $("#addEnd").val(),
-        "Days": $("#addDays").val(),
-        "Title": $("#addTitle").val(),
-        "Event": $("#addEvent").val(),
-        "Link": $("#addLink").val()
+        "order": $("#add_order").val(),
+        "start_date": $("#add_start_date").val(),
+        "end_date": $("#add_end_date").val(),
+        "days": $("#add_days").val(),
+        "title": $("#add_title").val()
       }
       var nullFields = new Array()
 
-      Object.keys(inputData).forEach((key) => (!inputData[key]) && nullFields.push(key));
+      Object.keys(inputData).forEach(
+        (key) => (!inputData[key]) && nullFields.push(key)
+      );
       if (nullFields.length > 0) {
         for (let i = 0; i < nullFields.length; i++) {
-          $("#errAdd" + nullFields[i]).text("欄位不可空白");
+          $("#errAdd_" + nullFields[i]).text("此欄位不可空白");
         }
         return null;
       }
 
+      inputData.event_type = $("#add_event_type").val();
+      inputData.link = $("#add_link").val();
+
       $.ajax({
         url: "{{ url_for('user.create_my_history') }}",
         method: 'POST',
-        data: {
-          "order": inputData.Order,
-          "start_date": inputData.Start,
-          "end_date": inputData.End,
-          "days": inputData.Days,
-          "title": inputData.Title,
-          "event_type": inputData.Event,
-          "link": inputData.Link
-        },
+        data: inputData,
         success: function (data) {
-          console.log(data);
+          if (data.errors) {
+            var errors = data.errors;
+            console.log(errors);
+            Object.keys(errors).forEach(
+              (key) => $("#errAdd_" + key).text(errors[key])
+            );
+          } else {
+
+          }
         },
         error: function (errorData) {
           console.log(errorData);

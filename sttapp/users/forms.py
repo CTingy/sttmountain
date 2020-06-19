@@ -20,15 +20,13 @@ class MyHistoryForm():
     def validate(self):
         validation_errors = dict()
         for k, v in self.__dict__.items():
-            if not v:
-                continue
             func = getattr(self, "validate_{}".format(k))
             err = func()
             if err:
                 validation_errors[k] = err
-        if err:
-            return None, validation_errors
-        return self, None
+        if validation_errors:
+            return validation_errors
+        return None
 
     def validate_start_date(self):
         try:
@@ -56,16 +54,21 @@ class MyHistoryForm():
         try:
             self.days = int(self.days)
         except ValueError:
-            return "日期格式錯誤，需為數字"
+            return "天數格式錯誤，需為數字"
 
-    def validate_event_type(self):
+    def validate_event_type(self):  # not required field
+        if not self.event_type:
+            self.event_type = None
+            return
         if len(self.event_type) > 8:
             return "隊伍類型太長囉，最多8個字"
 
-    def validate_link(self):
+    def validate_link(self):  # not required field
+        if not self.link:
+            self.link = None
+            return 
         u = URLField()
         try:
             u.validate(self.link)
         except ValidationError:
             return "連結格式錯誤，需為有效網址"
-        
