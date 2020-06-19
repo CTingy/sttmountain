@@ -106,7 +106,7 @@
                 <i class="tf-ion-ios-calendar"></i> {{ event.created_at_str }}
               </li>
               <li>
-                <i class="tf-ion-android-person"></i> <b><a style="color: cadetblue;"
+                <i class="tf-ion-android-person"></i> <b><a style="color: cornflowerblue;"
                     href="{{ url_for('user.detail', user_id=prop.created_by.id ) }}">{{ prop.created_by.username }}</a></b>
               </li>
               <li>
@@ -152,7 +152,7 @@
                 </p>
                 <p>
                   {% for a in prop.attendees %}
-                  {% if a.user_id %}<b><a style="color: cadetblue;"
+                  {% if a.user_id %}<b><a style="color: cornflowerblue;"
                       href="{{ url_for('user.detail', user_id=a.user_id ) }}">{{ a.attendee_display }}</a></b>
                   {% else %}
                   {{ a.attendee_display }}

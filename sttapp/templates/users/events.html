@@ -38,7 +38,7 @@
       </p>
       <p>
         {% for a in prop.attendees %}
-        {% if a.user_id %}<b><a style="color: cadetblue;"
+        {% if a.user_id %}<b><a style="color: cornflowerblue;"
             href="{{ url_for('user.detail', user_id=a.user_id ) }}">{{ a.attendee_display }}</a></b>
         {% else %}
         {{ a.attendee_display }}

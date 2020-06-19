@@ -1,6 +1,8 @@
 import datetime
 import re
 
+from .models import MyHistory
+
 
 class MyHistoryForm():
 
@@ -22,7 +24,9 @@ class MyHistoryForm():
             err = func(v)
             if err:
                 validation_errors[k] = err
-        return validation_errors
+        if err:
+            return None, validation_errors
+        return self, None
 
     def validate_start_date(self):
         try:
@@ -53,8 +57,8 @@ class MyHistoryForm():
             return "日期格式錯誤，需為數字"
 
     def validate_event_type(self):
-        if len(self.event_type) > 5:
-            return "隊伍類型太長囉，最多5個字"
+        if len(self.event_type) > 8:
+            return "隊伍類型太長囉，最多8個字"
 
     def validate_link(self):
         if not re.match(
@@ -62,4 +66,4 @@ class MyHistoryForm():
             self.link
         ):
             return "連結格式錯誤，需為有效網址"
-    
+        

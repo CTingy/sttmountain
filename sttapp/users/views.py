@@ -1,7 +1,7 @@
 import datetime
 import re
 
-from flask import flash, Blueprint, session, request, url_for, render_template, redirect, current_app
+from flask import flash, Blueprint, session, request, url_for, render_template, redirect, current_app, jsonify
 from flask_login import login_user, current_user, login_required
 from mongoengine.queryset.visitor import Q
 
@@ -44,7 +44,8 @@ def detail(user_id):
                     updated_by=current_user.id,
                     member_id=None
                 )
-    return render_template('users/detail.html', user=user, invited_by=invited_by, member=member)
+    history = MyHistory.objects.filter(user_id=user_id)
+    return render_template('users/detail.html', user=user, invited_by=invited_by, member=member, history=history)
 
 
 @bp.route('/update/', methods=["GET", "POST"])
@@ -140,10 +141,18 @@ def connect_member():
 @login_required
 def create_my_history():
 
-    form = request.form
-    h.save()
-
-
+    form = MyHistoryForm(request.form)
+    validated_data, errs = form.validate()
+    if errs:
+        return jsonify({'data': None, 'errors': errs})
+    h = MyHistory(**validated_data.__dict__)
+    h.created_at = h.updated_at = datetime.datetime.utcnow()
+    h.created_by = h.updated_by = current_user.id
+    try:
+        h.save()
+    except Exception as e:
+        return jsonify({'data': None, 'errors': e})
+    
 
 
 # @bp.route('/my_history/update/', methods=["POST"])

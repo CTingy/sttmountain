@@ -15,7 +15,7 @@
   <table class="table table-hover">
     <thead>
       <tr>
-        <th class="text-center" scope="col">學號<br>系級</th>
+        <th class="text-center" scope="col">系級<br>學號</th>
         <th class="text-center" scope="col">姓名<br>電話</th>
         <th class="text-center" scope="col">級數<br>資歷</th>
         <th class="text-center" scope="col">身份證字號<br>生日</th>
@@ -31,15 +31,22 @@
       {% for a in prop.attendees %}
       <tr>
         <td class="text-center">{{ a.department_and_grade }}{% if a.student_id %}<br>{{ a.student_id }}{% endif %}</td>
-        <td class="text-center">{{ a.name }}<br>{{ a.cellphone_number }}</td>
+        <td class="text-center">
+          {% if a.user_id %}<a title="檢視個人資料頁" style="color: cornflowerblue;"
+            href="{{ url_for('user.detail', user_id=a.user_id) }}"><b>{{ a.name }}</b></a>
+          {% else %}{{ a.name }}{% endif %}<br>{{ a.cellphone_number }}</td>
         <td class="text-center">
           {% if a.highest_difficulty %}{{ a.get_highest_difficulty_display() }}{% endif %}<br>
           {% if a.highest_difficulty_experience %}{{ a.highest_difficulty_experience }}{% endif %}</td>
-        <td class="text-center">{{ a.security_number }}<br>{{ a.birthday_str }}</td>
         <td class="text-center">
+          {% if current_user.id == prop.created_by.id %}{{ a.security_number }}<br>{{ a.birthday_str }}
+          {% else %}僅開隊者可見資料{% endif %}
+        </td>
+        <td class="text-center">
+          {% if current_user.id == prop.created_by.id %}
           {{ a.emergency_contact }}
           {% if a.emergency_contact_relationship %}({{ a.emergency_contact_relationship }}){% endif %}
-          <br>{{ a.emergency_contact_phone }}</td>
+          <br>{{ a.emergency_contact_phone }}</td>{% else %}僅開隊者可見資料{% endif %}
         <td class="text-center">{% if a.blood_type %}{{ a.blood_type }}{% endif %}</td>
         <td class="text-center">{{ a.drug_allergy }}</td>
         <td class="text-center">{% if not a.is_adult %}V{% endif%}</td>

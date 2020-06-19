@@ -23,7 +23,8 @@
         <i class="tf-ion-ios-calendar"></i> 建立時間： {{ prop.created_at_str }}
       </li>
       <li>
-        <i class="tf-ion-android-person"></i> 建立者： {{ prop.created_by.username }}
+        <i class="tf-ion-android-person"></i> 建立者： <b><a style="color: cornflowerblue;"
+            href="{{ url_for('user.detail', user_id=prop.created_by.id ) }}">{{ prop.created_by.username }}</a></b>
       </li>
       {% if prop.updated_at %}
       <li>
@@ -44,8 +45,12 @@
       <p>
         人員：
         {% for a in prop.attendees %}
-        {{ a.attendee_display }},&nbsp;
-        {% endfor %}
+        {% if a.user_id %}<b><a style="color: cornflowerblue;"
+            href="{{ url_for('user.detail', user_id=a.user_id ) }}">{{ a.attendee_display }}</a></b>
+        {% else %}
+        {{ a.attendee_display }}
+        {% endif %}
+        、{% endfor %}
       </p>
     </div>
   </div>

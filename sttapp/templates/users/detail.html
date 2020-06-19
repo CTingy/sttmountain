@@ -29,16 +29,16 @@
         {% include 'alerts.html' %}
         <div class="tabCommon mt-20">
           <ul class="nav nav-tabs justify-content-center list-inline dashboard-menu">
-            <li class="active"><a data-toggle="tab" href="#basic" aria-expanded="true">基本資料</a></li>
+            <li class=""><a data-toggle="tab" href="#basic" aria-expanded="false">基本資料</a></li>
             {% if current_user.id == user.id %}
-            <li class=""><a data-toggle="tab" href="#advanced" aria-expanded="true">進階資料</a></li>
+            <li class=""><a data-toggle="tab" href="#advanced" aria-expanded="false">進階資料</a></li>
             <li class=""><a data-toggle="tab" href="#member" aria-expanded="false">出隊用資料</a></li>
             {% endif %}
-            <li class=""><a data-toggle="tab" href="#experience" aria-expanded="false">隊伍經歷</a></li>
+            <li class="active"><a data-toggle="tab" href="#experience" aria-expanded="true">隊伍經歷</a></li>
           </ul>
           <br>
           <div class="tab-content">
-            <div id="basic" class="tab-pane fade active in dashboard-user-profile dashboard-wrapper">
+            <div id="basic" class="tab-pane fade dashboard-user-profile dashboard-wrapper">
               <div class="media">
                 <div class="pull-left text-center" href="#">
                   <img class="media-object user-img"
@@ -210,15 +210,12 @@
               </div>
             </div>
             {% endif %}
-            <div id="experience" class="tab-pane fade dashboard-user-profile dashboard-wrapper">
+            <div id="experience" class="tab-pane fade active in dashboard-user-profile dashboard-wrapper">
               <div class="media">
                 <div class="media-body">
                   <div class="table-responsive">
-                    {% if not user.my_history_ids %}
                     <br>
-                    <p class="text-center">目前尚無出隊資料，請新增</p><br>
-                    {% else %}
-                    <p>出隊紀錄，與站內出隊文資料並未直接連動，可自行新增與修改</p>
+                    <p class="text-center">出隊紀錄，與站內出隊文資料並未直接連動，可自行新增與修改</p><br>
                     <table class="table table-hover">
                       <thead>
                         <tr>
@@ -233,30 +230,76 @@
                         </tr>
                       </thead>
                       <tbody>
-                        {% for h in user.my_history_ids %}
-                        <tr>
-                          <td>{{ h.order }}</td>
-                          <td>{{ h.start_date_str }}~{{ h.end_date_str }}</td>
-                          <td>{{ h.days }}天</td>
-                          <td>{{ h.title }}</td>
-                          <td>{{ h.event_type }}</td>
+                        {% for h in history %}
+                        <tr id="{{ h.id }}">
+                          <td class="order">{{ h.order }}</td>
+                          <td class="date">{{ h.start_date_str }}~{{ h.end_date_str }}</td>
+                          <td class="days">{{ h.days }}天</td>
+                          <td class="title">{{ h.title }}</td>
+                          <td class="event_type">{{ h.event_type }}</td>
                           <td>{{ h.difficulty }}</td>
-                          <td><a type="button" class="btn btn-default btn-round-full" href="{{ h.link }}"
+                          <td><a type="button" class="btn btn-default btn-round-full link" href="{{ h.link }}"
                               target="_blank"><i class="tf-attachment"></i></a>
                           </td>
                           <td>
                             <div class="btn-group" role="group">
-                              <button type="button" class="btn btn-default"><i class="tf-pencil2"
-                                  aria-hidden="true"></i></button>
-                              <button type="button" class="btn btn-default"><i class="tf-ion-close"
-                                  aria-hidden="true"></i></button>
+                              <button id="edit-{{ h.id }}" type="button" class="btn btn-default edit-button"><i
+                                  class="tf-pencil2" aria-hidden="true"></i></button>
+                              <button id="delete-{{ h.id }}" type="button" class="btn btn-default delete-button"><i
+                                  class="tf-ion-close" aria-hidden="true"></i></button>
                             </div>
                           </td>
                         </tr>
                         {% endfor %}
                       </tbody>
                     </table>
-                    {% endif %}
+                    <br>
+                    <!-- collapse -->
+                    <div class="text-center">
+                      <a type="button" class="btn btn-default btn-round-full" data-toggle="collapse" href="#history"
+                        aria-expanded="false" aria-controls="collapseExample"><i class="tf-ion-android-add"></i> 新增</a>
+                      <br><br>
+                    </div>
+                    <div class="collapse" id="history">
+                      <form class="" action="" method="post">
+                        <div class="form-row">
+                          <div class="form-group col-md-1">
+                            <input id="order" name="order" type="text" class="form-control col-md-2" placeholder="排序">
+                          </div>
+                          <div class="form-group col-md-3">
+                            <input required id="start_date" name="start_date" type="text" class="form-control"
+                              placeholder="起始日期">
+                          </div>
+                          <div class="form-group col-md-3">
+                            <input required id="end_date" name="end_date" type="text" class="form-control"
+                              placeholder="結束日期">
+                          </div>
+                          <div class="form-group col-md-1">
+                            <input required id="end_date" name="end_date" type="text" class="form-control"
+                              placeholder="天數">
+                          </div>
+                          <div class="form-group col-md-4">
+                            <input required id="event_type" name="event_type" type="text" class="form-control"
+                              placeholder="類型（探勘、溯溪、玩水烤肉）">
+                          </div>
+                        </div>
+                        <div class="form-row">
+                          <div class="form-group col-md-6">
+                            <input required id="title" name="title" type="text" class="form-control" placeholder="名稱">
+                          </div>
+                          <div class="form-group col-md-6">
+                            <input required id="link" name="link" type="text" class="form-control"
+                              placeholder="連結網址（出隊/紀錄/相簿網址...等）">
+                          </div>
+                        </div>
+                        <br><br>
+                        <div class="text-center">
+                          <button type="submit" class="btn btn-small btn-main">送出</button>
+                          <br>
+                        </div>
+                      </form>
+                    </div>
+                    <br>
                   </div>
                 </div>
               </div>

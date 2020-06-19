@@ -98,7 +98,13 @@
     <p><b>活動人員</b>:&nbsp;</p>
   </div>
   <div class="col-md-8">
-    {% for a in prop.attendees %}{{ a.attendee_display }}、{% endfor %}
+    {% for a in prop.attendees %}
+    {% if a.user_id %}<b><a style="color: cornflowerblue;"
+        href="{{ url_for('user.detail', user_id=a.user_id ) }}">{{ a.attendee_display }}</a></b>
+    {% else %}
+    {{ a.attendee_display }}
+    {% endif %}
+    、{% endfor %}
   </div>
 </div>
 <div class="row">

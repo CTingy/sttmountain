@@ -26,6 +26,7 @@ class MyHistory(RecordModel):
     days = db.IntField()
     event_type = db.StringField()
     link = db.URLField()
+    user_id = db.ObjectIdField()
 
     meta = {'ordering': ['order']}
 
@@ -93,7 +94,6 @@ class SttUser(User):
     # 系統紀錄
     updated_at = db.DateTimeField()
     invitation_info = db.EmbeddedDocumentField(InvitationInfo)
-    my_history_ids = db.ListField(db.ObjectIdField(), default=list)
 
     @property
     def birthday_str(self):
