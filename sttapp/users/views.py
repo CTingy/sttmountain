@@ -140,26 +140,20 @@ def connect_member():
 @bp.route('/my_history/create/', methods=["POST"])
 @login_required
 def create_my_history():
-
     form = MyHistoryForm(request.form)
     validated_data, errs = form.validate()
     if errs:
-        return jsonify({'data': None, 'errors': errs})
+        return jsonify({'objs': None, 'errors': errs})
     h = MyHistory(**validated_data.__dict__)
     h.created_at = h.updated_at = datetime.datetime.utcnow()
     h.created_by = h.updated_by = current_user.id
+    h.user_id = current_user.id
     try:
         h.save()
     except Exception as e:
-        return jsonify({'data': None, 'errors': e})
+        return jsonify({'objs': None, 'errors': e})
+
+    # re-ordering
+    hs = MyHistory.objects.filter(user_id=current_user.id)
+    return jsonify({'objs': hs, 'errors': None})
     
-
-
-# @bp.route('/my_history/update/', methods=["POST"])
-# @login_required
-# def update_my_history():
-
-
-# @bp.route('/my_history/delete/', methods=["POST"])
-# @login_required
-# def delete_my_history():
