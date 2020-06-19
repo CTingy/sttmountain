@@ -140,7 +140,7 @@ def connect_member():
 @bp.route('/my_history/create/', methods=["POST"])
 @login_required
 def create_my_history():
-    
+
     form = MyHistoryForm(request.form)
     errs = form.validate()
 
@@ -156,8 +156,23 @@ def create_my_history():
         raise(e)
 
     # re-ordering
+    hs = []
     for i, h in enumerate(MyHistory.objects.filter(user_id=current_user.id), 1):
         MyHistory.objects(id=h.id).update_one(order=i)
-    # refresh from db
-    hs = MyHistory.objects.filter(user_id=current_user.id)
+        h.reload()
+        obj = {
+            '_id': str(h.id),
+            'order': i,
+            'date_str': "{}~{}".format(h.start_date_str, h.end_date_str),
+            'title': h.title,
+            'event_type': h.event_type or "",
+            'days': h.days,
+            'difficulty': h.difficulty,
+            'link': '''<a type="button" class="btn btn-default btn-round-full" 
+                       href="{}" target="_blank">
+                       <i class="tf-attachment"></i></a>'''.format(
+                           h.link) if h.link else "",
+        }
+        hs.append(obj)
+
     return jsonify({'objs': hs, 'errors': None})

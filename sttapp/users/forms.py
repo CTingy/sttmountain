@@ -39,6 +39,8 @@ class MyHistoryForm():
             self.end_date = datetime.datetime.strptime(self.end_date, "%Y/%m/%d")
         except ValueError:
             return "結束日期格式錯誤，需為YYYY/MM/DD"
+        if self.start_date > self.end_date:
+            return "結束日期不可早於開始日期"
 
     def validate_order(self):
         try:

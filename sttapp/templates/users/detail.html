@@ -231,7 +231,7 @@
                         <thead>
                           <tr>
                             <th class=""></th>
-                            <th style="width: 190px;">日期</th>
+                            <th style="width: 220px;">日期</th>
                             <th class="">天數</th>
                             <th class="">名稱</th>
                             <th class="">類型</th>
@@ -240,9 +240,9 @@
                             <th class="col-md-1 col-sm-1"></th>
                           </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="tbody">
                           {% for h in history %}
-                          <tr id="{{ h.id }}">
+                          <tr id="{{ h.id }}" class="jqcontrol">
                             <td class="order">{{ h.order }}</td>
                             <td class="date">{{ h.start_date_str }}~{{ h.end_date_str }}</td>
                             <td class="days">{{ h.days }}</td>
@@ -264,15 +264,17 @@
                           </tr>
                           {% endfor %}
                           <tr class="collapse" id="addHistory">
-                            <td class="order"><input id="add_order" style="width: 40px;" class="form-control"><span
-                                id="errAdd_order" style="color: red; font-size: 10px;"></span></td>
+                            <td class="order">
+                              <input id="add_order" style="width: 40px;" class="form-control">
+                              <span id="errAdd_order" style="color: red; font-size: 10px;"></span></td>
                             <td class="date">
-                              <div class="form-inline"> <input id="add_start_date" style="width: 70px;"
-                                  class="form-control">&nbsp;~&nbsp;<input id="add_end_date" style="width: 70px;"
-                                  class="form-control">
+                              <div class="form-inline">
+                                <input id="add_start_date" style="width: 95px;" class="form-control">~
+                                <input id="add_end_date" style="width: 95px;" class="form-control">
                               </div>
-                              <span id="errAdd_start_date" style="color: red; font-size: 10px;"></span><br><span
-                                id="errAdd_end_date" style="color: red; font-size: 10px;"></span>
+                              <span id="errAdd_start_date"
+                                style="color: red; font-size: 10px; width: 95px"></span>&nbsp;&nbsp;&nbsp;
+                              <span id="errAdd_end_date" style="color: red; font-size: 10px; width: 95px"></span>
                             </td>
                             <td class="days"><input id="add_days" style="width: 40px;" class="form-control"><span
                                 id="errAdd_days" style="color: red; font-size: 10px;"></span></td>
@@ -313,9 +315,10 @@
 {% block script %}
 <script>
   $(function () {
-    $("#addHistoryBtn").on("click", function () {
+    $("tbody").on("click", "#addHistoryBtn", function () {
+
       // clean all err msg
-      var inputField = ["order", "start_date", "end_date", "days", "title", "event_type", "link"]
+      const inputField = ["order", "start_date", "end_date", "days", "title", "event_type", "link"]
       for (let i = 0; i < inputField.length; i++) {
         $("#errAdd_" + inputField[i]).text("");
       }
@@ -327,6 +330,8 @@
         "days": $("#add_days").val(),
         "title": $("#add_title").val()
       }
+
+      // handle required fields
       var nullFields = new Array()
 
       Object.keys(inputData).forEach(
@@ -353,17 +358,42 @@
             Object.keys(errors).forEach(
               (key) => $("#errAdd_" + key).text(errors[key])
             );
-          } else {
-
+            return null
+          }
+          // clear original input 
+          for (let i = 0; i < inputField.length; i++) {
+            $("#add_" + inputField[i]).val("");
+          }
+          var createTr = $("#addHistory");
+          var tbody = $("#tbody");
+          var objs = data.objs
+          createTr.removeClass("in");
+          $("tr").remove(".jqcontrol");
+          for (let i = 0; i < objs.length; i++) {
+            const element = objs[i];
+            var objContent = `
+              <tr id="${element._id}" class="jqcontrol">
+                <td class="order">${element.order}</td>
+                <td class="date">${element.date_str}</td>
+                <td class="days">${element.days}</td>
+                <td class="title">${element.title}</td>
+                <td class="event_type">${element.event_type}</td>
+                <td class="difficulty">${element.difficulty}</td>
+                <td class="link">${element.link}</td>
+                <td>
+                  <div class="btn-group" role="group">
+                    <button id="edit-${element._id}" type="button" class="btn btn-default edit-button"><i
+                        class="tf-pencil2" aria-hidden="true"></i></button>
+                    <button id="delete-${element._id}" type="button" class="btn btn-default delete-button"><i
+                        class="tf-ion-close" aria-hidden="true"></i></button>
+                  </div>
+                </td>
+              </tr>
+            `;
+            createTr.before(objContent);
           }
         },
-        error: function (errorData) {
-          console.log(errorData);
-        }
       })
-
-
-
     });
   });
 </script>
