@@ -343,9 +343,9 @@
                 <td class="link">${element.link}</td>
                 <td>
                   <div class="btn-group" role="group">
-                    <button data-hid="${element._id}" type="button" class="btn btn-default edit-button"><i
+                    <button data-hid="${element.id}" type="button" class="btn btn-default edit-button"><i
                         class="tf-pencil2" aria-hidden="true"></i></button>
-                    <button data-hid="${element._id}" type="button" class="btn btn-default delete-button"><i
+                    <button data-hid="${element.id}" type="button" class="btn btn-default delete-button"><i
                         class="tf-ion-close" aria-hidden="true"></i></button>
                   </div>
                 </td>
@@ -469,6 +469,64 @@
       })
     })
 
+    // udpate my history
+    $("tbody").on("click", ".editHistoryBtn", function () {
+      if (userId != currentUserId) {
+        return alert("您無權進行此操作")
+      }
+      console.log(123)
+
+      var hid = $(this).data().hid
+      // clean all err msg
+      const inputField = ["order", "start_date", "end_date", "days", "title", "event_type", "link"]
+      for (let i = 0; i < inputField.length; i++) {
+        $("#" + hid + "_errEdit_" + inputField[i]).text("");
+      }
+
+      var inputData = {
+        "order": $("#" + hid + "_edit_order").val(),
+        "start_date": $("#" + hid + "_edit_start_date").val(),
+        "end_date": $("#" + hid + "_edit_end_date").val(),
+        "days": $("#" + hid + "_edit_days").val(),
+        "title": $("#" + hid + "_edit_title").val()
+      }
+
+      // handle required fields
+      var nullFields = new Array()
+
+      Object.keys(inputData).forEach(
+        (key) => (!inputData[key]) && nullFields.push(key)
+      );
+      if (nullFields.length > 0) {
+        for (let i = 0; i < nullFields.length; i++) {
+          $("#" + hid + "_errEdit_" + nullFields[i]).text("此欄位不可空白 ");
+        }
+        return null;
+      }
+
+      inputData.event_type = $("#" + hid + "_edit_event_type").val();
+      inputData.link = $("#" + hid + "_edit_link").val()
+      inputData.my_history_id = hid;
+
+      $.ajax({
+        url: "{{ url_for('user.update_my_history') }}",
+        method: 'POST',
+        data: inputData,
+        success: function (data) {
+          if (data.errors) {
+            var errors = data.errors;
+            console.log(errors);
+            Object.keys(errors).forEach(
+              (key) => $("#" + hid + "_errEdit_" + key).text(errors[key])
+            );
+            return null
+          }
+          $("#edit" + hid).remove()
+          rePopulateTbody(data.objs);
+        },
+      })
+    });
+
     // create my history
     $("tbody").on("click", "#addHistoryBtn", function () {
       if (userId != currentUserId) {
@@ -497,7 +555,7 @@
       );
       if (nullFields.length > 0) {
         for (let i = 0; i < nullFields.length; i++) {
-          $("#errAdd_" + nullFields[i]).text("此欄位不可空白");
+          $("#errAdd_" + nullFields[i]).text("此欄位不可空白 ");
         }
         return null;
       }

@@ -216,3 +216,28 @@ def get_my_history():
         return jsonify({'objs': None, 'errors': {'message': '找不到此項目'}}), 404
     
     return jsonify({'objs': [serialize_single(h)], 'errors': None}), 200
+
+
+@bp.route('/my_history/update/', methods=["POST"])
+@login_required
+def update_my_history():
+
+    hid = request.form.get('my_history_id')
+    try:
+        h = MyHistory.objects.get(id=hid)
+    except MyHistory.DoesNotExist:
+        return jsonify({'objs': None, 'errors': {'message': '找不到此項目'}}), 404
+    if h.user_id != current_user.id:
+        return jsonify({'objs': None, 'errors': {'message': '您無權進行此操作'}}), 403
+
+    form = MyHistoryForm(request.form)
+    errs = form.validate()
+
+    if errs:
+        return jsonify({'objs': None, 'errors': errs})
+    
+    MyHistory.objects(id=hid).update_one(
+        updated_at=datetime.datetime.utcnow(),
+        **form.__dict__
+    )
+    return jsonify({'objs': serialize_my_history(current_user.id), 'errors': None}), 200
