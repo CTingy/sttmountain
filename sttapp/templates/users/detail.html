@@ -217,19 +217,27 @@
                   <div class="table-responsive">
                     <br>
                     <h4 class="text-center">出隊紀錄</h4>
-                    {% if history %}
-                    <p class="text-center">與站內出隊文資料並未直接連動，可自行新增與修改</p><br>
+                    {% if user.id == current_user.id %}
+                    <br>
+                    <p class="text-center">與站內出隊文資料並未直接連動，可自行新增與修改</p>
+                    <!-- collapse -->
+                    <div class="text-center">
+                      <a type="button" class="btn btn-default btn-round-full" data-toggle="collapse" href="#addHistory"
+                        aria-expanded="false" aria-controls="collapseExample"><i class="tf-ion-android-add"></i> 新增</a>
+                      <br><br><br>
+                    </div>
+                    {% endif %}
                     <form id="historyForm" action="">
                       <table class="table table-hover">
                         <thead>
                           <tr>
-                            <th class=""></th>
+                            <th class="" title="排列順序">排序</th>
                             <th style="width: 220px;">日期</th>
-                            <th class="">天數</th>
+                            <th class="" title="不含交通天，用來計算級數">天數</th>
                             <th class="">名稱</th>
-                            <th class="">類型</th>
-                            <th class="">級數</th>
-                            <th class="">超連結</th>
+                            <th class="" title="可填入任何自定義隊伍類型，包含探勘、活動、爽隊、渡蜜月等等">類型(自定義)</th>
+                            <th class="" title="由系統根據天數計算">級數</th>
+                            <th class="" title="可填入出隊文、相簿、紀錄等相關網址">超連結</th>
                             {% if user.id == current_user.id %}
                             <th class="col-md-1 col-sm-1"></th>{% endif %}
                           </tr>
@@ -262,26 +270,32 @@
                           {% if current_user.id == user.id %}
                           <tr class="collapse" id="addHistory">
                             <td class="order">
-                              <input id="add_order" style="width: 40px;" class="form-control">
+                              <input id="add_order" title="排列順序" style="width: 40px;" class="form-control"
+                                value="{{ history.count() + 1 }}">
                               <span id="errAdd_order" style="color: red; font-size: 10px;"></span></td>
                             <td class="date">
                               <div class="form-inline">
-                                <input id="add_start_date" style="width: 95px;" class="form-control">~
-                                <input id="add_end_date" style="width: 95px;" class="form-control">
+                                <input id="add_start_date" style="width: 95px;" placeholder="輸入起始日" class="form-control"
+                                  title="輸入起始日期，yyyy/mm/dd">~
+                                <input id="add_end_date" style="width: 95px;" placeholder="輸入結束日" class="form-control"
+                                  title="輸入結束日期，yyyy/mm/dd">
                               </div>
                               <span id="errAdd_start_date" style="color: red; font-size: 10px; width: 95px"></span>
                               <span id="errAdd_end_date" style="color: red; font-size: 10px; width: 95px"></span>
                             </td>
-                            <td class="days"><input id="add_days" style="width: 40px;" class="form-control"><span
-                                id="errAdd_days" style="color: red; font-size: 10px;"></span></td>
-                            <td class="title"><input id="add_title" class="form-control"><span id="errAdd_title"
-                                style="color: red; font-size: 10px;"></span></td>
-                            <td class="event_type"><input id="add_event_type" style="width: 60px;"
-                                class="form-control"><span id="errAdd_event_type"
-                                style="color: red; font-size: 10px;"></span></td>
-                            <td class="difficulty"></td>
-                            <td class="link"><input id="add_link" style="width: 100px;" class="form-control"><span
-                                id="errAdd_link" style="color: red; font-size: 10px;"></span></td>
+                            <td class="days"><input id="add_days" style="width: 40px;" title="不含交通天，用來計算級數"
+                                class="form-control"><span id="errAdd_days" style="color: red; font-size: 10px;"></span>
+                            </td>
+                            <td class="title"><input id="add_title" placeholder="最多30個字" class="form-control"><span
+                                id="errAdd_title" style="color: red; font-size: 10px;"></span></td>
+                            <td class="event_type"><input id="add_event_type" style="width: 100px;"
+                                title="可填入任何自定義隊伍類型，包含探勘、活動、爽隊、渡蜜月等等" placeholder="探勘、爽隊" class="form-control"><span
+                                id="errAdd_event_type" style="color: red; font-size: 10px;"></span></td>
+                            <td class="difficulty" title="由系統根據天數計算"></td>
+                            <td class="link"><input id="add_link" style="width: 100px;" title="可填入出隊文、相簿、紀錄等相關網址"
+                                placeholder="相關網址" class="form-control"><span id="errAdd_link"
+                                style="color: red; font-size: 10px;"></span>
+                            </td>
                             <td>
                               <div class="btn-group" role="group">
                                 <button style="width: 40px;" id="addHistoryBtn" type="button"
@@ -295,17 +309,7 @@
                         </tbody>
                       </table>
                     </form>
-                    <!-- collapse -->
-                    {% else %}<br>
-                    <p class="text-center">目前尚無出隊資料</p>{% endif %}
-                    {% if user.id == current_user.id %}
-                    <div class="text-center">
-                      <a type="button" class="btn btn-default btn-round-full" data-toggle="collapse" href="#addHistory"
-                        aria-expanded="false" aria-controls="collapseExample"><i class="tf-ion-android-add"></i> 新增</a>
-                      <br><br>
-                    </div>
-                    {% endif %}
-                    <br>
+                    <br><br>
                   </div>
                 </div>
               </div>
@@ -319,20 +323,12 @@
 {% endblock %}
 
 {% block footer %}{% include "footer.html" %}{% endblock %}
-{% block script %}
+{% block script %}{% if current_user.id == user.id %}
 <script>
   $(function () {
 
     const userId = "{{ user.id }}"
     const currentUserId = "{{ current_user.id }}"
-
-    function authorizeChecking() {
-      if (userId != currentUserId) {
-        alert("您無權進行此操作")
-        return false
-      }
-      return true
-    }
 
     function rePopulateTbody(objs) {
       if ($(".editInputs")) {
@@ -371,9 +367,6 @@
 
     // render updating-myhistory input fields and button
     $("tbody").on("click", ".edit-button", function () {
-      if (!authorizeChecking()) {
-        return null
-      }
       var hid = $(this).data().hid
       var tr = $("#" + hid)
       var dates = tr.children(".date")[0].innerText.split('~')
@@ -405,7 +398,7 @@
               id="${hid}_errEdit_days" style="color: red; font-size: 10px;"></span></td>
           <td class="title"><input value="${oriData.title}" id="${hid}_edit_title" class="form-control"><span id="${hid}_errEdit_title"
               style="color: red; font-size: 10px;"></span></td>
-          <td class="event_type"><input value="${oriData.event_type}" id="${hid}_edit_event_type" style="width: 60px;" class="form-control"><span
+          <td class="event_type"><input value="${oriData.event_type}" id="${hid}_edit_event_type" style="width: 100px;" class="form-control"><span
               id="${hid}_errEdit_event_type" style="color: red; font-size: 10px;"></span></td>
           <td class="difficulty">${oriData.difficulty}</td>
           <td class="link"><input value="${oriData.link}" id="${hid}_edit_link" style="width: 100px;" class="form-control"><span
@@ -459,10 +452,6 @@
 
     // delete my history
     $("tbody").on("click", ".delete-button", function () {
-
-      if (!authorizeChecking()) {
-        return null
-      }
       if (!confirm("確定要刪除此項目？")) {
         return null
       }
@@ -596,4 +585,5 @@
     });
   });
 </script>
+{% endif %}
 {% endblock %}
