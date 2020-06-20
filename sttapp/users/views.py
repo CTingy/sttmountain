@@ -143,21 +143,25 @@ def serialize_my_history(user_id):
     for i, h in enumerate(MyHistory.objects.filter(user_id=user_id), 1):
         MyHistory.objects(id=h.id).update_one(order=i)
         h.reload()
-        obj = {
-            '_id': str(h.id),
-            'order': i,
-            'date_str': "{}~{}".format(h.start_date_str, h.end_date_str),
-            'title': h.title,
-            'event_type': h.event_type or "",
-            'days': h.days,
-            'difficulty': h.difficulty,
-            'link': '''<a type="button" class="btn btn-default btn-round-full" 
-                       href="{}" target="_blank">
-                       <i class="tf-attachment"></i></a>'''.format(
-                           h.link) if h.link else "",
-        }
-        hs.append(obj)
+        hs.append(serialize_single(h))
     return hs
+
+
+def serialize_single(h):
+    obj = {
+        'id': str(h.id),
+        'order': h.order,
+        'date_str': "{}~{}".format(h.start_date_str, h.end_date_str),
+        'title': h.title,
+        'event_type': h.event_type or "",
+        'days': h.days,
+        'difficulty': h.difficulty,
+        'link': '''
+            <a type="button" class="btn btn-default btn-round-full" 
+            href="{}" target="_blank"><i class="tf-attachment"></i></a>
+        '''.format(h.link) if h.link else "",
+    }
+    return obj
 
 
 @bp.route('/my_history/create/', methods=["POST"])
@@ -198,3 +202,17 @@ def delete_my_history():
     h.delete()
 
     return jsonify({'objs': serialize_my_history(current_user.id), 'errors': None}), 200
+
+
+@bp.route('/my_history/')
+@login_required
+def get_my_history():
+    
+    hid = request.args.get('my_history_id')
+
+    try:
+        h = MyHistory.objects.get(id=hid)
+    except MyHistory.DoesNotExist:
+        return jsonify({'objs': None, 'errors': {'message': '找不到此項目'}}), 404
+    
+    return jsonify({'objs': [serialize_single(h)], 'errors': None}), 200

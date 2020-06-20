@@ -271,8 +271,9 @@
                                 id="errAdd_days" style="color: red; font-size: 10px;"></span></td>
                             <td class="title"><input id="add_title" class="form-control"><span id="errAdd_title"
                                 style="color: red; font-size: 10px;"></span></td>
-                            <td class="event_type"><input id="add_event" style="width: 60px;" class="form-control"><span
-                                id="errAdd_event" style="color: red; font-size: 10px;"></span></td>
+                            <td class="event_type"><input id="add_event_type" style="width: 60px;"
+                                class="form-control"><span id="errAdd_event_type"
+                                style="color: red; font-size: 10px;"></span></td>
                             <td class="difficulty"></td>
                             <td class="link"><input id="add_link" style="width: 100px;" class="form-control"><span
                                 id="errAdd_link" style="color: red; font-size: 10px;"></span></td>
@@ -324,15 +325,15 @@
     }
 
     function rePopulateTbody(objs) {
-      if ($("#editInputs")) {
-        $("#editInputs").remove()
+      if ($(".editInputs")) {
+        $(".editInputs").remove()
       }
       var createTr = $("#addHistory");
       $("tr").remove(".jqcontrol");
       for (let i = 0; i < objs.length; i++) {
         const element = objs[i];
         var objContent = `
-              <tr id="${element._id}" class="jqcontrol">
+              <tr id="${element.id}" class="jqcontrol">
                 <td class="order">${element.order}</td>
                 <td class="date">${element.date_str}</td>
                 <td class="days">${element.days}</td>
@@ -376,41 +377,74 @@
         'difficulty': tr.children(".difficulty")[0].innerText,
         'link': tr.children(".link")[0].innerText
       }
-      console.log(oriData)
       tr.before(`
-        <tr id="editInputs">
+        <tr id="edit${hid}" class="editInputs">
           <td class="order">
-            <input value="${oriData.order}" id="edit_order" style="width: 40px;" class="form-control">
-            <span id="errEdit_order" style="color: red; font-size: 10px;"></span></td>
+            <input value="${oriData.order}" id="${hid}_edit_order" style="width: 40px;" class="form-control">
+            <span id="${hid}_errEdit_order" style="color: red; font-size: 10px;"></span></td>
           <td class="date">
             <div class="form-inline">
-              <input value="${oriData.start_date}" id="edit_start_date" style="width: 95px;" class="form-control">~
-              <input value="${oriData.end_date}" id="edit_end_date" style="width: 95px;" class="form-control">
+              <input value="${oriData.start_date}" id="${hid}_edit_start_date" style="width: 95px;" class="form-control">~
+              <input value="${oriData.end_date}" id="${hid}_edit_end_date" style="width: 95px;" class="form-control">
             </div>
-            <span id="errEdit_start_date"
+            <span id="${hid}_errEdit_start_date"
               style="color: red; font-size: 10px; width: 95px"></span>
-            <span id="errEdit_end_date" style="color: red; font-size: 10px; width: 95px"></span>
+            <span id="${hid}_errEdit_end_date" style="color: red; font-size: 10px; width: 95px"></span>
           </td>
-          <td class="days"><input value="${oriData.days}" id="edit_days" style="width: 40px;" class="form-control"><span
-              id="errEdit_days" style="color: red; font-size: 10px;"></span></td>
-          <td class="title"><input value="${oriData.title}" id="edit_title" class="form-control"><span id="errEdit_title"
+          <td class="days"><input value="${oriData.days}" id="${hid}_edit_days" style="width: 40px;" class="form-control"><span
+              id="${hid}_errEdit_days" style="color: red; font-size: 10px;"></span></td>
+          <td class="title"><input value="${oriData.title}" id="${hid}_edit_title" class="form-control"><span id="${hid}_errEdit_title"
               style="color: red; font-size: 10px;"></span></td>
-          <td class="event_type"><input value="${oriData.event_type}" id="edit_event" style="width: 60px;" class="form-control"><span
-              id="errEdit_event" style="color: red; font-size: 10px;"></span></td>
+          <td class="event_type"><input value="${oriData.event_type}" id="${hid}_edit_event_type" style="width: 60px;" class="form-control"><span
+              id="${hid}_errEdit_event_type" style="color: red; font-size: 10px;"></span></td>
           <td class="difficulty">${oriData.difficulty}</td>
-          <td class="link"><input value="${oriData.link}" id="edit_link" style="width: 100px;" class="form-control"><span
+          <td class="link"><input value="${oriData.link}" id="${hid}_edit_link" style="width: 100px;" class="form-control"><span
               id="errEdit_link" style="color: red; font-size: 10px;"></span></td>
           <td>
             <div class="btn-group" role="group">
-              <button style="width: 40px;" id="editHistoryBtn" data-hid="${hid}" type="button"
-                class="btn btn btn-default"><i class="tf-ion-checkmark-round"></i></button>
-              <button id="editCancelBtn" type="button" data-hid="${hid}" class="btn btn-default"><i
+              <button style="width: 40px;" data-hid="${hid}" type="button"
+                class="editHistoryBtn btn btn btn-default"><i class="tf-ion-checkmark-round"></i></button>
+              <button type="button" data-hid="${hid}" class="editCancelBtn btn btn-default"><i
                   class="tf-ion-minus-round" aria-hidden="true"></i></button>
             </div>
           </td>
         </tr> `
       )
-      tr.remove
+      tr.remove();
+    })
+    // cancel edit history input fields, refresh data from server
+    $("tbody").on("click", ".editCancelBtn", function () {
+      var hid = $(this).data().hid
+      var thisTr = $("#edit" + hid)
+
+      $.ajax({
+        url: "{{ url_for('user.get_my_history') }}",
+        method: 'GET',
+        data: { 'my_history_id': hid },
+        success: function (data) {
+          oriData = data.objs[0]
+          thisTr.before(`
+            <tr id="${hid}" class="jqcontrol">
+              <td class="order">${oriData.order}</td>
+              <td class="date">${oriData.date_str}</td>
+              <td class="days">${oriData.days}</td>
+              <td class="title">${oriData.title}</td>
+              <td class="event_type">${oriData.event_type}</td>
+              <td class="difficulty">${oriData.difficulty}</td>
+              <td class="link">${oriData.link}</td>
+              <td>
+                <div class="btn-group" role="group">
+                  <button data-hid="${hid}" type="button" class="btn btn-default edit-button"><i
+                      class="tf-pencil2" aria-hidden="true"></i></button>
+                  <button data-hid="${hid}" type="button" class="btn btn-default delete-button"><i
+                      class="tf-ion-close" aria-hidden="true"></i></button>
+                </div>
+              </td>
+            </tr>
+          `)
+          thisTr.remove()
+        },
+      })
     })
 
     // delete my history
@@ -422,7 +456,6 @@
       if (!confirm("確定要刪除此項目？")) {
         return null
       }
-
       $.ajax({
         url: "{{ url_for('user.delete_my_history') }}",
         method: 'POST',
@@ -435,7 +468,6 @@
         },
       })
     })
-
 
     // create my history
     $("tbody").on("click", "#addHistoryBtn", function () {
