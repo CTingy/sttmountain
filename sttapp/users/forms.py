@@ -32,7 +32,7 @@ class MyHistoryForm():
         try:
             self.start_date = datetime.datetime.strptime(self.start_date, "%Y/%m/%d")
         except ValueError:
-            return "開始日期格式錯誤，需為YYYY/MM/DD"
+            return "開始日期格式錯誤，需為YYYY/MM/DD。 "
 
     def validate_end_date(self):
         try:

@@ -264,8 +264,7 @@
                                 <input id="add_start_date" style="width: 95px;" class="form-control">~
                                 <input id="add_end_date" style="width: 95px;" class="form-control">
                               </div>
-                              <span id="errAdd_start_date"
-                                style="color: red; font-size: 10px; width: 95px"></span>&nbsp;&nbsp;&nbsp;
+                              <span id="errAdd_start_date" style="color: red; font-size: 10px; width: 95px"></span>
                               <span id="errAdd_end_date" style="color: red; font-size: 10px; width: 95px"></span>
                             </td>
                             <td class="days"><input id="add_days" style="width: 40px;" class="form-control"><span
@@ -277,8 +276,13 @@
                             <td class="difficulty"></td>
                             <td class="link"><input id="add_link" style="width: 100px;" class="form-control"><span
                                 id="errAdd_link" style="color: red; font-size: 10px;"></span></td>
-                            <td><button id="addHistoryBtn" type="button"
-                                class="btn btn-main btn-small btn-round-full">送出</button>
+                            <td>
+                              <div class="btn-group" role="group">
+                                <button style="width: 40px;" id="addHistoryBtn" type="button"
+                                  class="btn btn btn-default"><i class="tf-ion-checkmark-round"></i></button>
+                                <button id="addCancelBtn" type="button" class="btn btn-default"><i
+                                    class="tf-ion-minus-round" aria-hidden="true"></i></button>
+                              </div>
                             </td>
                           </tr>
                         </tbody>
@@ -320,6 +324,9 @@
     }
 
     function rePopulateTbody(objs) {
+      if ($("#editInputs")) {
+        $("#editInputs").remove()
+      }
       var createTr = $("#addHistory");
       $("tr").remove(".jqcontrol");
       for (let i = 0; i < objs.length; i++) {
@@ -346,6 +353,65 @@
         createTr.before(objContent);
       }
     }
+    // remove add my history form
+    $("tbody").on("click", "#addCancelBtn", function () {
+      $("#addHistory").removeClass("in");
+    })
+
+    // render updating-myhistory input fields and button
+    $("tbody").on("click", ".edit-button", function () {
+      if (!authorizeChecking()) {
+        return null
+      }
+      var hid = $(this).data().hid
+      var tr = $("#" + hid)
+      var dates = tr.children(".date")[0].innerText.split('~')
+      oriData = {
+        'order': tr.children(".order")[0].innerText,
+        'start_date': dates[0],
+        'end_date': dates[1],
+        'days': tr.children(".days")[0].innerText,
+        'title': tr.children(".title")[0].innerText,
+        'event_type': tr.children(".event_type")[0].innerText,
+        'difficulty': tr.children(".difficulty")[0].innerText,
+        'link': tr.children(".link")[0].innerText
+      }
+      console.log(oriData)
+      tr.before(`
+        <tr id="editInputs">
+          <td class="order">
+            <input value="${oriData.order}" id="edit_order" style="width: 40px;" class="form-control">
+            <span id="errEdit_order" style="color: red; font-size: 10px;"></span></td>
+          <td class="date">
+            <div class="form-inline">
+              <input value="${oriData.start_date}" id="edit_start_date" style="width: 95px;" class="form-control">~
+              <input value="${oriData.end_date}" id="edit_end_date" style="width: 95px;" class="form-control">
+            </div>
+            <span id="errEdit_start_date"
+              style="color: red; font-size: 10px; width: 95px"></span>
+            <span id="errEdit_end_date" style="color: red; font-size: 10px; width: 95px"></span>
+          </td>
+          <td class="days"><input value="${oriData.days}" id="edit_days" style="width: 40px;" class="form-control"><span
+              id="errEdit_days" style="color: red; font-size: 10px;"></span></td>
+          <td class="title"><input value="${oriData.title}" id="edit_title" class="form-control"><span id="errEdit_title"
+              style="color: red; font-size: 10px;"></span></td>
+          <td class="event_type"><input value="${oriData.event_type}" id="edit_event" style="width: 60px;" class="form-control"><span
+              id="errEdit_event" style="color: red; font-size: 10px;"></span></td>
+          <td class="difficulty">${oriData.difficulty}</td>
+          <td class="link"><input value="${oriData.link}" id="edit_link" style="width: 100px;" class="form-control"><span
+              id="errEdit_link" style="color: red; font-size: 10px;"></span></td>
+          <td>
+            <div class="btn-group" role="group">
+              <button style="width: 40px;" id="editHistoryBtn" data-hid="${hid}" type="button"
+                class="btn btn btn-default"><i class="tf-ion-checkmark-round"></i></button>
+              <button id="editCancelBtn" type="button" data-hid="${hid}" class="btn btn-default"><i
+                  class="tf-ion-minus-round" aria-hidden="true"></i></button>
+            </div>
+          </td>
+        </tr> `
+      )
+      tr.remove
+    })
 
     // delete my history
     $("tbody").on("click", ".delete-button", function () {
