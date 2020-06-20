@@ -245,7 +245,7 @@
                         <tbody id="tbody">
                           {% for h in history %}
                           <tr id="{{ h.id }}" class="jqcontrol">
-                            <td class="order">{{ loop.index }}</td>
+                            <td class="order">{{ h.order }}</td>
                             <td class="date">{{ h.start_date_str }}~{{ h.end_date_str }}</td>
                             <td class="days">{{ h.days }}</td>
                             <td class="title">{{ h.title }}</td>
@@ -340,7 +340,7 @@
         const element = objs[i];
         var objContent = `
               <tr id="${element.id}" class="jqcontrol">
-                <td class="order">${i + 1}</td>
+                <td class="order">${element.order}</td>
                 <td class="date">${element.date_str}</td>
                 <td class="days">${element.days}</td>
                 <td class="title">${element.title}</td>
@@ -419,12 +419,7 @@
     $("tbody").on("click", ".editCancelBtn", function () {
       var hid = $(this).data().hid
       var thisTr = $("#edit" + hid)
-      if (thisTr.prev().children().length === 0) {
-        var order = 1
-      } else {
-        var order = parseInt(thisTr.prev().children()[0].innerText) + 1
 
-      }
       $.ajax({
         url: "{{ url_for('user.get_my_history') }}",
         method: 'GET',
@@ -433,7 +428,7 @@
           oriData = data.objs[0]
           thisTr.before(`
             <tr id="${hid}" class="jqcontrol">
-              <td class="order">${order}</td>
+              <td class="order">${oriData.order}</td>
               <td class="date">${oriData.date_str}</td>
               <td class="days">${oriData.days}</td>
               <td class="title">${oriData.title}</td>
