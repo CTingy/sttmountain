@@ -217,6 +217,7 @@
                   <div class="table-responsive">
                     <br>
                     <h4 class="text-center">出隊紀錄</h4>
+                    {% if history %}
                     <p class="text-center">與站內出隊文資料並未直接連動，可自行新增與修改</p><br>
                     <form id="historyForm" action="">
                       <table class="table table-hover">
@@ -229,7 +230,8 @@
                             <th class="">類型</th>
                             <th class="">級數</th>
                             <th class="">超連結</th>
-                            <th class="col-md-1 col-sm-1"></th>
+                            {% if user.id == current_user.id %}
+                            <th class="col-md-1 col-sm-1"></th>{% endif %}
                           </tr>
                         </thead>
                         <tbody id="tbody">
@@ -245,6 +247,7 @@
                               {% if h.link %}<a type="button" class="btn btn-default btn-round-full" href="{{ h.link }}"
                                 target="_blank"><i class="tf-attachment"></i></a>{% endif %}
                             </td>
+                            {% if user.id == current_user.id %}
                             <td>
                               <div class="btn-group" role="group">
                                 <button data-hid="{{ h.id }}" type="button" class="btn btn-default edit-button"><i
@@ -253,8 +256,10 @@
                                     class="tf-ion-close" aria-hidden="true"></i></button>
                               </div>
                             </td>
+                            {% endif %}
                           </tr>
                           {% endfor %}
+                          {% if current_user.id == user.id %}
                           <tr class="collapse" id="addHistory">
                             <td class="order">
                               <input id="add_order" style="width: 40px;" class="form-control">
@@ -286,15 +291,20 @@
                               </div>
                             </td>
                           </tr>
+                          {% endif %}
                         </tbody>
                       </table>
                     </form>
                     <!-- collapse -->
+                    {% else %}<br>
+                    <p class="text-center">目前尚無出隊資料</p>{% endif %}
+                    {% if user.id == current_user.id %}
                     <div class="text-center">
                       <a type="button" class="btn btn-default btn-round-full" data-toggle="collapse" href="#addHistory"
                         aria-expanded="false" aria-controls="collapseExample"><i class="tf-ion-android-add"></i> 新增</a>
                       <br><br>
                     </div>
+                    {% endif %}
                     <br>
                   </div>
                 </div>
@@ -474,7 +484,6 @@
       if (userId != currentUserId) {
         return alert("您無權進行此操作")
       }
-      console.log(123)
 
       var hid = $(this).data().hid
       // clean all err msg
@@ -515,7 +524,6 @@
         success: function (data) {
           if (data.errors) {
             var errors = data.errors;
-            console.log(errors);
             Object.keys(errors).forEach(
               (key) => $("#" + hid + "_errEdit_" + key).text(errors[key])
             );
@@ -571,7 +579,6 @@
         success: function (data) {
           if (data.errors) {
             var errors = data.errors;
-            console.log(errors);
             Object.keys(errors).forEach(
               (key) => $("#errAdd_" + key).text(errors[key])
             );
