@@ -3,22 +3,14 @@
 {% block menu %}{% include "menu.html" %}{% endblock %}
 
 {% block content %}
-<style>
-  td>input {
-    width: 100%;
-    box-sizing: border-box;
-    /* 使元素的寬度包括padding margin, border*/
-    -moz-box-sizing: border-box;
-  }
-
-</style>
-
 <section class="page-header">
   <div class="container">
     <div class="row">
       <div class="col-md-12">
         <div class="content">
-          <h1 class="page-name">個人頁面</h1>
+          <h1 class="page-name">{% if user.id == current_user.id %}我
+            {% else %}{{ user.username }}{% endif %}的頁面
+          </h1>
           <ol class="breadcrumb">
             <li><a href="{{ url_for('user.detail', user_id=current_user.id) }}">個人頁面</a></li>
             <li class="active">帳號資料檢視</li>
@@ -255,9 +247,9 @@
                             </td>
                             <td>
                               <div class="btn-group" role="group">
-                                <button id="edit-{{ h.id }}" type="button" class="btn btn-default edit-button"><i
+                                <button data-hid="{{ h.id }}" type="button" class="btn btn-default edit-button"><i
                                     class="tf-pencil2" aria-hidden="true"></i></button>
-                                <button id="delete-{{ h.id }}" type="button" class="btn btn-default delete-button"><i
+                                <button data-hid="{{ h.id }}" type="button" class="btn btn-default delete-button"><i
                                     class="tf-ion-close" aria-hidden="true"></i></button>
                               </div>
                             </td>
@@ -315,10 +307,72 @@
 {% block script %}
 <script>
   $(function () {
-    $("tbody").on("click", "#addHistoryBtn", function () {
 
-      var userId = "{{ user.id }}"
-      var currentUserId = "{{ current_user.id }}"
+    const userId = "{{ user.id }}"
+    const currentUserId = "{{ current_user.id }}"
+
+    function authorizeChecking() {
+      if (userId != currentUserId) {
+        alert("您無權進行此操作")
+        return false
+      }
+      return true
+    }
+
+    function rePopulateTbody(objs) {
+      var createTr = $("#addHistory");
+      $("tr").remove(".jqcontrol");
+      for (let i = 0; i < objs.length; i++) {
+        const element = objs[i];
+        var objContent = `
+              <tr id="${element._id}" class="jqcontrol">
+                <td class="order">${element.order}</td>
+                <td class="date">${element.date_str}</td>
+                <td class="days">${element.days}</td>
+                <td class="title">${element.title}</td>
+                <td class="event_type">${element.event_type}</td>
+                <td class="difficulty">${element.difficulty}</td>
+                <td class="link">${element.link}</td>
+                <td>
+                  <div class="btn-group" role="group">
+                    <button data-hid="${element._id}" type="button" class="btn btn-default edit-button"><i
+                        class="tf-pencil2" aria-hidden="true"></i></button>
+                    <button data-hid="${element._id}" type="button" class="btn btn-default delete-button"><i
+                        class="tf-ion-close" aria-hidden="true"></i></button>
+                  </div>
+                </td>
+              </tr>
+            `;
+        createTr.before(objContent);
+      }
+    }
+
+    // delete my history
+    $("tbody").on("click", ".delete-button", function () {
+
+      if (!authorizeChecking()) {
+        return null
+      }
+      if (!confirm("確定要刪除此項目？")) {
+        return null
+      }
+
+      $.ajax({
+        url: "{{ url_for('user.delete_my_history') }}",
+        method: 'POST',
+        data: {
+          'user_id': userId,
+          'my_history_id': $(this).data().hid
+        },
+        success: function (data) {
+          rePopulateTbody(data.objs)
+        },
+      })
+    })
+
+
+    // create my history
+    $("tbody").on("click", "#addHistoryBtn", function () {
       if (userId != currentUserId) {
         return alert("您無權進行此操作")
       }
@@ -372,33 +426,8 @@
             $("#add_" + inputField[i]).val("");
           }
           var createTr = $("#addHistory");
-          var tbody = $("#tbody");
-          var objs = data.objs
           createTr.removeClass("in");
-          $("tr").remove(".jqcontrol");
-          for (let i = 0; i < objs.length; i++) {
-            const element = objs[i];
-            var objContent = `
-              <tr id="${element._id}" class="jqcontrol">
-                <td class="order">${element.order}</td>
-                <td class="date">${element.date_str}</td>
-                <td class="days">${element.days}</td>
-                <td class="title">${element.title}</td>
-                <td class="event_type">${element.event_type}</td>
-                <td class="difficulty">${element.difficulty}</td>
-                <td class="link">${element.link}</td>
-                <td>
-                  <div class="btn-group" role="group">
-                    <button id="edit-${element._id}" type="button" class="btn btn-default edit-button"><i
-                        class="tf-pencil2" aria-hidden="true"></i></button>
-                    <button id="delete-${element._id}" type="button" class="btn btn-default delete-button"><i
-                        class="tf-ion-close" aria-hidden="true"></i></button>
-                  </div>
-                </td>
-              </tr>
-            `;
-            createTr.before(objContent);
-          }
+          rePopulateTbody(data.objs);
         },
       })
     });

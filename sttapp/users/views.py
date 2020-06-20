@@ -137,30 +137,10 @@ def connect_member():
     return redirect(url_for("user.detail", user_id=current_user.id))
 
 
-@bp.route('/my_history/create/', methods=["POST"])
-@login_required
-def create_my_history():
-
-    if request.form.get('user_id') != current_user.id:
-        return jsonify({'objs': None, 'errors': None}), 403
-
-    form = MyHistoryForm(request.form)
-    errs = form.validate()
-
-    if errs:
-        return jsonify({'objs': None, 'errors': errs})
-    h = MyHistory(**form.__dict__)
-    h.created_at = h.updated_at = datetime.datetime.utcnow()
-    h.created_by = h.updated_by = current_user.id
-    h.user_id = current_user.id
-    try:
-        h.save()
-    except Exception as e:
-        raise(e)
-
+def serialize_my_history(user_id):
     # re-ordering
     hs = []
-    for i, h in enumerate(MyHistory.objects.filter(user_id=current_user.id), 1):
+    for i, h in enumerate(MyHistory.objects.filter(user_id=user_id), 1):
         MyHistory.objects(id=h.id).update_one(order=i)
         h.reload()
         obj = {
@@ -177,5 +157,44 @@ def create_my_history():
                            h.link) if h.link else "",
         }
         hs.append(obj)
+    return hs
 
-    return jsonify({'objs': hs, 'errors': None}), 200
+
+@bp.route('/my_history/create/', methods=["POST"])
+@login_required
+def create_my_history():
+
+    if request.form.get('user_id') != str(current_user.id):
+        return jsonify({'objs': None, 'errors': {'message': '您無權進行此操作'}}), 403
+
+    form = MyHistoryForm(request.form)
+    errs = form.validate()
+
+    if errs:
+        return jsonify({'objs': None, 'errors': errs})
+    h = MyHistory(**form.__dict__)
+    h.created_at = h.updated_at = datetime.datetime.utcnow()
+    h.created_by = h.updated_by = current_user.id
+    h.user_id = current_user.id
+    try:
+        h.save()
+    except Exception as e:
+        raise(e)
+    return jsonify({'objs': serialize_my_history(current_user.id), 'errors': None}), 200
+
+
+@bp.route('/my_history/delete/', methods=["POST"])
+@login_required
+def delete_my_history():
+    
+    hid = request.form.get('my_history_id')
+    try:
+        h = MyHistory.objects.get(id=hid)
+    except MyHistory.DoesNotExist:
+        return jsonify({'objs': None, 'errors': {'message': '找不到此項目'}}), 404
+    
+    if h.user_id != current_user.id:
+        return jsonify({'objs': None, 'errors': {'message': '您無權進行此操作'}}), 403
+    h.delete()
+
+    return jsonify({'objs': serialize_my_history(current_user.id), 'errors': None}), 200
