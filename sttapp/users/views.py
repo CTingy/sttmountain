@@ -137,20 +137,32 @@ def connect_member():
     return redirect(url_for("user.detail", user_id=current_user.id))
 
 
-def serialize_my_history(user_id):
-    # re-ordering
-    hs = []
-    for i, h in enumerate(MyHistory.objects.filter(user_id=user_id), 1):
-        MyHistory.objects(id=h.id).update_one(order=i)
-        h.reload()
-        hs.append(serialize_single(h))
-    return hs
+def re_order_history(h, target_order, user_id):
+
+    hs_list = list(MyHistory.objects.filter(user_id=user_id, id__ne=h.id))
+    try:
+        hidden_order = hs_list[target_order-2].order  # 實際位置的前一個元素的order
+    except IndexError:
+        # 若使用者輸入order數字過大，使用最後一個位置的元素的order
+        hidden_order = hs_list[-1].order
+    h.order = hidden_order
+    h.save()
+    hs_list.insert(target_order-1, h)
+    return hs_list
+
+# def serialize_my_history(user_id):
+    
+#     hs = []
+#     for i, h in enumerate(MyHistory.objects.filter(user_id=user_id), 1):
+#         MyHistory.objects(id=h.id).update_one(order=i)
+#         h.reload()
+#         hs.append(serialize_single(h))
+#     return hs
 
 
 def serialize_single(h):
     obj = {
         'id': str(h.id),
-        'order': h.order,
         'date_str': "{}~{}".format(h.start_date_str, h.end_date_str),
         'title': h.title,
         'event_type': h.event_type or "",
@@ -184,7 +196,10 @@ def create_my_history():
         h.save()
     except Exception as e:
         raise(e)
-    return jsonify({'objs': serialize_my_history(current_user.id), 'errors': None}), 200
+    
+    hs = re_order_history(h, h.order, current_user.id)
+    objs = list(map(serialize_single, hs))
+    return jsonify({'objs': objs, 'errors': None}), 200
 
 
 @bp.route('/my_history/delete/', methods=["POST"])
@@ -201,7 +216,8 @@ def delete_my_history():
         return jsonify({'objs': None, 'errors': {'message': '您無權進行此操作'}}), 403
     h.delete()
 
-    return jsonify({'objs': serialize_my_history(current_user.id), 'errors': None}), 200
+    objs = list(map(serialize_single, MyHistory.objects(user_id=current_user.id)))
+    return jsonify({'objs': objs, 'errors': None}), 200
 
 
 @bp.route('/my_history/')
@@ -240,4 +256,9 @@ def update_my_history():
         updated_at=datetime.datetime.utcnow(),
         **form.__dict__
     )
-    return jsonify({'objs': serialize_my_history(current_user.id), 'errors': None}), 200
+    print(form.__dict__['order'], "00000000000000000")
+    hs = re_order_history(h, h.order, current_user.id)
+    objs = list(map(serialize_single, hs))
+    return jsonify({'objs': objs, 'errors': None}), 200
+
+    # return jsonify({'objs': serialize_my_history(current_user.id), 'errors': None}), 200
