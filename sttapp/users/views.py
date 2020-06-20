@@ -141,6 +141,9 @@ def connect_member():
 @login_required
 def create_my_history():
 
+    if request.form.get('user_id') != current_user.id:
+        return jsonify({'objs': None, 'errors': None}), 403
+
     form = MyHistoryForm(request.form)
     errs = form.validate()
 
@@ -175,4 +178,4 @@ def create_my_history():
         }
         hs.append(obj)
 
-    return jsonify({'objs': hs, 'errors': None})
+    return jsonify({'objs': hs, 'errors': None}), 200

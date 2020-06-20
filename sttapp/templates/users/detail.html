@@ -317,6 +317,12 @@
   $(function () {
     $("tbody").on("click", "#addHistoryBtn", function () {
 
+      var userId = "{{ user.id }}"
+      var currentUserId = "{{ current_user.id }}"
+      if (userId != currentUserId) {
+        return alert("您無權進行此操作")
+      }
+
       // clean all err msg
       const inputField = ["order", "start_date", "end_date", "days", "title", "event_type", "link"]
       for (let i = 0; i < inputField.length; i++) {
@@ -346,6 +352,7 @@
 
       inputData.event_type = $("#add_event_type").val();
       inputData.link = $("#add_link").val();
+      inputData.user_id = userId;
 
       $.ajax({
         url: "{{ url_for('user.create_my_history') }}",
