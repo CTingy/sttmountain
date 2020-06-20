@@ -25,17 +25,17 @@
           {% if current_user.is_authenticated %}
           <!-- invitation -->
           <li class="dropdown dropdown-slide">
-            <a href="{{ url_for('auth.invite') }}"><i class="tf-ion-wineglass"></i>&nbsp邀請</a>
+            <a href="{{ url_for('auth.invite') }}"><i class="tf-ion-wineglass"></i>&nbsp;邀請</a>
           </li>
           <li class="dropdown dropdown-slide">
-            <a href="{{ url_for('proposal.create') }}"><i class="tf-ion-flame"></i>&nbsp開隊</a>
+            <a href="{{ url_for('proposal.create') }}"><i class="tf-ion-flame"></i>&nbsp;開隊</a>
           </li>
           {% endif %}
 
           <!-- Search -->
           <li class="dropdown search dropdown-slide">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"><i
-                class="tf-ion-ios-search-strong"></i>&nbsp搜尋</a>
+                class="tf-ion-ios-search-strong"></i>&nbsp;搜尋</a>
             <ul class="dropdown-menu search-dropdown">
               <li>
                 <form action="{{ url_for('event.search') }}"><input type="search" name="keyword" class="form-control"
@@ -50,33 +50,33 @@
           <li class="dropdown dropdown-slide">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="350"
               role="button" aria-haspopup="true" aria-expanded="false">
-              <i class="tf-ion-social-octocat"></i>&nbsp{{ current_user.username }}&nbsp<span
+              <i class="tf-ion-social-octocat"></i>&nbsp;{{ current_user.username }}&nbsp;<span
                 class="tf-ion-ios-arrow-down"></span>
             </a>
             <ul class="dropdown-menu">
               <li><a href="{{ url_for('user.detail', user_id=current_user.id) }}">
-                  <h5><i class="tf-ion-happy-outline"></i>&nbsp&nbsp我的頁面</h5>
+                  <h5><i class="tf-ion-happy-outline"></i>&nbsp;&nbsp;我的頁面</h5>
                 </a></li>
               <li><a href="{{ url_for('proposal.user_posts') }}">
-                  <h5><i class="tf-ion-paper-airplane"></i>&nbsp&nbsp我的PO文</h5>
+                  <h5><i class="tf-ion-paper-airplane"></i>&nbsp;&nbsp;我的PO文</h5>
                 </a></li>
               {% if current_user.member_id %}
               <li><a href="{{ url_for('event.member_history', member_id=current_user.member_id) }}">
-                  <h5><i class="tf-ion-earth"></i>&nbsp&nbsp出隊紀錄</h5>
+                  <h5><i class="tf-ion-earth"></i>&nbsp;&nbsp;站內隊紀錄</h5>
                 </a></li>
               {% endif %}
               <li><a href="{{ url_for('user.update') }}">
-                  <h5><i class="tf-ion-paintbrush"></i>&nbsp&nbsp帳號管理</h5>
+                  <h5><i class="tf-ion-paintbrush"></i>&nbsp;&nbsp;帳號管理</h5>
                 </a></li>
               <li><a href="{{ url_for('auth.logout') }}">
-                  <h5><i class="tf-ion-log-out"></i>&nbsp&nbsp登出</h5>
+                  <h5><i class="tf-ion-log-out"></i>&nbsp;&nbsp;登出</h5>
                 </a></li>
             </ul>
           </li>
           {% else %}
           <!-- Login/Logout -->
           <li class="dropdown dropdown-slide">
-            <a href="{{ url_for('auth.login') }}"><i class="tf-ion-ios-paw"></i>&nbsp登入</a>
+            <a href="{{ url_for('auth.login') }}"><i class="tf-ion-ios-paw"></i>&nbsp;登入</a>
           </li>
           {% endif %}
         </ul><!-- / .nav .navbar-nav .navbar-right -->

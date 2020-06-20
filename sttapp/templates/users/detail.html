@@ -216,12 +216,11 @@
                 <div class="media-body">
                   <div class="table-responsive">
                     <br>
-                    <h4 class="text-center">出隊紀錄</h4>
+                    <h4 class="text-center">隊伍經歷</h4>
                     {% if user.id == current_user.id %}
-                    <br>
                     <p class="text-center">與站內出隊文資料並未直接連動，可自行新增與修改</p>
                     {% endif %}
-                    <br><br>
+                    <br>
                     <form id="historyForm" action="">
                       <table class="table table-hover">
                         <thead>
@@ -287,8 +286,8 @@
                                 title="可填入任何自定義隊伍類型，包含探勘、活動、爽隊、渡蜜月等等" placeholder="探勘、爽隊" class="form-control"><span
                                 id="errAdd_event_type" style="color: red; font-size: 10px;"></span></td>
                             <td class="difficulty" title="由系統根據天數計算"></td>
-                            <td class="link"><input id="add_link" style="width: 100px;" title="可填入出隊文、相簿、紀錄等相關網址"
-                                placeholder="相關網址" class="form-control"><span id="errAdd_link"
+                            <td class="link"><input id="add_link" style="width: 165px;" title="可填入出隊文、相簿、紀錄等相關網址"
+                                placeholder="出隊文/紀錄/相簿網址" class="form-control"><span id="errAdd_link"
                                 style="color: red; font-size: 10px;"></span>
                             </td>
                             <td>
@@ -375,6 +374,13 @@
       var hid = $(this).data().hid
       var tr = $("#" + hid)
       var dates = tr.children(".date")[0].innerText.split('~')
+
+      if (tr.children(".link")[0].firstElementChild) {
+        var link = tr.children(".link")[0].firstElementChild.href
+      } else {
+        var link = ""
+      }
+
       oriData = {
         'order': tr.children(".order")[0].innerText,
         'start_date': dates[0],
@@ -383,7 +389,7 @@
         'title': tr.children(".title")[0].innerText,
         'event_type': tr.children(".event_type")[0].innerText,
         'difficulty': tr.children(".difficulty")[0].innerText,
-        'link': tr.children(".link")[0].innerText
+        'link': link
       }
       tr.before(`
         <tr id="edit${hid}" class="editInputs">
@@ -406,7 +412,7 @@
           <td class="event_type"><input value="${oriData.event_type}" id="${hid}_edit_event_type" style="width: 100px;" class="form-control"><span
               id="${hid}_errEdit_event_type" style="color: red; font-size: 10px;"></span></td>
           <td class="difficulty">${oriData.difficulty}</td>
-          <td class="link"><input value="${oriData.link}" id="${hid}_edit_link" style="width: 100px;" class="form-control"><span
+          <td class="link"><input value="${oriData.link}" id="${hid}_edit_link" style="width: 165px;" class="form-control"><span
               id="${hid}_errEdit_link" style="color: red; font-size: 10px;"></span></td>
           <td>
             <div class="btn-group" role="group">
