@@ -30,16 +30,16 @@
         {% include 'alerts.html' %}
         <div class="tabCommon mt-20">
           <ul class="nav nav-tabs justify-content-center list-inline dashboard-menu">
-            <li class=""><a data-toggle="tab" href="#basic" aria-expanded="false">基本資料</a></li>
+            <li class="active"><a data-toggle="tab" href="#basic" aria-expanded="false">基本資料</a></li>
             {% if current_user.id == user.id %}
             <li class=""><a data-toggle="tab" href="#advanced" aria-expanded="false">進階資料</a></li>
             <li class=""><a data-toggle="tab" href="#member" aria-expanded="false">出隊用資料</a></li>
             {% endif %}
-            <li class="active"><a data-toggle="tab" href="#experience" aria-expanded="true">隊伍經歷</a></li>
+            <li class=""><a data-toggle="tab" href="#experience" aria-expanded="true">隊伍經歷</a></li>
           </ul>
           <br>
           <div class="tab-content">
-            <div id="basic" class="tab-pane fade dashboard-user-profile dashboard-wrapper">
+            <div id="basic" class="tab-pane fade active in dashboard-user-profile dashboard-wrapper">
               <div class="media">
                 <div class="pull-left text-center" href="#">
                   <img class="media-object user-img"
@@ -211,7 +211,7 @@
               </div>
             </div>
             {% endif %}
-            <div id="experience" class="tab-pane fade active in dashboard-user-profile dashboard-wrapper">
+            <div id="experience" class="tab-pane fade dashboard-user-profile dashboard-wrapper">
               <div class="media">
                 <div class="media-body">
                   <div class="table-responsive">
@@ -220,13 +220,8 @@
                     {% if user.id == current_user.id %}
                     <br>
                     <p class="text-center">與站內出隊文資料並未直接連動，可自行新增與修改</p>
-                    <!-- collapse -->
-                    <div class="text-center">
-                      <a type="button" class="btn btn-default btn-round-full" data-toggle="collapse" href="#addHistory"
-                        aria-expanded="false" aria-controls="collapseExample"><i class="tf-ion-android-add"></i> 新增</a>
-                      <br><br><br>
-                    </div>
                     {% endif %}
+                    <br><br>
                     <form id="historyForm" action="">
                       <table class="table table-hover">
                         <thead>
@@ -244,7 +239,7 @@
                         </thead>
                         <tbody id="tbody">
                           {% for h in history %}
-                          <tr id="{{ h.id }}" class="jqcontrol">
+                          <tr style="height: 50px;" id="{{ h.id }}" class="jqcontrol">
                             <td class="order">{{ h.order }}</td>
                             <td class="date">{{ h.start_date_str }}~{{ h.end_date_str }}</td>
                             <td class="days">{{ h.days }}</td>
@@ -308,8 +303,18 @@
                           {% endif %}
                         </tbody>
                       </table>
+                      {% if current_user.id == user.id %}
+                      <!-- collapse -->
+                      <div class="">&nbsp;
+                        <a type="button" class="btn btn-default btn-round-full" data-toggle="collapse"
+                          href="#addHistory" aria-expanded="false" aria-controls="collapseExample"><i
+                            class="tf-ion-android-add"></i>
+                          新增</a>
+                        <br>
+                      </div>
+                      {% endif %}
+                      <br><br>
                     </form>
-                    <br><br>
                   </div>
                 </div>
               </div>
@@ -402,7 +407,7 @@
               id="${hid}_errEdit_event_type" style="color: red; font-size: 10px;"></span></td>
           <td class="difficulty">${oriData.difficulty}</td>
           <td class="link"><input value="${oriData.link}" id="${hid}_edit_link" style="width: 100px;" class="form-control"><span
-              id="errEdit_link" style="color: red; font-size: 10px;"></span></td>
+              id="${hid}_errEdit_link" style="color: red; font-size: 10px;"></span></td>
           <td>
             <div class="btn-group" role="group">
               <button style="width: 40px;" data-hid="${hid}" type="button"
@@ -515,6 +520,7 @@
             var errors = data.errors;
             Object.keys(errors).forEach(
               (key) => $("#" + hid + "_errEdit_" + key).text(errors[key])
+
             );
             return null
           }

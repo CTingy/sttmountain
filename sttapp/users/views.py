@@ -137,12 +137,20 @@ def connect_member():
     return redirect(url_for("user.detail", user_id=current_user.id))
 
 
-def serialize_my_history(user_id):
+def serialize_my_history(user_id, target_h=None):
     # re-ordering
+    if target_h:
+        hs_list = list(MyHistory.objects(user_id=user_id, id__ne=target_h.id))
+        try:
+            hs_list.insert(target_h.order-1, target_h)
+        except IndexError:
+            hs_list.append(target_h)
+    else:
+        hs_list = list(MyHistory.objects(user_id=user_id))
     hs = []
-    for i, h in enumerate(MyHistory.objects.filter(user_id=user_id), 1):
-        MyHistory.objects(id=h.id).update_one(order=i)
-        h.reload()
+    for i, h in enumerate(hs_list, 1):
+        h.order = i
+        h.save()
         hs.append(serialize_single(h))
     return hs
 
@@ -184,7 +192,7 @@ def create_my_history():
         h.save()
     except Exception as e:
         raise(e)
-    return jsonify({'objs': serialize_my_history(current_user.id), 'errors': None}), 200
+    return jsonify({'objs': serialize_my_history(current_user.id, h), 'errors': None}), 200
 
 
 @bp.route('/my_history/delete/', methods=["POST"])
@@ -240,4 +248,5 @@ def update_my_history():
         updated_at=datetime.datetime.utcnow(),
         **form.__dict__
     )
-    return jsonify({'objs': serialize_my_history(current_user.id), 'errors': None}), 200
+    h.reload()
+    return jsonify({'objs': serialize_my_history(current_user.id, h), 'errors': None}), 200
