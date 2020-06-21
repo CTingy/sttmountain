@@ -62,4 +62,48 @@
       {% endfor %}
     </tbody>
   </table>
+  {% if current_user.id == prop.created_by.id %}
+  <div class="text-center" data-toggle="modal" data-target="#ModalGenDoc" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <br><br>
+    <button type=" submit" class="btn btn-main btn-medium">
+      產生人員名冊
+    </button>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="ModalGenDoc" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <form action="{{ url_for('proposal.gen_doc', prop_id=prop.id) }}" method="POST">
+          <div class="modal-body">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h3 class="text-center">產生檔案</h3>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <div class="col-md-12">
+              <br><br>
+              <p class="">
+                1. 請填寫檔案位置，建議開好一個隊伍資料夾，並確認該檔案位置已開啟更改權限給山協網站主機。<br><br>
+                2. 若下表空白，將於山協資料夾根目錄建立以隊伍為名之資料夾，並將人員資料表至於其中</p>
+              <br>
+              <div class="form-group">
+                <label>google drive 網址</label>
+                <input type="text" class="form-control" name="doc_url" placeholder="ex: sttmountain G Suite出隊資料夾檔案網址">
+              </div>
+              <br>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+            <button type="submit" class="btn btn-primary">確定產生</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- end modal -->
+  {% endif %}
 </div>

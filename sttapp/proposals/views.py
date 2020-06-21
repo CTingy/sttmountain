@@ -235,3 +235,11 @@ def user_posts():
 
     proposals = Proposal.objects.filter(created_by=current_user.id)
     return render_template('users/proposals.html', proposals=proposals)
+
+
+@bp.route('/user_posts/<string:prop_id>', methods=["POST"])
+@login_required
+def gen_doc(prop_id):
+
+    doc_url = request.form.get("doc_url")
+    
