@@ -16,11 +16,16 @@ bp = Blueprint('user', __name__, url_prefix="/user")
 
 
 @bp.route('/detail/<string:user_id>')
-@login_required
 def detail(user_id):
 
     user = SttUser.objects.get_or_404(id=user_id)
     invited_by = ""
+    history = MyHistory.objects.filter(user_id=user_id)
+
+    if not current_user.is_authenticated:
+        return render_template('users/detail.html', user=user, invited_by="", 
+                               member=None, history=history)
+
     if user.invitation_info.invited_by:
         try:
             invited_by = SttUser.objects.get(id=user.invitation_info.invited_by).username
@@ -44,7 +49,6 @@ def detail(user_id):
                     updated_by=current_user.id,
                     member_id=None
                 )
-    history = MyHistory.objects.filter(user_id=user_id)
     return render_template('users/detail.html', user=user, invited_by=invited_by, member=member, history=history)
 
 

@@ -24,9 +24,6 @@
   <div class="container">
     <div class="row">
       <div class="col-xs-12">
-        {% if not current_user.is_authenticated %}
-        <p>您無權瀏覽此頁面</p>
-        {% endif %}
         {% include 'alerts.html' %}
         <div class="tabCommon mt-20">
           <ul class="nav nav-tabs justify-content-center list-inline dashboard-menu">
@@ -44,7 +41,8 @@
                 <div class="pull-left text-center" href="#">
                   <img class="media-object user-img"
                     src="{{ user.profile_img or url_for('static', filename='images/avater.jpg') }}" alt="Image">
-                  <a href="#x" class="btn btn-transparent mt-20">Change Image<br>(這張只是放好看的)</a>
+                  {% if current_user.id == user.id %}
+                  <a href="#x" class="btn btn-transparent mt-20">Change Image<br>(這張只是放好看的)</a>{% endif %}
                 </div>
                 <div class="media-body">
                   <ul class="user-profile-list">
@@ -333,6 +331,7 @@
 
     const userId = "{{ user.id }}"
     const currentUserId = "{{ current_user.id }}"
+    const inputField = ["order", "start_date", "end_date", "days", "title", "event_type", "link"]
 
     function rePopulateTbody(objs) {
       if ($(".editInputs")) {
@@ -367,6 +366,12 @@
     // remove add my history form
     $("tbody").on("click", "#addCancelBtn", function () {
       $("#addHistory").removeClass("in");
+
+      // clean err msg
+      for (let i = 0; i < inputField.length; i++) {
+        $("#errAdd_" + inputField[i]).text("");
+      }
+
     })
 
     // render updating-myhistory input fields and button
@@ -487,7 +492,6 @@
 
       var hid = $(this).data().hid
       // clean all err msg
-      const inputField = ["order", "start_date", "end_date", "days", "title", "event_type", "link"]
       for (let i = 0; i < inputField.length; i++) {
         $("#" + hid + "_errEdit_" + inputField[i]).text("");
       }
@@ -508,7 +512,7 @@
       );
       if (nullFields.length > 0) {
         for (let i = 0; i < nullFields.length; i++) {
-          $("#" + hid + "_errEdit_" + nullFields[i]).text("此欄位不可空白 ");
+          $("#" + hid + "_errEdit_" + nullFields[i]).text("此欄位不可空白。 ");
         }
         return null;
       }
@@ -543,7 +547,6 @@
       }
 
       // clean all err msg
-      const inputField = ["order", "start_date", "end_date", "days", "title", "event_type", "link"]
       for (let i = 0; i < inputField.length; i++) {
         $("#errAdd_" + inputField[i]).text("");
       }
@@ -564,7 +567,7 @@
       );
       if (nullFields.length > 0) {
         for (let i = 0; i < nullFields.length; i++) {
-          $("#errAdd_" + nullFields[i]).text("此欄位不可空白 ");
+          $("#errAdd_" + nullFields[i]).text("此欄位不可空白。 ");
         }
         return null;
       }

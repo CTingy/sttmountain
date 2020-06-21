@@ -69,7 +69,8 @@
               <div class="col-md-12">
                 <div class="form-group col-md-12">
                   <label>自我介紹</label>
-                  <textarea name="introduction" class="form-control" rows="7">{{ form.introduction.data }}</textarea>
+                  <textarea name="introduction" class="form-control"
+                    rows="7">{{ form.introduction.data or "" }}</textarea>
                 </div>
               </div>
             </div>
