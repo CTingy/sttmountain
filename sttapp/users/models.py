@@ -28,7 +28,7 @@ class MyHistory(RecordModel):
     link = db.URLField()
     user_id = db.ObjectIdField()
 
-    meta = {'ordering': ['order', '-updated_at']}
+    meta = {'ordering': ['order']}
 
     @property
     def start_date_str(self):

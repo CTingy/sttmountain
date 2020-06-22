@@ -8,6 +8,7 @@ from mongoengine.errors import NotUniqueError
 from sttapp.base.enums import FlashCategory, EventStatus, Level, Gender
 from sttapp.proposals.models import Itinerary, Proposal
 from sttapp.members.models import Member
+from sttapp.users.models import MyHistory
 from .models import Event
 
 
@@ -116,9 +117,14 @@ def update_as_back(event_id):
                 communication_info=form.get("communication_info{}".format(i))
             )
             inputted_itinerary_list.append(itinerary)
+
+    if inputted_itinerary_list:
+        event_real_days = inputted_itinerary_list[-1].day_number
+    else:
+        event_real_days = event.proposal.days
     
-    #TODO: 確認為狀態由"出隊"變為"已下山"時，匯出到member的歷史中，這個應該要放到job裡面
-    #TODO: 還要再加個加到我的頁面裡
+    #TODO: use other thread
+    # create connection between BACK event and member
     if event.status == EventStatus.get_map()[EventStatus.NORM]:
         for a in Proposal.objects.get(id=event.proposal.id).attendees:
             event_ids = a.event_ids
@@ -128,6 +134,23 @@ def update_as_back(event_id):
                 updated_by=current_user.id,
                 event_ids=event_ids
             )
+            if not a.user_id:
+                continue
+            h = MyHistory(
+                user_id=a.user_id,
+                created_at=datetime.datetime.utcnow(),
+                updated_at=datetime.datetime.utcnow(),
+                title=event.title or event.proposal.title,
+                start_date=event.proposal.start_date,
+                end_date=event.proposal.end_date,
+                days=event_real_days,
+                link=request.host_url.rstrip(
+                    "/") + url_for("event.detail", event_id=event_id),
+                order=MyHistory.objects(user_id=a.user_id).order_by(
+                    '-order').first().order + 1
+            )
+            h.save()
+    # use other thread
     
     Event.objects(id=event_id).update_one(
         status=EventStatus.get_map()[EventStatus.BACK],
