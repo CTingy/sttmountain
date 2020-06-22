@@ -145,35 +145,15 @@ def serialize_my_history(user_id, target_h=None):
     # re-ordering
     if target_h:
         hs_list = list(MyHistory.objects(user_id=user_id, id__ne=target_h.id))
-        try:
-            hs_list.insert(target_h.order-1, target_h)
-        except IndexError:
-            hs_list.append(target_h)
+        hs_list.insert(target_h.order-1, target_h)
     else:
         hs_list = list(MyHistory.objects(user_id=user_id))
     hs = []
     for i, h in enumerate(hs_list, 1):
         h.order = i
         h.save()
-        hs.append(serialize_single(h))
+        hs.append(h.serialize())
     return hs
-
-
-def serialize_single(h):
-    obj = {
-        'id': str(h.id),
-        'order': h.order,
-        'date_str': "{}~{}".format(h.start_date_str, h.end_date_str),
-        'title': h.title,
-        'event_type': h.event_type or "",
-        'days': h.days,
-        'difficulty': h.difficulty,
-        'link': '''
-            <a type="button" class="btn btn-default btn-round-full" 
-            href="{}" target="_blank"><i class="tf-attachment"></i></a>
-        '''.format(h.link) if h.link else "",
-    }
-    return obj
 
 
 @bp.route('/my_history/create/', methods=["POST"])
@@ -190,7 +170,7 @@ def create_my_history():
         return jsonify({'objs': None, 'errors': errs})
     h = MyHistory(**form.__dict__)
     h.created_at = h.updated_at = datetime.datetime.utcnow()
-    h.created_by = h.updated_by = current_user.id
+    h.created_by = current_user.id
     h.user_id = current_user.id
     try:
         h.save()
@@ -227,7 +207,7 @@ def get_my_history():
     except MyHistory.DoesNotExist:
         return jsonify({'objs': None, 'errors': {'message': '找不到此項目'}}), 404
     
-    return jsonify({'objs': [serialize_single(h)], 'errors': None}), 200
+    return jsonify({'objs': [h.serialize()], 'errors': None}), 200
 
 
 @bp.route('/my_history/update/', methods=["POST"])

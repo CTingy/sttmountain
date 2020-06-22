@@ -53,6 +53,22 @@ class MyHistory(RecordModel):
         else:
             return Difficulty.LEVEL_A
 
+    def serialize(self):
+        obj = {
+            'id': str(self.id),
+            'order': self.order,
+            'date_str': "{}~{}".format(self.start_date_str, self.end_date_str),
+            'title': self.title or "",
+            'event_type': self.event_type or "",
+            'days': self.days or "",
+            'difficulty': self.difficulty or "",
+            'link': '''
+                <a type="button" class="btn btn-default btn-round-full" 
+                href="{}" target="_blank"><i class="tf-attachment"></i></a>
+            '''.format(self.link) if self.link else "",
+        }
+        return obj
+
 
 class User(UserMixin, RecordModel):
 
