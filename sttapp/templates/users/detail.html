@@ -33,6 +33,10 @@
             <li class=""><a data-toggle="tab" href="#member" aria-expanded="false">出隊用資料</a></li>
             {% endif %}
             <li class=""><a data-toggle="tab" href="#experience" aria-expanded="true">隊伍經歷</a></li>
+            {% if user.member_id %}
+            <li class=""><a href="{{ url_for('event.member_history', member_id=user.member_id) }}" target="_blank"
+                aria-expanded="true">站內隊紀錄</a></li>
+            {% endif %}
           </ul>
           <br>
           <div class="tab-content">
