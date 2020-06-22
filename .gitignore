@@ -3,3 +3,5 @@
 *.pyc
 sttenv/*
 static/*
+credentials/*
+
