@@ -67,7 +67,8 @@
             <!-- end Modal -->
           </div>
           {% endif %}
-          <h2>[{{ event.get_status_display() }}]&nbsp;{{ event.title }}&nbsp;&nbsp;
+          <h2>[{{ event.get_status_display() }}]&nbsp;{{ event.title }}
+            ({{ prop.difficulty }}{% if prop.event_type %}{{ prop.get_event_type_display() }}{% else %}級隊{% endif %})&nbsp;&nbsp;
             {% if current_user.id == event.created_by.id and event.status == "NORM" %}
             <a href="{{ url_for('event.update_as_back', event_id=event.id) }}" title="回報下山或徹退" type="button"
               class="btn btn-primary btn-round-full"><i
