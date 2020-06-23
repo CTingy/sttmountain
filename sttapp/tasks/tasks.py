@@ -1,6 +1,6 @@
-from .celery import capp
+from .celery import app
 
 
-@capp.task()
+@app.task()
 def add(a, b):
     return a + b

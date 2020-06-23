@@ -4,7 +4,7 @@ import datetime
 
 class Config:
 
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'flask123')
+    SECRET_KEY = os.environ.get('SECRET_KEY')
 
     # mongodb config
     MONGODB_SETTINGS = {
@@ -19,8 +19,12 @@ class Config:
     CELERY_ACCEPT_CONTENT = ['json']
     CELERY_TASK_SERIALIZER = 'json'
     CELERY_RESULT_SERIALIZER = 'json'
-    CELERY_RESULT_BACKEND = 'rpc://'
-    CELERY_BROKER_URL = 'pyamqp://'
+    CELERY_RESULT_BACKEND = 'mongodb://127.0.0.1:27017/'
+    CELERY_MONGODB_BACKEND_SETTINGS = {
+        'database': os.getenv("DB_NAME"),
+        'taskmeta_collection': 'stt_taskmeta_collection',
+    }
+    CELERY_BROKER_URL = 'redis://127.0.0.1:6379/1'
 
     MAIL_DEFAULT_SENDER = 'sttmountain@mail.ncku.edu.tw'
     SESSION_PROTECTION = 'strong'
