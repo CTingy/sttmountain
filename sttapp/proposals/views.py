@@ -12,7 +12,6 @@ from .forms import ProposalForm
 from .models import Proposal, Itinerary
 from .service import GoogleDriveService
 
-import pygsheets
 import iso8601
 
 
@@ -245,17 +244,11 @@ def user_posts():
 def gen_doc(prop_id):
 
     doc_url = request.form.get("doc_url")
-    if doc_url:
-        client = pygsheets.authorize(service_account_file=os.environ.get("GOOGLE_DRIVE_API_CERD_PATH"))
-        try:
-            sh = client.create('validation_test', folder=doc_url.split("/folders/")[1])
-        except:
-            flash("輸入的內容無效，或是該網址未開啟權限", FlashCategory.ERROR)
-            return redirect(url_for('proposal.detail', prop_id=prop_id))
+
+    if doc_url and "folders/" in doc_url:
         folder_id = doc_url.split("/folders/")[1]
-        sh.delete()
     else:
-        folder_id = None
+        folder_id = doc_url
 
     gd = GoogleDriveService(proposal_id=prop_id, google_folder_id=folder_id)
     gd.generate_sheets()

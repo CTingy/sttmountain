@@ -46,8 +46,8 @@ class DevelopmentConfig(Config):
     MAIL_USE_TLS = True
     MAIL_USE_SSL = False
 
-    GOOGLE_DRIVE_FOLDER_ID = os.environ.get('GOOGLE_DRIVE_FOLDER_ID', None)
-    GOOGLE_DRIVE_API_CERD_PATH = os.environ.get('GOOGLE_DRIVE_API_CERD_PATH', None)
+    # GOOGLE_DRIVE_FOLDER_ID = os.environ.get('GOOGLE_DRIVE_FOLDER_ID', None)
+    # GOOGLE_DRIVE_API_CERD_PATH = os.environ.get('GOOGLE_DRIVE_API_CERD_PATH', None)
 
 
 class ProductionConfig(Config):

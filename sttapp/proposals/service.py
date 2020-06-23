@@ -22,6 +22,9 @@ class GoogleDriveService():
         self.file_name = "{}_{}".format(
             proposal.title, get_local_dt(datetime.datetime.utcnow()).strftime("%Y%m%d%H%M%s"))
 
+    def _validate_folder_id(self):
+        pass
+
     def generate_sheets(self):
         
         sheet = self.client.create(self.file_name + "_入山", folder=self.folder_id)
