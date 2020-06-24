@@ -1,16 +1,9 @@
 import os
 
 from flask import Flask
-
-from .config import app_config
-from .db import init_db
-from .mail import init_mail
-from .login import init_login
-from flask_wtf.csrf import CSRFProtect
-
-
-from flask import Flask
 from werkzeug.utils import import_string
+from .config import app_config
+from flask_wtf.csrf import CSRFProtect
 
 
 blueprints = [
@@ -24,29 +17,33 @@ blueprints = [
 ]
 
 
+extensions = [
+    'sttapp.ext:db',
+    'sttapp.ext:mail',
+    'sttapp.ext:login_manager',
+]
+
+
 def create_app(config_name='development'):
 
     config = app_config[config_name]
-
-    app = Flask(__name__,
-                static_url_path='',
-                static_folder=config.STATIC_DIR,
-                template_folder='templates/'
-                )
+    app = Flask(
+        __name__,
+        static_url_path='',
+        static_folder=config.STATIC_DIR,
+        template_folder='templates/'
+    )
     app.config.from_object(config)
-    db = init_db(app)
-    mail = init_mail(app)
-    login_manager = init_login(app)
+
+    for ext_name in extensions:
+        ext = import_string(ext_name)
+        ext.init_app(app)
+
     csrf = CSRFProtect(app)
     
     # register_bps
     for bp_name, prefix in blueprints:
         bp = import_string(bp_name, silent=False)
-        if prefix:
-            app.register_blueprint(bp, url_prefix=prefix)
-        else:
-            app.register_blueprint(bp, url_prefix=prefix)
-
+        app.register_blueprint(bp, url_prefix=prefix)
+        
     return app
-
-app = create_app()

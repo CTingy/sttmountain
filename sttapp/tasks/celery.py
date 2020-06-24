@@ -1,6 +1,7 @@
 import os
 from celery import Celery
 from sttapp.config import app_config
+from sttapp.app import create_app
 
 
 celery = Celery()
