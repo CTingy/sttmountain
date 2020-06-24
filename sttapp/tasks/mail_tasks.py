@@ -1,4 +1,4 @@
-from .celery import app
+from .celery import celery
 
 from flask import current_app, render_template
 from flask_mail import Message
@@ -13,7 +13,8 @@ def send_async_email(app, msg):
         except ConnectionRefusedError:
             raise Exception("[MAIL SERVER] not working")
 
-@app.task()
+
+@celery.task()
 def send_mail(subject, recipients, html_body):
     app = current_app._get_current_object()
     msg = Message(subject, recipients=recipients)
