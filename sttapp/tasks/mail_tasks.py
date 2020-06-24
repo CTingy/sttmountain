@@ -1,7 +1,7 @@
 from .celery import celery
 
 from flask_mail import Message
-from sttapp.app import app
+# from sttapp.app import app
 from sttapp.mail import mail
 
 

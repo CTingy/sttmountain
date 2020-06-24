@@ -4,10 +4,24 @@ from flask import Flask
 
 from .config import app_config
 from .db import init_db
-from .bp import register_bps
 from .mail import init_mail
 from .login import init_login
 from flask_wtf.csrf import CSRFProtect
+
+
+from flask import Flask
+from werkzeug.utils import import_string
+
+
+blueprints = [
+    ('sttapp.users:bp', '/user'),
+    ('sttapp.base:bp', ''),
+    ('sttapp.base:err_handler', ''),
+    ('sttapp.proposals:bp', '/proposal'),
+    ('sttapp.auth:bp', '/auth'),
+    ('sttapp.members:bp', '/member'),
+    ('sttapp.events:bp', '/event'),
+]
 
 
 def create_app(config_name='development'):
@@ -24,7 +38,14 @@ def create_app(config_name='development'):
     mail = init_mail(app)
     login_manager = init_login(app)
     csrf = CSRFProtect(app)
-    register_bps(app)
+    
+    # register_bps
+    for bp_name, prefix in blueprints:
+        bp = import_string(bp_name, silent=False)
+        if prefix:
+            app.register_blueprint(bp, url_prefix=prefix)
+        else:
+            app.register_blueprint(bp, url_prefix=prefix)
 
     return app
 
