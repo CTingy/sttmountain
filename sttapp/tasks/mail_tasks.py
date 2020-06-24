@@ -1,8 +1,7 @@
 from .celery import celery
 
-from flask import current_app, render_template
 from flask_mail import Message
-
+from sttapp.app import app
 from sttapp.mail import mail
 
 
@@ -16,7 +15,7 @@ def send_async_email(app, msg):
 
 @celery.task()
 def send_mail(subject, recipients, html_body):
-    app = current_app._get_current_object()
+    # app = current_app._get_current_object()
     msg = Message(subject, recipients=recipients)
     msg.html = html_body
     send_async_email(app, msg)

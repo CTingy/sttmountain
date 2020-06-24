@@ -42,7 +42,7 @@ def invite():
             flash("邀請註冊連結生成發生問題，請洽管理員", FlashCategory.ERROR)
             return redirect(url_for('auth.invite'))
 
-        send_mail(
+        send_mail.delay(
             subject="邀請您註冊成大山協網站帳號",
             recipients=[form.email.data, ],
             html_body=render_template(
