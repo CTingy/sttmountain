@@ -3,7 +3,7 @@ from .celery import app
 from flask import current_app, render_template
 from flask_mail import Message
 
-from mail import mail
+from sttapp.mail import mail
 
 
 def send_async_email(app, msg):
