@@ -19,12 +19,17 @@ class Config:
     CELERY_ACCEPT_CONTENT = ['json']
     CELERY_TASK_SERIALIZER = 'json'
     CELERY_RESULT_SERIALIZER = 'json'
-    CELERY_RESULT_BACKEND = 'mongodb://127.0.0.1:27017/'
-    CELERY_MONGODB_BACKEND_SETTINGS = {
-        'database': os.getenv("DB_NAME"),
-        'taskmeta_collection': 'stt_taskmeta_collection',
-    }
-    CELERY_BROKER_URL = 'redis://127.0.0.1:6379/1'
+    BROKER_URL = 'redis://127.0.0.1:6379/'  # CELERY_BROKER_URL
+    CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/'
+    # CELERY_RESULT_BACKEND = 'mongodb://{}:{}@127.0.0.1:27017/'.format(
+    #     os.getenv("DB_USERNAME"), os.getenv("DB_PASSWORD")
+    # )
+    # CELERY_MONGODB_BACKEND_SETTINGS = {
+    #     'database': os.getenv("DB_NAME"),
+    #     'taskmeta_collection': 'stt_taskmeta_collection',
+    #     'user': os.getenv("DB_USERNAME"),
+    #     'password': os.getenv("DB_PASSWORD")
+    # }
 
     MAIL_DEFAULT_SENDER = 'sttmountain@mail.ncku.edu.tw'
     SESSION_PROTECTION = 'strong'
