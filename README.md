@@ -55,47 +55,7 @@ export GOOGLE_CLIENT_SECRET=自己申請一個
 # mail server
 export DEV_MAIL_USERNAME=參見下方指定smtp server章節
 export DEV_MAIL_PASSWORD=參見下方指定smtp server章節
-
 ```
-## 加入靜態檔案
-* 到[這邊](https://github.com/CTingy/sttmountain_static)下載`static/`資料夾
-* 將資料夾放在此專案下，專案結構會變成像是這樣：
-```
-- 專案根目錄/
-    - static/
-    - sttapp/
-        - auth/
-        - users/
-        - proposals/
-        - events/ 
-        - ....
-    - README.md
-    - requirements.txt
-```
-
-# 啟動
-```
-cd 專案根目錄/sttapp/
-flask run
-```
-
-# 其他所需準備
-## 建立第一個登入者
-**(因為此網站不登入的話幾乎沒剩下什麼功能可以用@@ 詳見下方功能說明)**
-```
-cd 專案根目錄/sttapp/
-flask shell
-```
-在shell之中：
-```python
-from sttapp.users.models import SttUser
-user = SttUser()
-user.username = "<網站顯示名稱>"
-user.email = "<email>"
-user.password = "<輸入密碼>"  # 請直接輸入密碼，資料庫會hash後再儲存
-user.save()
-```
-
 ## 指定smtp server
 下面示範使用mailtrap的步驟
 * 至https://mailtrap.io/ 申請一個帳號
@@ -117,6 +77,47 @@ class DevelopmentConfig(Config):
     MAIL_PASSWORD = os.environ.get('DEV_MAIL_PASSWORD', None)
     MAIL_USE_TLS = True
     MAIL_USE_SSL = False
+```
+
+## 加入靜態檔案
+* 到[這邊](https://github.com/CTingy/sttmountain_static)下載`static/`資料夾
+* 將資料夾放在此專案下，專案結構會變成像是這樣：
+```
+- 專案根目錄/
+    - static/
+    - sttapp/
+        - auth/
+        - users/
+        - proposals/
+        - events/ 
+        - ....
+    - README.md
+    - requirements.txt
+```
+
+# 啟動
+```
+cd 專案根目錄/sttapp/
+flask run
+```
+按 ctrl+c 離開
+
+# 建立第一個登入者
+* 請先建立第一位使用者，才使用邀請功能讓其他帳號註冊
+* 其實也是因為此網站不登入的話幾乎沒剩下什麼功能可以用@@  
+* 詳細登入功能請見下方的註冊與登入
+```
+cd 專案根目錄/sttapp/
+flask shell
+```
+在shell之中：
+```python
+from sttapp.users.models import SttUser
+user = SttUser()
+user.username = "<網站顯示名稱>"
+user.email = "<email>"
+user.password = "<輸入密碼>"  # 請直接輸入密碼，資料庫會hash後再儲存
+user.save()
 ```
 
 # 功能說明
