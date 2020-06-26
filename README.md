@@ -1,5 +1,9 @@
 # 安裝步驟
 ## 環境準備
+* 下載此repo與靜態檔案
+```
+git clone https://github.com/CTingy/sttmountain.git --recurse-submodules
+```
 * python3 與建立虛擬環境
 ```
 sudo apt-get install python3.7
@@ -35,6 +39,7 @@ mongo
 ```
 離開docker，使用密碼模式重新啟動
 ```
+docker stop <mongo_container_id>
 docker run -d -p 27017:27017 -v ~/dataMongo:/data/db mongo mongod --auth
 ```
 ## 所需環境變數
@@ -70,8 +75,8 @@ export GOOGLE_DRIVE_API_CERD_PATH=自己申請一個
 
 至虛擬環境中，新增環境變數：
 ```
-export MAIL_USERNAME=剛剛複製的username
-export MAIL_PASSWORD=剛剛複製的password
+export DEV_MAIL_USERNAME=剛剛複製的username
+export DEV_MAIL_PASSWORD=剛剛複製的password
 ```
 若不使用mailtrap，自行至`專案根目錄/config.py`中修改以下程式碼：
 ```python
@@ -85,8 +90,11 @@ class DevelopmentConfig(Config):
 ```
 
 ## 加入靜態檔案
-* 到[這邊](https://github.com/CTingy/sttmountain_static)下載`static/`資料夾
-* 將資料夾放在此專案下，專案結構會變成像是這樣：
+* 若是一開始clone此專案時未下載到submodule靜態檔的話，請執行：
+```
+git submodule update --init
+```
+* 最後專案結構會變成像是這樣：
 ```
 - 專案根目錄/
     - static/
@@ -99,6 +107,7 @@ class DevelopmentConfig(Config):
     - README.md
     - requirements.txt
 ```
+* 更多submodule設定使用[參考](https://blog.puckwang.com/post/2020/git-submodule-vs-subtree/)
 
 # 啟動
 ```
