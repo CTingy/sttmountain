@@ -9,8 +9,8 @@ class Config:
     # mongodb config
     MONGODB_SETTINGS = {
         'db': os.getenv("DB_NAME"),
-        'host': '127.0.0.1',
-        'port': 27017,
+        'host': os.getenv("DB_HOST"),
+        'port': int(os.getenv("DB_PORT")),
         'username': os.getenv("DB_USERNAME"),
         'password': os.getenv("DB_PASSWORD")
     }
