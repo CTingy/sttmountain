@@ -26,7 +26,7 @@ def detail(user_id):
         return render_template('users/detail.html', user=user, invited_by="", 
                                member=None, history=history)
 
-    if user.invitation_info.invited_by:
+    if user.invitation_info and user.invitation_info.invited_by:
         try:
             invited_by = SttUser.objects.get(id=user.invitation_info.invited_by).username
         except SttUser.DoesNotExist:
