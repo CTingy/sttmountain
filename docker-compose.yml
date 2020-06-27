@@ -64,8 +64,6 @@ services:
     mongo:
         container_name: mongo_service
         image: mongo:4.2.6
-        ports:
-            - "127.0.0.1:27018:27017"
         volumes:
             - ./dataMongo/:/data/db/
             - ./dataRedis/:/data/
@@ -78,21 +76,27 @@ services:
         networks:
             - backend_mongo
 
-    # nginx as a system webserver
+    # nginx with host mode. connect service by export ports
+    # you have to set ports in 'sttapp'
+    # can also serve other services
     nginx:
         image: nginx
         volumes:
             - ./conf.d/:/etc/nginx/conf.d/
+            - ./static/:/var/www/static/
         network_mode: "host"
 
-    # nginx as the sttapp frontend proxy or static file server
+    # nginx with bridge mode. connect service by container_name
+    # can only listen the ports set in 'ports'
+    # cannot serve other services from localhost ip ports
     sttapp_front:
         container_name: sttapp_front
-        image: nginx
         ports:
-            - "0.0.0.0:80:80"
+            "80:80"
+        image: nginx
         volumes:
             - ./conf.d/:/etc/nginx/conf.d/
+            - ./static/:/var/www/static/
         networks:
             - frontend
 
