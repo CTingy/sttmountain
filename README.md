@@ -51,6 +51,9 @@ export FLASK_ENV=development
 export DB_NAME=上面doker之中建立的your_db_name
 export DB_USERNAME=上面doker之中建立的mongo_user_name
 export DB_PASSWORD=上面doker之中建立的secret_password
+export DB_HOST=127.0.0.1
+export DB_PORT=27017
+export DB_NAME=上面doker之中建立的db_name
 
 # google service
 # 此為goole第三方登入使用，不需要此功能的話這邊不用寫
