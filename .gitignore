@@ -4,4 +4,4 @@
 sttenv/*
 static/*
 credentials/*
-
+env.sh

@@ -1,0 +1,102 @@
+version: "3"
+
+services:
+    sttapp:
+        container_name: sttapp_service
+        image: sttapp:0.1.01
+        build:
+            context: .
+        environment:
+            # environment variable for 專案根目錄
+            SECRET_KEY: 
+            FLASK_ENV: 
+            DB_NAME: 
+            DB_HOST: mongo_service
+            DB_PORT: 27017
+            DB_USERNAME: 
+            DB_PASSWORD: 
+            # google service
+            # 此為goole第三方登入使用，不需要此功能的話這邊不用寫
+            GOOGLE_CLIENT_ID: 
+            GOOGLE_CLIENT_SECRET: 
+            # mail server
+            DEV_MAIL_USERNAME: 
+            DEV_MAIL_PASSWORD: 
+            # google drive api
+            # 此為至goole drive產生人員名冊用，不需要此功能的話這邊不用寫
+            GOOGLE_DRIVE_FOLDER_ID: 
+            GOOGLE_DRIVE_API_CERD_PATH: 
+            PYTHONBUFFERED: 1
+        depends_on:
+            - redis
+            - mongo
+        restart: "unless-stopped"
+        networks:
+            - frontend
+            - backend_redis
+            - backend_mongo
+
+    redis:
+        container_name: redis_service
+        image: redis
+        restart: "unless-stopped"
+        environment:
+            # not implemented
+        networks:
+            - backend_redis
+
+    # build / up for develop only
+    mongo_dev:
+        container_name: mongo_dev_service
+        image: mongo:4.2.6
+        ports:
+            - "127.0.0.1:27018:27017"
+        volumes:
+            - ~/dataMongo:/data/db/
+        environment:
+            MONGO_INITDB_DATABASE: 
+            MONGO_INITDB_ROOT_USERNAME: 
+            MONGO_INITDB_ROOT_PASSWORD: 
+        command: "mongod --auth"
+        restart: "unless-stopped"
+
+    # build / up for deploy
+    mongo:
+        container_name: mongo_service
+        image: mongo:4.2.6
+        ports:
+            - "127.0.0.1:27018:27017"
+        volumes:
+            - ./dataMongo/:/data/db/
+            - ./dataRedis/:/data/
+        environment:
+            MONGO_INITDB_DATABASE: 
+            MONGO_INITDB_ROOT_USERNAME: 
+            MONGO_INITDB_ROOT_PASSWORD: 
+        command: "mongod --auth"
+        restart: "unless-stopped"
+        networks:
+            - backend_mongo
+
+    # nginx as a system webserver
+    nginx:
+        image: nginx
+        volumes:
+            - ./conf.d/:/etc/nginx/conf.d/
+        network_mode: "host"
+
+    # nginx as the sttapp frontend proxy or static file server
+    sttapp_front:
+        container_name: sttapp_front
+        image: nginx
+        ports:
+            - "0.0.0.0:80:80"
+        volumes:
+            - ./conf.d/:/etc/nginx/conf.d/
+        networks:
+            - frontend
+
+networks:
+    backend_mongo:
+    backend_redis:
+    frontend:
