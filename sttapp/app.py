@@ -52,6 +52,6 @@ def create_app(config_name='development'):
 
 
     celery.config_from_object(app_config[os.getenv('FLASK_ENV')])
-    # celery.autodiscover_tasks(["sttapp.tasks"])
+    celery.autodiscover_tasks(["sttapp.tasks"])
     
     return app

@@ -9,8 +9,8 @@ from flask_login import login_user, current_user, login_required, logout_user
 
 from sttapp.users.models import SttUser, InvitationInfo
 from sttapp.base.enums import FlashCategory, Identity
+from sttapp.tasks import send_mail
 from .forms import SttSignupForm, InvitationForm, LoginForm, PostSignupForm
-from .tasks import send_mail
 from .services.google import get_request_uri, callback, google_signup_action, google_login_action
 from .enums import Expiration, SocialLogin, SocialAction
 
