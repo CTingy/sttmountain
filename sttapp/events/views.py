@@ -10,6 +10,7 @@ from sttapp.proposals.models import Itinerary, Proposal
 from sttapp.members.models import Member
 from sttapp.users.models import MyHistory
 from .models import Event
+from .tasks import connect_member_and_history
 
 
 bp = Blueprint('event', __name__, url_prefix='/event')
@@ -33,10 +34,7 @@ def check_before_create_event(prop):
 def create(prop_id):
 
     prop = Proposal.objects.get_or_404(id=prop_id)
-    # if prop.created_by.id != current_user.id:
-    #     flash("只有張貼者能夠發佈出隊文", FlashCategory.WARNING)
-    #     return redirect(url_for('proposal.proposals'))
-    
+
     if not check_before_create_event(prop):
         return redirect(url_for('proposal.update', prop_id=prop_id))
 
@@ -123,35 +121,16 @@ def update_as_back(event_id):
     else:
         event_real_days = event.proposal.days
     
-    #TODO: use other thread
-    # create connection between BACK event and member
     if event.status == EventStatus.get_map()[EventStatus.NORM]:
-        for a in Proposal.objects.get(id=event.proposal.id).attendees:
-            event_ids = a.event_ids
-            event_ids.append(event_id)
-            Member.objects(id=a.id).update_one(
-                updated_at=datetime.datetime.utcnow(),
-                updated_by=current_user.id,
-                event_ids=event_ids
-            )
-            if not a.user_id:
-                continue
-            h = MyHistory(
-                user_id=a.user_id,
-                created_at=datetime.datetime.utcnow(),
-                updated_at=datetime.datetime.utcnow(),
-                title=event.title or event.proposal.title,
-                start_date=event.proposal.start_date,
-                end_date=event.proposal.end_date,
-                days=event_real_days,
-                link=request.host_url.rstrip(
-                    "/") + url_for("event.detail", event_id=event_id),
-                order=MyHistory.objects(user_id=a.user_id).order_by(
-                    '-order').first().order + 1
-            )
-            h.save()
-    # use other thread
-    
+        connect_member_and_history.delay(
+            event_id=str(event_id), 
+            proposal_id=str(event.proposal.id),
+            event_title=form.get("real_title") or event.proposal.title,
+            event_real_days=event_real_days,
+            link=request.host_url.rstrip(
+                 "/") + url_for("event.detail", event_id=event_id)
+        )
+
     Event.objects(id=event_id).update_one(
         status=EventStatus.get_map()[EventStatus.BACK],
         real_itinerary_list=inputted_itinerary_list,

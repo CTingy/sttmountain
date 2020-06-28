@@ -6,12 +6,11 @@ from itsdangerous import SignatureExpired, BadSignature
 
 from mongoengine.errors import NotUniqueError
 from flask_login import login_user, current_user, login_required, logout_user
-# from mongoengine.queryset.visitor import Q
 
 from sttapp.users.models import SttUser, InvitationInfo
 from sttapp.base.enums import FlashCategory, Identity
+from sttapp.base.tasks import send_mail
 from .forms import SttSignupForm, InvitationForm, LoginForm, PostSignupForm
-from .services.mail import send_mail
 from .services.google import get_request_uri, callback, google_signup_action, google_login_action
 from .enums import Expiration, SocialLogin, SocialAction
 
@@ -41,7 +40,7 @@ def invite():
             flash("邀請註冊連結生成發生問題，請洽管理員", FlashCategory.ERROR)
             return redirect(url_for('auth.invite'))
 
-        send_mail(
+        send_mail.delay(
             subject="邀請您註冊成大山協網站帳號",
             recipients=[form.email.data, ],
             html_body=render_template(
