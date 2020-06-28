@@ -1,4 +1,5 @@
 import os
+import re
 import pygsheets
 import datetime
 
@@ -22,8 +23,18 @@ class GoogleDriveService():
         self.file_name = "{}_{}".format(
             proposal.title, get_local_dt(datetime.datetime.utcnow()).strftime("%Y%m%d%H%M%s"))
 
-    def _validate_folder_id(self):
-        pass
+    @staticmethod
+    def validate_folder_url(google_folder_url):
+
+        if not google_folder_url:
+            return os.environ.get('GOOGLE_DRIVE_FOLDER_ID')
+        if not re.match(
+            '^https:\/\/drive.google.com\/drive\/u\/[0-1]\/folders\/[a-zA-Z0-9\.\-_]{33}$',
+            google_folder_url):
+            raise ValueError("Wrong google drive url")
+        
+        folder_id = google_folder_url.split("/folders/")[1]
+        return folder_id
 
     def generate_sheets(self):
         

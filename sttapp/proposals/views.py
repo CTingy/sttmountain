@@ -11,6 +11,7 @@ from sttapp.events.models import Event
 from .tasks import gen_sheets
 from .forms import ProposalForm
 from .models import Proposal, Itinerary
+from .service import GoogleDriveService
 
 import iso8601
 
@@ -243,14 +244,17 @@ def user_posts():
 @login_required
 def gen_doc(prop_id):
 
-    doc_url = request.form.get("doc_url")
-
-    if doc_url and "folders/" in doc_url:
-        folder_id = doc_url.split("/folders/")[1]
+    doc_url = request.form.get("doc_url").strip()
+    if doc_url:
+        try:
+            doc_id = GoogleDriveService.validate_folder_url(doc_url)
+        except ValueError:
+            flash("您輸入的google drive網址: {}，格式錯誤".format(doc_url), FlashCategory.ERROR)
+            return redirect(url_for('proposal.detail', prop_id=prop_id))
     else:
-        folder_id = doc_url
+        doc_id = None
 
-    gen_sheets.delay(prop_id, folder_id, current_user.email)
+    gen_sheets.delay(prop_id, doc_id, current_user.email)
 
     flash("資料產生中，請稍後至資料夾確認。若產生失敗，將會寄失敗訊息至信箱。", FlashCategory.INFO)
     return redirect(url_for('proposal.detail', prop_id=prop_id))
