@@ -8,9 +8,9 @@ from mongoengine.queryset.visitor import Q
 from sttapp.base.enums import FlashCategory, Level, Gender, EventType
 from sttapp.base.utils import get_local_dt
 from sttapp.events.models import Event
+from .tasks import gen_sheets
 from .forms import ProposalForm
 from .models import Proposal, Itinerary
-from .service import GoogleDriveService
 
 import iso8601
 
@@ -250,9 +250,7 @@ def gen_doc(prop_id):
     else:
         folder_id = doc_url
 
-    gd = GoogleDriveService(proposal_id=prop_id, google_folder_id=folder_id)
-    gd.generate_sheets()
-    gd.generate_doc()
+    gen_sheets.delay(prop_id, folder_id, current_user.email)
 
-    flash("資料產生中，請稍後至資料夾確認", FlashCategory.INFO)
+    flash("資料產生中，請稍後至資料夾確認。若產生失敗，將會寄失敗訊息至信箱。", FlashCategory.INFO)
     return redirect(url_for('proposal.detail', prop_id=prop_id))

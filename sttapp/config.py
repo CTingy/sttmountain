@@ -19,23 +19,11 @@ class Config:
     CELERY_ACCEPT_CONTENT = ['json']
     CELERY_TASK_SERIALIZER = 'json'
     CELERY_RESULT_SERIALIZER = 'json'
-    BROKER_URL = 'redis://127.0.0.1:6379/'  # CELERY_BROKER_URL
-    CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/'
-    # CELERY_RESULT_BACKEND = 'mongodb://{}:{}@127.0.0.1:27017/'.format(
-    #     os.getenv("DB_USERNAME"), os.getenv("DB_PASSWORD")
-    # )
-    # CELERY_MONGODB_BACKEND_SETTINGS = {
-    #     'database': os.getenv("DB_NAME"),
-    #     'taskmeta_collection': 'stt_taskmeta_collection',
-    #     'user': os.getenv("DB_USERNAME"),
-    #     'password': os.getenv("DB_PASSWORD")
-    # }
+    CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", None)
+    BROKER_URL = os.environ.get("CELERY_BROKER_URL", None)  # CELERY_BROKER_URL
 
-    MAIL_DEFAULT_SENDER = 'sttmountain@mail.ncku.edu.tw'
+    MAIL_DEFAULT_SENDER = os.environ.get("GOOGLE_CLIENT_ID", None)
     SESSION_PROTECTION = 'strong'
-
-    # APPLICATION_ROOT = os.path.dirname(os.path.abspath(__file__))
-    # SERVER_NAME = '127.0.0.1:5000'
 
     # crediential form Google
     GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
@@ -61,9 +49,6 @@ class DevelopmentConfig(Config):
     MAIL_PASSWORD = os.environ.get('DEV_MAIL_PASSWORD', None)
     MAIL_USE_TLS = True
     MAIL_USE_SSL = False
-
-    # GOOGLE_DRIVE_FOLDER_ID = os.environ.get('GOOGLE_DRIVE_FOLDER_ID', None)
-    # GOOGLE_DRIVE_API_CERD_PATH = os.environ.get('GOOGLE_DRIVE_API_CERD_PATH', None)
 
 
 class ProductionConfig(Config):
