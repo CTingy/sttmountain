@@ -2,8 +2,12 @@ import os
 
 from flask import Flask
 from werkzeug.utils import import_string
-from .config import app_config
+from .config import app_config, Config
 from flask_wtf.csrf import CSRFProtect
+from celery import Celery
+
+
+celery = Celery()
 
 
 blueprints = [
@@ -40,13 +44,14 @@ def create_app(config_name='development'):
         ext = init_ext(app)
 
     csrf = CSRFProtect(app)
-    
+
     # register_bps
     for bp_name, prefix in blueprints:
         bp = import_string(bp_name, silent=False)
         app.register_blueprint(bp, url_prefix=prefix)
-        
+
+
+    celery.config_from_object(app_config[os.getenv('FLASK_ENV')])
+    # celery.autodiscover_tasks(["sttapp.tasks"])
+    
     return app
-
-
-app = create_app()

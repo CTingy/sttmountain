@@ -6,13 +6,11 @@ from itsdangerous import SignatureExpired, BadSignature
 
 from mongoengine.errors import NotUniqueError
 from flask_login import login_user, current_user, login_required, logout_user
-# from mongoengine.queryset.visitor import Q
 
 from sttapp.users.models import SttUser, InvitationInfo
 from sttapp.base.enums import FlashCategory, Identity
 from .forms import SttSignupForm, InvitationForm, LoginForm, PostSignupForm
-# from .services.mail import send_mail
-from sttapp.tasks import send_mail
+from .tasks import send_mail
 from .services.google import get_request_uri, callback, google_signup_action, google_login_action
 from .enums import Expiration, SocialLogin, SocialAction
 
