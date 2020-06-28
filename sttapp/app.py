@@ -18,9 +18,9 @@ blueprints = [
 
 
 extensions = [
-    'sttapp.ext:db',
-    'sttapp.ext:mail',
-    'sttapp.ext:login_manager',
+    'sttapp.db:init_db',
+    'sttapp.mail:init_mail',
+    'sttapp.login:init_login',
 ]
 
 
@@ -36,8 +36,8 @@ def create_app(config_name='development'):
     app.config.from_object(config)
 
     for ext_name in extensions:
-        ext = import_string(ext_name)
-        ext.init_app(app)
+        init_ext = import_string(ext_name)
+        ext = init_ext(app)
 
     csrf = CSRFProtect(app)
     
@@ -47,3 +47,6 @@ def create_app(config_name='development'):
         app.register_blueprint(bp, url_prefix=prefix)
         
     return app
+
+
+app = create_app()
