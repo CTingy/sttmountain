@@ -50,7 +50,6 @@ def create_app(config_name='development'):
         bp = import_string(bp_name, silent=False)
         app.register_blueprint(bp, url_prefix=prefix)
 
-
     celery.config_from_object(app_config[os.getenv('FLASK_ENV')])
     # celery.autodiscover_tasks(["sttapp.tasks"])
     
