@@ -1,34 +1,46 @@
 import datetime
+import itertools
 from sttapp.app import celery
 from sttapp.proposals.models import Proposal
 from sttapp.users.models import MyHistory
+from sttapp.events.models import Event
 
 
-@celery.task()
-def connect_member_and_history(event_id, proposal_id, event_title, event_real_days, link):
+def connect_to_member(attendees, event_id):
 
-    proposal = Proposal.objects.get(id=proposal_id)
-   
-    for a in proposal.attendees:
+    for a in attendees:
         event_ids = a.event_ids
         event_ids.append(event_id)
-
         a.event_ids = event_ids
         a.updated_at = datetime.datetime.utcnow()
         a.save()
 
+
+def connect_to_user_history(attendees, event, link):
+
+    for a in attendees:
         if not a.user_id:
             continue
         h = MyHistory(
             user_id=a.user_id,
             created_at=datetime.datetime.utcnow(),
             updated_at=datetime.datetime.utcnow(),
-            title=event_title,
-            start_date=proposal.start_date,
-            end_date=proposal.end_date,
-            days=event_real_days,
+            title=event.title,
+            start_date=event.proposal.start_date,
+            end_date=event.proposal.end_date,
+            days=event.days,
             link=link,
             order=MyHistory.objects(user_id=a.user_id).order_by(
                 '-order').first().order + 1
         )
         h.save()
+
+
+@celery.task()
+def connect_member_and_history(event_id, link):
+
+    event = Event.objects.get(id=event_id)
+    for_member_connection, for_history_connection = itertools.tee(event.proposal.attendees, 2)
+
+    connect_to_member(for_member_connection, event_id)
+    connect_to_user_history(for_history_connection, event, link)

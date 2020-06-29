@@ -34,3 +34,7 @@ class Event(RecordModel):
     @property
     def title(self):
         return self.real_title or self.proposal.title
+
+    @property
+    def days(self):
+        return self.real_days or self.proposal.days

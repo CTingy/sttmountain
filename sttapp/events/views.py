@@ -121,26 +121,20 @@ def update_as_back(event_id):
     else:
         event_real_days = None
 
-    if event.status == EventStatus.get_map()[EventStatus.NORM]:
-        # connect_member_and_history.delay(
-        connect_member_and_history(
-            event_id=str(event_id), 
-            proposal_id=str(event.proposal.id),
-            event_title=form.get("real_title") or event.proposal.title,
-            event_real_days=event_real_days or event.proposal.days,
-            link=request.host_url.rstrip(
-                 "/") + url_for("event.detail", event_id=event_id)
-        )
-
     Event.objects(id=event_id).update_one(
         status=EventStatus.get_map()[EventStatus.BACK],
         real_itinerary_list=inputted_itinerary_list,
         real_title=form.get("real_title") or None,  # None 為沿用舊名: proposal.title
         feedback=form.get("feedback"),
         updated_by=current_user.id,
-        real_days=event_real_days or None,
+        real_days=event_real_days,
         updated_at=datetime.datetime.utcnow()
     )
+
+    if event.status == EventStatus.get_map()[EventStatus.NORM]:
+        connect_member_and_history.delay(
+            event_id=str(event_id), 
+            link=request.host_url.rstrip("/") + url_for("event.detail", event_id=event_id) )
 
     flash("已修改成功！", FlashCategory.SUCCESS)
     return redirect(url_for('event.detail', event_id=event_id))
