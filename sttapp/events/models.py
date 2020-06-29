@@ -19,7 +19,11 @@ class Event(RecordModel):
     status = db.StringField(choices=EventStatus.get_choices(False), 
                             default=EventStatus.get_map()[EventStatus.NORM])
 
-    meta = {'ordering': ['-created_at']}
+    # more about indexes: https://docs.mongoengine.org/guide/defining-documents.html#indexes
+    meta = {
+        'ordering': ['-created_at'],
+        'indexes': ['real_title', 'created_at']
+    }
 
     @property
     def gathering_time_str(self):

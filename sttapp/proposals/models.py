@@ -35,7 +35,10 @@ class Proposal(RecordModel):
     open_time = db.StringField()
     event_id = db.ObjectIdField()
 
-    meta = {'ordering': ['-created_at']}
+    meta = {
+        'ordering': ['-created_at'],
+        'indexes': ['title', 'created_at']
+    }
 
     @property
     def start_date_str(self):

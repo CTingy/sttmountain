@@ -26,7 +26,10 @@ class MyHistory(RecordModel):
     link = db.URLField()
     user_id = db.ObjectIdField()
 
-    meta = {'ordering': ['order']}
+    meta = {
+        'ordering': ['order'],
+        'indexes': ['user_id']
+    }
 
     @property
     def start_date_str(self):
@@ -108,6 +111,11 @@ class SttUser(User):
     # 系統紀錄
     updated_at = db.DateTimeField()
     invitation_info = db.EmbeddedDocumentField(InvitationInfo)
+
+    meta = {
+        'ordering': ['-created_at'],
+        'indexes': ['name', ]
+    }
 
     @property
     def birthday_str(self):

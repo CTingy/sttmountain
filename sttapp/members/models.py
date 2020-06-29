@@ -44,6 +44,10 @@ class Member(RecordModel):
     user_id = db.ObjectIdField()
     event_ids = db.ListField(db.ObjectIdField(), default=list)
 
+    meta = {
+        'indexes': ['security_number', 'cellphone_number', ]
+    }
+
     @property
     def display_name(self):
         return self.nickname or self.name
