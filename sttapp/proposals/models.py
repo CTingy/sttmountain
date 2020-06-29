@@ -1,4 +1,3 @@
-import datetime
 import mongoengine
 from sttapp.db import db
 from sttapp.base.models import RecordModel
@@ -33,7 +32,7 @@ class Proposal(RecordModel):
     satellite_telephone = db.StringField()
     attendees = db.ListField(
         db.ReferenceField('sttapp.members.models.Member', reverse_delete_rule=mongoengine.DENY))
-    open_time=db.StringField()
+    open_time = db.StringField()
     event_id = db.ObjectIdField()
 
     meta = {'ordering': ['-created_at']}

@@ -2,7 +2,7 @@ import os
 
 from flask import Flask
 from werkzeug.utils import import_string
-from .config import app_config, Config
+from .config import app_config
 from flask_wtf.csrf import CSRFProtect
 from celery import Celery
 

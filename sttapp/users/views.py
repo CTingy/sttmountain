@@ -1,13 +1,12 @@
 import datetime
 import re
 
-from flask import flash, Blueprint, session, request, url_for, render_template, redirect, current_app, jsonify
-from flask_login import login_user, current_user, login_required
-from mongoengine.queryset.visitor import Q
+from flask import flash, Blueprint, request, url_for, render_template, redirect, jsonify
+from flask_login import current_user, login_required
 
 from .models import SttUser, MyHistory
 from .forms import MyHistoryForm
-from sttapp.base.enums import FlashCategory, Position, Group, Level, Identity
+from sttapp.base.enums import FlashCategory, Identity
 from sttapp.auth.forms import PostSignupForm
 from sttapp.members.models import CHOICES, Member
 
@@ -101,8 +100,7 @@ def create_member():
         member.department_and_grade = current_user.department
 
     flash("請填寫額外資訊", FlashCategory.INFO)
-    return render_template("members/members.html", member=member, 
-                            for_updating=False, errors=None, choices=CHOICES)
+    return render_template("members/members.html", member=member, for_updating=False, errors=None, choices=CHOICES)
 
 
 @bp.route('/connect_member/', methods=["POST"])

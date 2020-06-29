@@ -1,10 +1,9 @@
 import datetime
 from flask_wtf import FlaskForm
-from wtforms import ValidationError, IntegerField, TextAreaField ,StringField, SelectField, PasswordField, BooleanField, validators
+from wtforms import ValidationError, TextAreaField, StringField, BooleanField, validators
 
 from sttapp.members.models import Member
 from sttapp.base.enums import EventType
-from .models import Proposal
 
 
 class ProposalForm(FlaskForm):
@@ -23,7 +22,7 @@ class ProposalForm(FlaskForm):
     approach_way = TextAreaField("交通方式", validators=[validators.Optional()])
     radio = StringField("無線電頻率/台號", validators=[
         validators.Optional(),
-        validators.Regexp("^14[4-5].[0-9]{2}\/", message="格式錯誤")])
+        validators.Regexp("^14[4-5].[0-9]{2}\/[.]+", message="格式錯誤")])
     satellite_telephone = StringField("衛星電話", validators=[
         validators.Optional(), 
         validators.Regexp("\+882[0-9]{10}$", message="電話格式錯誤，需為+882開頭，加上10碼數字")])
@@ -38,7 +37,8 @@ class ProposalForm(FlaskForm):
         self.guide_id = None
         self.attendees_ids = None
 
-    def _get_member_id(self, data):    
+    @staticmethod
+    def _get_member_id(data):
         try:
             name = data.split("|")[0]
             security_number = data.split("|")[1]
@@ -74,7 +74,8 @@ class ProposalForm(FlaskForm):
 
         setattr(self, "{}_dt".format(field.id), dt)
 
-    def _validate_int(self, field):
+    @staticmethod
+    def _validate_int(field):
         try:
             field.data = int(field.data)
         except ValueError:

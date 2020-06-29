@@ -1,5 +1,4 @@
 import datetime
-import pytz
 
 from sttapp.db import db
 from .utils import get_local_dt
@@ -15,11 +14,13 @@ class RecordModel(db.Document):
     
     meta = {'abstract': True, }
 
-    def _dt_to_str(self, dt):
+    @staticmethod
+    def _dt_to_str(dt):
         tz_dt = get_local_dt(dt)
         return tz_dt.strftime("%Y/%m/%d %H:%M")
 
-    def _d_to_str(self, dt):
+    @staticmethod
+    def _d_to_str(dt):
         # 不可進行時區轉換
         return dt.strftime("%Y/%m/%d")
 

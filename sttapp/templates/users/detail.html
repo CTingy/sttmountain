@@ -487,7 +487,7 @@
       })
     })
 
-    // udpate my history
+    // update my history
     $("tbody").on("click", ".editHistoryBtn", function () {
       if (userId != currentUserId) {
         return alert("您無權進行此操作")
@@ -508,7 +508,7 @@
       }
 
       // handle required fields
-      var nullFields = new Array()
+      var nullFields = []
 
       Object.keys(inputData).forEach(
         (key) => (!inputData[key]) && nullFields.push(key)
@@ -563,7 +563,7 @@
       }
 
       // handle required fields
-      var nullFields = new Array()
+      var nullFields = []
 
       Object.keys(inputData).forEach(
         (key) => (!inputData[key]) && nullFields.push(key)

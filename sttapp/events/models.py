@@ -1,9 +1,8 @@
-import datetime
 import mongoengine
 from sttapp.db import db
 from sttapp.base.models import RecordModel
 from sttapp.proposals.models import Itinerary
-from sttapp.base.enums import Difficulty, EventType, EventStatus
+from sttapp.base.enums import EventStatus
 
 
 class Event(RecordModel):

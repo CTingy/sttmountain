@@ -1,11 +1,9 @@
 import datetime
-import re
-from flask_wtf import FlaskForm
-from wtforms import ValidationError, IntegerField, StringField, SelectField, PasswordField, validators
 
-from sttapp.members.models import Member
-from sttapp.base.enums import Level, Gender, Difficulty, Group
-from .models import Member
+from flask_wtf import FlaskForm
+from wtforms import ValidationError, StringField, validators
+
+from sttapp.base.enums import Level, Difficulty, Group
 
 
 class MemberForm(FlaskForm):
@@ -13,7 +11,7 @@ class MemberForm(FlaskForm):
     nickname = StringField("綽號")
     security_number = StringField("身份證字號", validators=[
         validators.DataRequired("此為必填欄位"),
-        validators.Regexp("^[A-Z]\d{9}$", message="身份證字號格式需為：首字大寫加9碼數字")])
+        validators.Regexp("^[A-Z][0-9]{9}$", message="身份證字號格式需為：首字大寫加9碼數字")])
     birthday = StringField("生日", validators=[validators.DataRequired("此為必填欄位")])
     cellphone_number = StringField("手機號碼", validators=[
         validators.DataRequired("此為必填欄位"), 
@@ -29,8 +27,9 @@ class MemberForm(FlaskForm):
 
     # 學校資訊
     student_id = StringField("學號", validators=[
-        validators.Optional(), validators.Regexp("[A-Z]\d{8}$", message="學號格式錯誤")])
-    department_and_grade = StringField("系級/OB/校外", validators=[validators.DataRequired("此為必填欄位")])  # ex: 水利四 / ob / 物理所 / 校外
+        validators.Optional(), validators.Regexp("[A-Z][0-9]{8}$", message="學號格式錯誤")])
+    department_and_grade = StringField(
+        "系級/OB/校外", validators=[validators.DataRequired("此為必填欄位")])  # ex: 水利四 / ob / 物理所 / 校外
 
     # 最高資歷
     highest_difficulty = StringField("最高資歷級數")  # 級數

@@ -1,14 +1,13 @@
 import datetime
 
-from flask import flash, Blueprint, session, request, url_for, render_template, redirect, current_app
-from flask_login import login_user, current_user, login_required
+from flask import flash, Blueprint, request, url_for, render_template, redirect, current_app
+from flask_login import current_user, login_required
 from mongoengine.queryset.visitor import Q
 from mongoengine.errors import NotUniqueError
 
 from sttapp.base.enums import FlashCategory, EventStatus, Level, Gender
 from sttapp.proposals.models import Itinerary, Proposal
 from sttapp.members.models import Member
-from sttapp.users.models import MyHistory
 from .models import Event
 from .tasks import connect_member_and_history
 
@@ -20,11 +19,11 @@ def check_before_create_event(prop):
     failed_fields, failed_itinerary = prop.validate_for_publishing()
     if failed_fields or failed_itinerary:
         if failed_fields:
-            flash("無法發佈，欄位有缺少：{}，請填寫完成再試一次".format("、".join(failed_fields)), 
-                   FlashCategory.WARNING)
+            flash("無法發佈，欄位有缺少：{}，請填寫完成再試一次".format("、".join(failed_fields)),
+                  FlashCategory.WARNING)
         if failed_itinerary:
-            flash("無法發佈，預定行程中{}的內容是空白的，請填寫完成再試一次".format("、".join(failed_itinerary)), 
-                   FlashCategory.WARNING)
+            flash("無法發佈，預定行程中{}的內容是空白的，請填寫完成再試一次".format("、".join(failed_itinerary)),
+                  FlashCategory.WARNING)
         return False
     return True
 
@@ -168,20 +167,20 @@ def detail(event_id):
 
 @bp.route('/events/')
 def events():
-    events = Event.objects.all()
-    return render_template('events/events.html', events=events, page_name="出隊文總覽")
+    event_list = Event.objects.all()
+    return render_template('events/events.html', events=event_list, page_name="出隊文總覽")
 
 
 @bp.route('/not_back_events/')
 def not_back():
-    events = Event.objects.filter(status=EventStatus.get_map()[EventStatus.NORM])
-    return render_template('events/events.html', events=events, page_name="出隊文（即將上山、進行中）")
+    event_list = Event.objects.filter(status=EventStatus.get_map()[EventStatus.NORM])
+    return render_template('events/events.html', events=event_list, page_name="出隊文（即將上山、進行中）")
 
 
 @bp.route('/back_events/')
 def is_back():
-    events = Event.objects.filter(status=EventStatus.get_map()[EventStatus.BACK])
-    return render_template('events/events.html', events=events, page_name="出隊文（已下山）")
+    event_list = Event.objects.filter(status=EventStatus.get_map()[EventStatus.BACK])
+    return render_template('events/events.html', events=event_list, page_name="出隊文（已下山）")
 
 
 @bp.route('/delete/<string:event_id>', methods=["POST"])
@@ -223,8 +222,8 @@ def search():
 @login_required
 def user_posts():
 
-    events = Event.objects.filter(created_by=current_user.id)
-    return render_template('users/events.html', events=events)
+    event_list = Event.objects.filter(created_by=current_user.id)
+    return render_template('users/events.html', events=event_list)
 
 
 @bp.route('/member_history/<string:member_id>/')
@@ -232,5 +231,5 @@ def user_posts():
 def member_history(member_id):
 
     member = Member.objects.get_or_404(id=member_id)
-    events = Event.objects.filter(id__in=member.event_ids)
-    return render_template('events/events.html', events=events, page_name=member.display_name+"的站內出隊紀錄")
+    event_list = Event.objects.filter(id__in=member.event_ids)
+    return render_template('events/events.html', events=event_list, page_name=member.display_name+"的站內出隊紀錄")

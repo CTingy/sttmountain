@@ -1,7 +1,6 @@
 import datetime
 import itertools
 from sttapp.app import celery
-from sttapp.proposals.models import Proposal
 from sttapp.users.models import MyHistory
 from sttapp.events.models import Event
 
@@ -30,8 +29,7 @@ def connect_to_user_history(attendees, event, link):
             end_date=event.proposal.end_date,
             days=event.days,
             link=link,
-            order=MyHistory.objects(user_id=a.user_id).order_by(
-                '-order').first().order + 1
+            order=MyHistory.objects(user_id=a.user_id).order_by('-order').first().order + 1
         )
         h.save()
 

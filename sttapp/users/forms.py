@@ -1,12 +1,9 @@
 import datetime
-import re
 
 from mongoengine import URLField, ValidationError
 
-from .models import MyHistory
 
-
-class MyHistoryForm():
+class MyHistoryForm:
 
     def __init__(self, form):
         self.start_date = form.get("start_date")

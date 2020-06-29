@@ -1,9 +1,7 @@
 import datetime
-import os
 
-from flask import flash, Blueprint, session, request, url_for, render_template, redirect, current_app
-from flask_login import login_user, current_user, login_required
-from mongoengine.queryset.visitor import Q
+from flask import flash, Blueprint, request, url_for, render_template, redirect
+from flask_login import current_user, login_required
 from mongoengine.errors import OperationError
 
 from sttapp.base.enums import FlashCategory, Level, Gender, EventType
@@ -13,8 +11,6 @@ from .tasks import gen_files_on_gsuite
 from .forms import ProposalForm
 from .models import Proposal, Itinerary
 from .service import GoogleDriveService
-
-import iso8601
 
 
 bp = Blueprint('proposal', __name__, url_prefix='/proposal')
@@ -31,8 +27,8 @@ def proposals():
 def create():
    
     if request.method == "GET":
-        return render_template("proposals/basic_form.html", prop=None, 
-                                for_updating=False, errors=None, types=EventType.get_choices())
+        return render_template(
+            "proposals/basic_form.html", prop=None, for_updating=False, errors=None, types=EventType.get_choices())
 
     info_dict = dict(request.form)
     # extract user inputs that needs to be returned after fail form validation
@@ -70,8 +66,8 @@ def create():
     prop.inputted_attendees = inputted_attendees
     prop.inputted_start_date = inputted_start_date
     flash("表單格式有誤，請重新填寫", FlashCategory.ERROR)
-    return render_template("proposals/basic_form.html", prop=prop, for_updating=False,
-                            errors=errors, types=EventType.get_choices(True))
+    return render_template(
+        "proposals/basic_form.html", prop=prop, for_updating=False, errors=errors, types=EventType.get_choices(True))
 
 
 @bp.route('/detail/<string:prop_id>')
@@ -107,8 +103,7 @@ def update(prop_id):
         flash("僅隊伍企劃創建者可編輯", FlashCategory.WARNING)
         return redirect(url_for('proposal.detail', prop_id=prop_id))
 
-    if ori_prop.event_id and Event.objects.filter(
-        id=ori_prop.event_id, status__in=("BACK", "CANCEL")):
+    if ori_prop.event_id and Event.objects.filter(id=ori_prop.event_id, status__in=("BACK", "CANCEL")):
         flash("已下山或倒隊之隊伍企劃不可編輯", FlashCategory.WARNING)
         return redirect(url_for('proposal.detail', prop_id=prop_id))
 
@@ -139,11 +134,9 @@ def update(prop_id):
         prop.attendees = form.attendees_ids
         prop.buffer_days = form.buffer_days.data or None
 
-        # update itineray obj
+        # update itinerary obj
         itinerary_list = ori_prop.itinerary_list
-        update_itinerary = False
         if ori_prop.days != prop.days:
-            update_itinerary = True
             itinerary_list = ori_prop.itinerary_list
             if prop.days > ori_prop.days:
                 for i in range(ori_prop.days+1, prop.days+1):
@@ -153,7 +146,6 @@ def update(prop_id):
                     i = ori_prop.itinerary_list.get(day_number=i)
                     itinerary_list.remove(i)
         if ori_prop.has_d0 != prop.has_d0:
-            update_itinerary = True
             if prop.has_d0 and not ori_prop.has_d0:
                 itinerary_list.insert(0, Itinerary(day_number=0))
             elif not prop.has_d0 and ori_prop.has_d0:
@@ -238,8 +230,8 @@ def delete(prop_id):
 @login_required
 def user_posts():
 
-    proposals = Proposal.objects.filter(created_by=current_user.id)
-    return render_template('users/proposals.html', proposals=proposals)
+    proposal_list = Proposal.objects.filter(created_by=current_user.id)
+    return render_template('users/proposals.html', proposals=proposal_list)
 
 
 @bp.route('/user_posts/<string:prop_id>', methods=["POST"])

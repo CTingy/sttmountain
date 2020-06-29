@@ -1,16 +1,12 @@
 import datetime
 
-from flask import flash, Blueprint, session, request, jsonify, url_for, render_template, redirect, current_app
-from flask_login import login_user, current_user, login_required
-# from mongoengine.queryset.visitor import Q
+from flask import flash, Blueprint, request, jsonify, url_for, render_template, redirect, current_app
+from flask_login import current_user, login_required
 from mongoengine.errors import NotUniqueError, OperationError
 
-from sttapp.base.enums import FlashCategory, Level, Difficulty, Gender, Group
+from sttapp.base.enums import FlashCategory
 from .models import Member, CHOICES
 from .forms import MemberForm
-
-
-import iso8601
 
 
 bp = Blueprint('member', __name__, url_prefix='/member')
@@ -32,8 +28,8 @@ def search():
 @bp.route('/search_for_updating/')
 @login_required
 def search_for_updating():
-    return render_template("members/members.html", member=None, 
-                            for_updating=True, errors=None, choices=CHOICES)
+    return render_template(
+        "members/members.html", member=None, for_updating=True, errors=None, choices=CHOICES)
 
 
 @bp.route('/search_one/', methods=["POST"])
@@ -65,8 +61,8 @@ def update(member_id):
     ori_member = Member.objects.get_or_404(id=member_id)
 
     if request.method == "GET":
-        return render_template("members/members.html", member=ori_member, 
-                               for_updating=True, errors=None, choices=CHOICES)      
+        return render_template(
+            "members/members.html", member=ori_member, for_updating=True, errors=None, choices=CHOICES)
 
     info_dict = dict(request.form)
     info_dict.pop('csrf_token', None)
@@ -96,16 +92,16 @@ def update(member_id):
         errors[field] = errs[0]    
     flash("表單格式有誤，請重新填寫", FlashCategory.ERROR)
     member.inputted_birthday = info_dict.get('birthday')
-    return render_template("members/members.html", member=member, 
-                            for_updating=True, errors=errors, choices=CHOICES)      
+    return render_template(
+        "members/members.html", member=member, for_updating=True, errors=errors, choices=CHOICES)
 
 
 @bp.route('/create/', methods=["GET", "POST"])
 @login_required
 def create():
     if request.method == "GET":
-        return render_template("members/members.html", member=None, 
-                                for_updating=False, errors=None, choices=CHOICES)
+        return render_template(
+            "members/members.html", member=None, for_updating=False, errors=None, choices=CHOICES)
     
     info_dict = dict(request.form)
     info_dict.pop('csrf_token', None)
@@ -131,9 +127,9 @@ def create():
         errors[field] = errs[0]
 
     member.inputted_birthday = info_dict.get('birthday')
-    return render_template("members/members.html", member=member, errors=errors, 
-                            for_updating=False, choices=CHOICES)
-    
+    return render_template(
+        "members/members.html", member=member, errors=errors, for_updating=False, choices=CHOICES)
+
 
 @bp.route('/delete/<string:member_id>', methods=["POST"])
 @login_required

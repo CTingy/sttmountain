@@ -48,10 +48,7 @@ class Member(RecordModel):
 
     @property
     def display_name(self):
-        if self.nickname:
-            return nickname
-        else:
-            return self.name
+        return self.nickname or self.name
 
     @property
     def selected_name(self):

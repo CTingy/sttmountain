@@ -3,8 +3,6 @@ import re
 import pygsheets
 import datetime
 
-from pygsheets.drive import DriveAPIWrapper
-
 from sttapp.base.utils import get_local_dt
 from sttapp.proposals.models import Proposal
 
@@ -28,9 +26,8 @@ class GoogleDriveService():
 
         if not google_folder_url:
             return os.environ.get('GOOGLE_DRIVE_FOLDER_ID')
-        if not re.match(
-            '^https:\/\/drive.google.com\/drive\/u\/[0-1]\/folders\/[a-zA-Z0-9\.\-_]{33}$',
-            google_folder_url):
+        if not re.match('^https:\/\/drive.google.com\/drive\/u\/[0-1]\/folders\/[a-zA-Z0-9\.\-_]{33}$',
+                        google_folder_url):
             raise ValueError("Wrong google drive url")
         
         folder_id = google_folder_url.split("/folders/")[1]
