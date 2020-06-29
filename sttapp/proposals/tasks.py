@@ -5,7 +5,7 @@ from .service import GoogleDriveService
 
 
 @celery.task()
-def gen_sheets(proposal_id, google_folder_id, user_email):
+def gen_files_on_gsuite(proposal_id, google_folder_id, user_email):
     
     gd = GoogleDriveService(proposal_id=proposal_id, google_folder_id=google_folder_id)
     try:
