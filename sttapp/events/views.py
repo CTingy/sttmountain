@@ -119,14 +119,15 @@ def update_as_back(event_id):
     if inputted_itinerary_list:
         event_real_days = inputted_itinerary_list[-1].day_number
     else:
-        event_real_days = event.proposal.days
-    
+        event_real_days = None
+
     if event.status == EventStatus.get_map()[EventStatus.NORM]:
-        connect_member_and_history.delay(
+        # connect_member_and_history.delay(
+        connect_member_and_history(
             event_id=str(event_id), 
             proposal_id=str(event.proposal.id),
             event_title=form.get("real_title") or event.proposal.title,
-            event_real_days=event_real_days,
+            event_real_days=event_real_days or event.proposal.days,
             link=request.host_url.rstrip(
                  "/") + url_for("event.detail", event_id=event_id)
         )
@@ -137,6 +138,7 @@ def update_as_back(event_id):
         real_title=form.get("real_title") or None,  # None 為沿用舊名: proposal.title
         feedback=form.get("feedback"),
         updated_by=current_user.id,
+        real_days=event_real_days or None,
         updated_at=datetime.datetime.utcnow()
     )
 

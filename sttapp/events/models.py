@@ -12,6 +12,7 @@ class Event(RecordModel):
     img_url = db.URLField()
     real_title = db.StringField()
     real_itinerary_list = db.EmbeddedDocumentListField(Itinerary)
+    real_days = db.IntField()
     feedback = db.StringField()
     gathering_time = db.DateTimeField()
     gathering_point = db.StringField()
