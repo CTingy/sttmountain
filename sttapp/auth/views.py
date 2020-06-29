@@ -119,8 +119,8 @@ def google_callback():
 
         try:
             user = google_signup_action(google_user_data, invitation_info_dict)
-        except NotUniqueError:
-            flash("您使用的google帳號的信箱已經被註冊過了，請使用google登入", FlashCategory.INFO)
+        except NotUniqueError or ValueError:
+            flash("您使用的google帳號已經被註冊過了，請使用google登入", FlashCategory.INFO)
             return redirect(url_for("auth.login"))
         else:
             flash("最後一步！再填寫詳細資料後就完成囉！", FlashCategory.INFO)

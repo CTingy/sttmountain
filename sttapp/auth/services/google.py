@@ -95,6 +95,9 @@ def google_signup_action(google_user_data, invitation_info_dict):
             invited_by=invitation_info_dict['user_id']
         )
     )
+    if SttUser.objects(social_login_with=user.social_login_with,
+                       social_login_id=user.social_login_id):
+        raise ValueError("this social login has already existed in DB")
     user.save()
     return user
 
