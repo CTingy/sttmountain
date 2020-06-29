@@ -70,6 +70,6 @@ class GoogleDriveService():
                 f"{a.emergency_contact}\n{a.emergency_contact_phone}",
                 f"{a.blood_type or ''}",
                 f"{a.drug_allergy}",
-                f"{'' if a.is_adult else ''}",
+                f"{'V' if a.is_adult else ''}",
             ])
         wks.sync()
