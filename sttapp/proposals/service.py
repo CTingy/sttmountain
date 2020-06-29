@@ -48,7 +48,6 @@ class GoogleDriveService():
                 # 電話、電子郵件(不紀錄)、地址(不紀錄)、緊急聯絡人姓名、緊急聯絡人電話
                 a.cellphone_number, "", "", a.emergency_contact, a.emergency_contact_phone
             ])
-        wks.sync()
 
     def generate_doc(self):
 
@@ -69,4 +68,3 @@ class GoogleDriveService():
                 f"{a.drug_allergy}",
                 f"{'V' if a.is_adult else ''}",
             ])
-        wks.sync()
