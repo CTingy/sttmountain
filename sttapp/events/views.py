@@ -54,12 +54,12 @@ def create(prop_id):
     e = Event(
         proposal=prop_id,
         created_by=current_user.id,
+        updated_by=current_user.id,
         created_at=datetime.datetime.utcnow(),
         gathering_point=request.form.get("gathering_point"),
         gathering_time=dt
     )
     e.updated_at = e.created_at
-    e.updated_by = e.created_by
     try:
         e.save()
     except NotUniqueError:
