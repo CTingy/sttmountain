@@ -4,6 +4,7 @@ import os
 from flask import flash, Blueprint, session, request, url_for, render_template, redirect, current_app
 from flask_login import login_user, current_user, login_required
 from mongoengine.queryset.visitor import Q
+from mongoengine.errors import OperationError
 
 from sttapp.base.enums import FlashCategory, Level, Gender, EventType
 from sttapp.base.utils import get_local_dt
@@ -221,15 +222,16 @@ def update_itinerary(prop_id):
 def delete(prop_id):
     prop = Proposal.objects.get_or_404(id=prop_id)
 
-    if prop.event_id:
-        flash("已產生出隊文之隊伍企劃不可刪除", FlashCategory.WARNING)
-        return redirect(url_for('proposal.proposals'))
     if prop.created_by.id != current_user.id:
         flash("只有張貼者能夠刪除隊伍企劃", FlashCategory.WARNING)
-        return redirect(url_for('proposal.proposals'))
-    prop.delete()
-    flash("已經為您刪除隊伍企劃：{}".format(prop.title), FlashCategory.SUCCESS)
-    return redirect(url_for("proposal.proposals"))
+        return redirect(url_for("proposal.detail", prop_id=prop_id))
+    try:
+        prop.delete()
+    except OperationError:
+        flash("已產生出隊文之隊伍企劃不可刪除", FlashCategory.WARNING)
+    else:
+        flash("已經為您刪除隊伍企劃：{}".format(prop.title), FlashCategory.SUCCESS)
+    return redirect(url_for("proposal.detail", prop_id=prop_id))
 
 
 @bp.route('/user_posts/')

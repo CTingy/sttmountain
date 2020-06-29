@@ -1,5 +1,5 @@
 import datetime
-
+import mongoengine
 from sttapp.db import db
 from sttapp.base.models import RecordModel
 from sttapp.proposals.models import Itinerary
@@ -8,7 +8,8 @@ from sttapp.base.enums import Difficulty, EventType, EventStatus
 
 class Event(RecordModel):
     
-    proposal = db.ReferenceField('sttapp.proposals.models.Proposal', unique=True)
+    proposal = db.ReferenceField('sttapp.proposals.models.Proposal', unique=True, 
+                                 reverse_delete_rule=mongoengine.DENY)
     img_url = db.URLField()
     real_title = db.StringField()
     real_itinerary_list = db.EmbeddedDocumentListField(Itinerary)

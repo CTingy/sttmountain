@@ -3,7 +3,7 @@ import datetime
 from flask import flash, Blueprint, session, request, jsonify, url_for, render_template, redirect, current_app
 from flask_login import login_user, current_user, login_required
 # from mongoengine.queryset.visitor import Q
-from mongoengine.errors import NotUniqueError
+from mongoengine.errors import NotUniqueError, OperationError
 
 from sttapp.base.enums import FlashCategory, Level, Difficulty, Gender, Group
 from .models import Member, CHOICES
@@ -139,9 +139,14 @@ def create():
 @login_required
 def delete(member_id):
     member = Member.objects.get_or_404(id=member_id)
-    if member_id.created_by.id != current_user.id:
+    if member.created_by.id != current_user.id:
         flash("只有此筆資料創建者能夠刪除", FlashCategory.ERROR)
-
-    member.delete()
-    flash("已經為您刪除人員：{}".format(member.name), FlashCategory.SUCCESS)
+    try:
+        member.delete()
+    except OperationError:
+        flash(
+            "此人員資料已經被引入某筆企劃書之中，無法刪除，若仍想刪除此筆資訊，請聯絡管理員", 
+            FlashCategory.WARNING)
+    else:
+        flash("已經為您刪除人員：{}".format(member.name), FlashCategory.SUCCESS)
     return redirect(url_for('member.search_for_updating'))

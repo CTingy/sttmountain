@@ -1,5 +1,5 @@
 import datetime
-
+import mongoengine
 from sttapp.db import db
 from sttapp.base.models import RecordModel
 from sttapp.base.enums import Difficulty, EventType, Gender, Level
@@ -22,8 +22,8 @@ class Proposal(RecordModel):
     has_d0 = db.BooleanField(default=False)
     event_type = db.StringField(choices=EventType.get_choices())
     days = db.IntField(default=1)
-    leader = db.ReferenceField('sttapp.members.models.Member')
-    guide = db.ReferenceField('sttapp.members.models.Member')
+    leader = db.ReferenceField('sttapp.members.models.Member', reverse_delete_rule=mongoengine.DENY)
+    guide = db.ReferenceField('sttapp.members.models.Member', reverse_delete_rule=mongoengine.DENY)
     itinerary_list = db.EmbeddedDocumentListField(Itinerary)
     supporter = db.StringField()
     return_plan = db.StringField()
@@ -31,7 +31,8 @@ class Proposal(RecordModel):
     approach_way = db.StringField()
     radio = db.StringField()
     satellite_telephone = db.StringField()
-    attendees = db.ListField(db.ReferenceField('sttapp.members.models.Member'))
+    attendees = db.ListField(
+        db.ReferenceField('sttapp.members.models.Member', reverse_delete_rule=mongoengine.DENY))
     open_time=db.StringField()
     event_id = db.ObjectIdField()
 
