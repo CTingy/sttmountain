@@ -19,6 +19,7 @@ pip install -r requirements.txt
 docker pull mongo:4.2.6
 docker pull redis
 ```
+## run mongo
 * mongo 建立使用者帳號密碼
 ([參考此](https://stackoverflow.com/questions/37450871/how-to-allow-remote-connections-from-mongo-docker-container))
 進入docker
@@ -42,18 +43,31 @@ mongo
 docker stop <mongo_container_id>
 docker run -d -p 27017:27017 -v ~/dataMongo:/data/db mongo mongod --auth
 ```
+## run redis
+```
+docker run -d -p 6379:6379 -v ~/my_volume/dataRedis:/data redis redis-server
+```
+
 ## 所需環境變數
-* 可將此寫入虛擬環境啟動用的active之中
+* 可將此寫入虛擬環境啟動用的active之中，更多請參考檔案：`env_examples.sh`
 ```shell
-# environment variable for 專案根目錄
+# 專案設定
 export SECRET_KEY=自己隨便打一個
 export FLASK_ENV=development
+export ADMIN_EMAIL=你的email
+export MAIL_DEFAULT_SENDER=預設網站的寄件者email
+
+# database config
 export DB_NAME=上面doker之中建立的your_db_name
 export DB_USERNAME=上面doker之中建立的mongo_user_name
 export DB_PASSWORD=上面doker之中建立的secret_password
 export DB_HOST=127.0.0.1
 export DB_PORT=27017
 export DB_NAME=上面doker之中建立的db_name
+
+# celery config
+export CELERY_BROKER_URL=redis://127.0.0.1:6379/
+export CELERY_RESULT_BACKEND=redis://127.0.0.1:6379/
 
 # google service
 # 此為goole第三方登入使用，不需要此功能的話這邊不用寫
@@ -113,13 +127,22 @@ git submodule update --init
 * 更多submodule設定使用[參考](https://blog.puckwang.com/post/2020/git-submodule-vs-subtree/)
 
 # 啟動
+## run server
 ```
 cd 專案根目錄/sttapp/
 flask run
 ```
 按 ctrl+c 離開
 
-# 建立第一個登入者
+## run script
+想要跑任何離線script請進入：
+```
+cd 專案根目錄/sttapp/
+flask shell
+```
+離開請輸入`exit`或 `quit()`或`quit`
+
+## 建立第一個登入者
 * 請先建立第一位使用者，才使用邀請功能讓其他帳號註冊
 * 其實也是因為此網站不登入的話幾乎沒剩下什麼功能可以用@@  
 * 詳細登入功能請見下方的註冊與登入
@@ -135,6 +158,15 @@ user.username = "<網站顯示名稱>"
 user.email = "<email>"
 user.password = "<輸入密碼>"  # 請直接輸入密碼，資料庫會hash後再儲存
 user.save()
+```
+
+## 啟動celery worker
+* 開啟另一個terminal視窗
+* 確定redis已啟動
+* 輸入以下
+```
+cd 專案根目錄/
+celery -A sttapp.celery_worker.celery worker -l info
 ```
 
 # 功能說明
