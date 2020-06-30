@@ -27,22 +27,30 @@
           </li>
 
           <li class="dropdown ">
-            <a href="{{ url_for('event.events') }}">隊伍/紀錄</a>
+            <!-- <a href="{{ url_for('event.events') }}">隊伍/紀錄</a> -->
+            <a href="{{ url_for('event.events') }}">出隊文</a>
           </li>
 
+          {% if current_user.is_authenticated %}
           <li class="dropdown ">
-            <a href="#">討論區</a>
+            <a href="{{ url_for('proposal.proposals') }}">企劃書</a>
           </li>
+          <li class="dropdown ">
+            <a href="{{ url_for('member.search_for_updating') }}">出隊人員資料查詢</a>
+          </li>
+          {% endif %}
 
-          <!-- Pages -->
-          <li class="dropdown full-width dropdown-slide">
+          <!-- <li class="dropdown ">
+            <a href="#">討論區</a>
+          </li> -->
+
+          <!-- <li class="dropdown full-width dropdown-slide">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="350"
               role="button" aria-haspopup="true" aria-expanded="false">關於 <span
                 class="tf-ion-ios-arrow-down"></span></a>
             <div class="dropdown-menu">
               <div class="row">
 
-                <!-- Introduction -->
                 <div class="col-sm-3 col-xs-12">
                   <ul>
                     <li class="dropdown-header">介紹</li>
@@ -55,7 +63,6 @@
                   </ul>
                 </div>
 
-                <!-- Introduction -->
                 <div class="col-sm-3 col-xs-12">
                   <ul>
                     <li class="dropdown-header">組織架構</li>
@@ -67,7 +74,6 @@
                   </ul>
                 </div>
 
-                <!-- Contact -->
                 <div class="col-sm-3 col-xs-12">
                   <ul>
                     <li class="dropdown-header">規範</li>
@@ -80,18 +86,16 @@
                   </ul>
                 </div>
 
-                <!-- Mega Menu -->
                 <div class="col-sm-3 col-xs-12">
                   <a href="shop.html">
                     <img class="img-responsive" src="{{ url_for('static', filename='images/321.jpg') }}"
                       alt="menu image" />
                   </a>
                 </div>
-              </div><!-- / .row -->
-            </div><!-- / .dropdown-menu -->
-          </li><!-- / Pages -->
+              </div>
+            </div>
+          </li>
 
-          <!-- Blog -->
           <li class="dropdown dropdown-slide">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="350"
               role="button" aria-haspopup="true" aria-expanded="false">山上 <span
@@ -104,10 +108,8 @@
               <li><a href="blog-full-width.html">大眾化&nbsp&nbsp<i class="tf-ion-speakerphone"></i></a></li>
               <li><a href="blog-grid.html">探洞&nbsp&nbsp<i class="tf-ion-lightbulb"></i></a></li>
             </ul>
-          </li><!-- / Blog -->
+          </li>
 
-          {% if current_user.is_authenticated %}
-          <!-- Blog -->
           <li class="dropdown dropdown-slide">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="350"
               role="button" aria-haspopup="true" aria-expanded="false">山防 <span
@@ -120,10 +122,9 @@
               <li><a href="profile-details.html">隊伍審核原則</a></li>
               <li><a href="profile-details.html">歷屆山難</a></li>
             </ul>
-          </li><!-- / Blog -->
-          {% endif %}
+          </li> -->
 
-        </ul><!-- / .nav .navbar-nav -->
+        </ul>
 
       </div>
       <!--/.navbar-collapse -->
