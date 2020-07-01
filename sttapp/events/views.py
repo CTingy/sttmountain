@@ -1,4 +1,5 @@
 import datetime
+import itertools
 
 from flask import flash, Blueprint, request, url_for, render_template, redirect, current_app
 from flask_login import current_user, login_required
@@ -203,16 +204,23 @@ def delete(event_id):
 @bp.route('/search/')
 def search():
 
-    kw = request.args.get("keyword")
+    kw = request.args.get("keyword").strip()
     if not kw:
         flash("請輸入搜尋關鍵字", FlashCategory.WARNING)
         return redirect("/")
-    event_ids = []
+    
+    generators = []
     for kw in kw.split(" "):
-        event_ids.extend([e.id for e in Event.objects.filter(
+        generators.append(e.id for e in Event.objects.filter(
             Q(feedback__contains=kw) | Q(real_title__contains=kw))
-        ])
-        event_ids.extend([p.event_id for p in Proposal.objects(title__contains=kw)])
+        )
+        generators.append(
+            filter(
+                lambda x: x != None,
+                (p.event_id for p in Proposal.objects(title__contains=kw))
+            )
+        )
+    event_ids = itertools.chain(*generators)
 
     return render_template(
         'events/events.html', events=Event.objects.filter(id__in=set(event_ids)), page_name="出隊文搜尋結果")
