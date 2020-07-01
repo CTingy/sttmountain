@@ -1,6 +1,6 @@
-from sttapp.app import celery
+from sttapp.exts.celery  import celery
 from flask_mail import Message
-from sttapp.mail import mail
+from sttapp.exts.mail import mail
 
 
 @celery.task()

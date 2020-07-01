@@ -1,5 +1,5 @@
 from flask_login import LoginManager
-from .base.enums import FlashCategory
+from sttapp.base.enums import FlashCategory
 
 
 login_manager = LoginManager()

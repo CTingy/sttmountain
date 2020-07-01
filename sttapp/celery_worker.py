@@ -1,5 +1,5 @@
 from sttapp.app import create_app
-from sttapp.app import celery
+from sttapp.exts.celery import celery
 
 
 app = create_app()

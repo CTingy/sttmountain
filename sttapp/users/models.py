@@ -1,8 +1,8 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
-from sttapp.db import db
-from sttapp.login import login_manager
+from sttapp.exts.db import db
+from sttapp.exts.login import login_manager
 from sttapp.base.enums import Group, Position, Level, Identity, Difficulty
 from sttapp.base.models import RecordModel
 
