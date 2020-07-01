@@ -1,5 +1,5 @@
 import os
-from sttapp.app import celery
+from sttapp.exts.celery  import celery
 from sttapp.base.tasks import send_mail
 from .service import GoogleDriveService
 

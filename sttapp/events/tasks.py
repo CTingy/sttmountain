@@ -1,6 +1,6 @@
 import datetime
 import itertools
-from sttapp.app import celery
+from sttapp.exts.celery  import celery
 from sttapp.users.models import MyHistory
 from sttapp.events.models import Event
 
