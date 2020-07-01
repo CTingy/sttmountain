@@ -52,6 +52,7 @@ docker run -d -p 6379:6379 -v ~/my_volume/dataRedis:/data redis redis-server
 * 可將此寫入虛擬環境啟動用的active之中，更多請參考檔案：`env_examples.sh`
 ```shell
 # 專案設定
+export FLASK_APP=sttapp/app.py
 export SECRET_KEY=自己隨便打一個
 export FLASK_ENV=development
 export ADMIN_EMAIL=你的email
@@ -129,7 +130,7 @@ git submodule update --init
 # 啟動
 ## run server
 ```
-cd 專案根目錄/sttapp/
+cd 專案根目錄/
 flask run
 ```
 按 ctrl+c 離開
@@ -137,7 +138,7 @@ flask run
 ## run script
 想要跑任何離線script請進入：
 ```
-cd 專案根目錄/sttapp/
+cd 專案根目錄/
 flask shell
 ```
 離開請輸入`exit`或 `quit()`或`quit`
