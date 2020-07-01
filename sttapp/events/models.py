@@ -1,5 +1,5 @@
 import mongoengine
-from sttapp.db import db
+from sttapp.exts.db import db
 from sttapp.base.models import RecordModel
 from sttapp.proposals.models import Itinerary
 from sttapp.base.enums import EventStatus

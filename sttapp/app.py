@@ -22,9 +22,9 @@ blueprints = [
 
 
 extensions = [
-    'sttapp.db:init_db',
-    'sttapp.mail:init_mail',
-    'sttapp.login:init_login',
+    'sttapp.exts.db:init_db',
+    'sttapp.exts.mail:init_mail',
+    'sttapp.exts.login:init_login',
 ]
 
 

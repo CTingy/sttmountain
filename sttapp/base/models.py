@@ -1,6 +1,6 @@
 import datetime
 
-from sttapp.db import db
+from sttapp.exts.db import db
 from .utils import get_local_dt
 
 
