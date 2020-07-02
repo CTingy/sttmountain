@@ -3,5 +3,7 @@
 *.pyc
 sttenv/*
 static/*
-credentials/*
+*/credentials/*
+.env
 env.sh
+tmp/*
