@@ -1,106 +1,55 @@
 version: "3"
 
 services:
-    sttapp:
-        container_name: sttapp_service
-        image: sttapp:0.1.01
-        build:
-            context: .
-        environment:
-            # environment variable for 專案根目錄
-            SECRET_KEY: 
-            FLASK_ENV: 
-            DB_NAME: 
-            DB_HOST: mongo_service
-            DB_PORT: 27017
-            DB_USERNAME: 
-            DB_PASSWORD: 
-            # google service
-            # 此為goole第三方登入使用，不需要此功能的話這邊不用寫
-            GOOGLE_CLIENT_ID: 
-            GOOGLE_CLIENT_SECRET: 
-            # mail server
-            DEV_MAIL_USERNAME: 
-            DEV_MAIL_PASSWORD: 
-            # google drive api
-            # 此為至goole drive產生人員名冊用，不需要此功能的話這邊不用寫
-            GOOGLE_DRIVE_FOLDER_ID: 
-            GOOGLE_DRIVE_API_CERD_PATH: 
-            PYTHONBUFFERED: 1
-        depends_on:
-            - redis
-            - mongo
-        restart: "unless-stopped"
-        networks:
-            - frontend
-            - backend_redis
-            - backend_mongo
+  flask_app:
+    container_name: flask_app
+    restart: "unless-stopped"
+    build: ./sttapp
+    env_file:
+      - .env
+    command: gunicorn -w 1 -b 0.0.0.0:8000 sttapp.wsgi:server
+    networks:
+      - backend_redis
+      - webserver
+    depends_on:
+      - redis
+    volumes:
+      - ./sttapp:/app/sttapp/
 
-    redis:
-        container_name: redis_service
-        image: redis
-        restart: "unless-stopped"
-        environment:
-            # not implemented
-        networks:
-            - backend_redis
+  worker:
+    container_name: worker
+    restart: "unless-stopped"
+    build: ./sttapp
+    env_file:
+      - .env
+    networks:
+      - backend_redis
+    depends_on:
+      - redis
+    command: celery -A sttapp.celery_worker.celery worker -l info
+    volumes:
+      - ./sttapp:/app/sttapp/
 
-    # build / up for develop only
-    mongo_dev:
-        container_name: mongo_dev_service
-        image: mongo:4.2.6
-        ports:
-            - "127.0.0.1:27018:27017"
-        volumes:
-            - ~/dataMongo:/data/db/
-        environment:
-            MONGO_INITDB_DATABASE: 
-            MONGO_INITDB_ROOT_USERNAME: 
-            MONGO_INITDB_ROOT_PASSWORD: 
-        command: "mongod --auth"
-        restart: "unless-stopped"
+  nginx:
+    container_name: nginx
+    restart: "unless-stopped"
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - flask_app
+    networks:
+      - webserver
 
-    # build / up for deploy
-    mongo:
-        container_name: mongo_service
-        image: mongo:4.2.6
-        volumes:
-            - ./dataMongo/:/data/db/
-            - ./dataRedis/:/data/
-        environment:
-            MONGO_INITDB_DATABASE: 
-            MONGO_INITDB_ROOT_USERNAME: 
-            MONGO_INITDB_ROOT_PASSWORD: 
-        command: "mongod --auth"
-        restart: "unless-stopped"
-        networks:
-            - backend_mongo
-
-    # nginx with host mode. connect service by export ports
-    # you have to set ports in 'sttapp'
-    # can also serve other services
-    nginx:
-        image: nginx
-        volumes:
-            - ./conf.d/:/etc/nginx/conf.d/
-            - ./static/:/var/www/static/
-        network_mode: "host"
-
-    # nginx with bridge mode. connect service by container_name
-    # can only listen the ports set in 'ports'
-    # cannot serve other services from localhost ip ports
-    sttapp_front:
-        container_name: sttapp_front
-        ports:
-            "80:80"
-        image: nginx
-        volumes:
-            - ./conf.d/:/etc/nginx/conf.d/
-            - ./static/:/var/www/static/
-        networks:
-            - frontend
+  redis:
+    container_name: redis
+    image: redis
+    restart: "unless-stopped"
+    volumes:
+      - ~/my_volume/dataRedis:/data/
+    networks:
+      - backend_redis
 
 networks:
-    backend_mongo:
-    backend_redis:
-    frontend:
+  backend_redis:
+  webserver:
