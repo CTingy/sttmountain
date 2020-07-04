@@ -9,8 +9,7 @@ export DB_USERNAME=
 export DB_PASSWORD=
 
 # redis server for celery broker and cache
-export CELERY_BROKER_URL=
-export CELERY_RESULT_BACKEND=
+export REDIS_HOST=
 
 # google service
 # 此為goole第三方登入使用，不需要此功能的話這邊不用寫
