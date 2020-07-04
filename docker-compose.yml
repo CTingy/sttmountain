@@ -7,14 +7,16 @@ services:
     build: ./sttapp
     env_file:
       - .env
-    command: gunicorn -w 1 -b 0.0.0.0:8000 sttapp.wsgi:server
+    environment:
+      - REDIS_URL=redis
+    command: gunicorn -w 1 -b 0.0.0.0:8000 sttapp.wsgi:app --log-level debug
     networks:
       - backend_redis
       - webserver
     depends_on:
       - redis
     volumes:
-      - ./sttapp:/app/sttapp/
+      - ./:/app/
 
   worker:
     container_name: worker
@@ -26,9 +28,11 @@ services:
       - backend_redis
     depends_on:
       - redis
+    environment:
+      - REDIS_URL=redis
     command: celery -A sttapp.celery_worker.celery worker -l info
     volumes:
-      - ./sttapp:/app/sttapp/
+      - ./:/app/
 
   nginx:
     container_name: nginx
@@ -46,7 +50,8 @@ services:
     image: redis
     restart: "unless-stopped"
     volumes:
-      - ~/my_volume/dataRedis:/data/
+      - .data/dataRedis:/data/
+    # command: echo never > /sys/kernel/mm/transparent_hugepage/enabled
     networks:
       - backend_redis
 
