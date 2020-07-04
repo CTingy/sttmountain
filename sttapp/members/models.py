@@ -18,14 +18,12 @@ class Member(RecordModel):
     # 基本資料
     name = db.StringField()
     nickname = db.StringField()
-    security_number = db.StringField(unique=True)
+    security_number = db.StringField(unique=True, sparse=True)
     birthday = db.DateTimeField()
     cellphone_number = db.StringField()
 
     # 進階資料
-    # email = db.EmailField()
     drug_allergy = db.StringField(default="NKDA")
-    # home_address = db.StringField()
     blood_type = db.StringField()
     level = db.StringField(choices=CHOICES["level"])  # 新生、隊員、幹部等
     group = db.StringField(choices=CHOICES["group"])

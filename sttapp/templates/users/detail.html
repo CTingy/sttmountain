@@ -60,7 +60,7 @@
                     <li><span>註冊信箱：</span>{{ user.email }}</li>
                     <li><span>系級：</span>{{ user.department or "" }}{{ user.graduation_year or "" }}</li>
                     {% if user.group %}<li><span>嚮導隊：</span>{{ user.get_group_display() }}</li>{% endif %}
-                    <li><span>在校狀態：</span>{{ user.get_identity_display() }}</li>
+                    <li><span>在校狀態：</span>{{ user.get_identity_display() or "" }}</li>
                     {% if user.position %}
                     <li><span>工作組：</span>{{ user.get_position_display() }}</li>{% endif %}
                     {% if user.level %}<li><span>級數：</span>{{ user.get_level_display() }}</li>{% endif %}
