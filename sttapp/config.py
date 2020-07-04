@@ -19,8 +19,8 @@ class Config:
     CELERY_ACCEPT_CONTENT = ['json']
     CELERY_TASK_SERIALIZER = 'json'
     CELERY_RESULT_SERIALIZER = 'json'
-    CELERY_RESULT_BACKEND = "redis://{}:6379".format(os.environ.get("REDIS_URL", None)) 
-    BROKER_URL = "redis://{}:6379".format(os.environ.get("REDIS_URL", None))
+    CELERY_RESULT_BACKEND = "redis://{}:6379".format(os.environ.get("REDIS_HOST", None)) 
+    BROKER_URL = "redis://{}:6379".format(os.environ.get("REDIS_HOST", None))
 
     MAIL_DEFAULT_SENDER = os.environ.get("GOOGLE_CLIENT_ID", None)
     SESSION_PROTECTION = 'strong'
