@@ -90,17 +90,22 @@ docker-compose rm -fs
 docker-compose build
 docker-compose up
 ```
-### 充填初始資料
+### 匯入初始資料
 * 若為第一次使用且為開發環境，可執行充填資料
-* 進入flask_app container之中
+* 充填資料的所有使用者(stt_user)預設密碼都是`123456`
+
+* 啟動無auth模式連線的mongodb
 ```
-cd 專案根目錄/
-docker exec -it flask_app bash
-```
-* 進入後執行充填資料
-```
-cd /app/sttapp
-python -m populate_data.py
+cd 專案資料夾/
+docker-compose down
+docker run -d -p 27017:27017 -v 專案資料夾/.data/dataMongo/:/data/db/ mongo
+
+# 安裝mongodb-clients後執行匯入資料
+mongoimport -d <db_name> -c stt_user --type=json --file init_data/stt_user.json
+mongoimport -d <db_name> -c event --type=json --file init_data/event.json
+mongoimport -d <db_name> -c proposal --type=json --file init_data/proposal.json
+mongoimport -d <db_name> -c member --type=json --file init_data/member.json
+mongoimport -d <db_name> -c my_history --type=json --file init_data/my_history.json
 ```
 ### 僅加入第一位使用者
 * 若是不想在資料庫中塞入假資料，可手動新增第一位使用者
