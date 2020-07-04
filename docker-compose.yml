@@ -10,7 +10,7 @@ services:
     environment:
       - REDIS_HOST=sttredis
       - DB_HOST=sttmongo
-    command: gunicorn -w 1 -b 0.0.0.0:8000 sttapp.wsgi:app --log-level debug
+    command: gunicorn -w 1 -b 0.0.0.0:8000 sttapp.wsgi:app --log-level debug --reload
     networks:
       - backend_redis
       - backend_mongo

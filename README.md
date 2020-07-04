@@ -12,8 +12,8 @@ git clone git@github.com:CTingy/sttmountain.git --recurse-submodules
 ```
 git submodule update --init
 ```
-## 安裝與運行
-
+* 安裝docker & docker-compose
+## 設定
 ### 環境變數
 * 在專案跟目錄新增`.env`檔案如下，並填上空白處
 * `DEV_MAIL_USERNAME`與`DEV_MAIL_PASSWORD`使用方式可參考下方的：指定smtp server
@@ -38,7 +38,29 @@ DEV_MAIL_PASSWORD=
 MAIL_DEFAULT_SENDER=
 ADMIN_EMAIL=
 ```
-
+### 建立資料庫帳密
+* 若是第一次執行，請建立資料庫使用者帳密
+```
+docker run -d -p 27017:27017 -v .data/dataMongo:/data/db mongo
+docker ps
+docker exec -it <mongo_contianer_id> bash
+```
+* 進入docker container
+```
+mongo
+> use <your_db_name>
+> db.createUser({
+    user: '<mongo_user_name>',
+    pwd: '<secret_password>',
+    roles: [{ role: 'readWrite', db:'<your_db_name>'}]
+})
+> exit
+exit
+```
+* 關閉container
+```
+docker stop <mongo_contianer_id>
+```
 ### 指定smtp server
 下面示範使用mailtrap的步驟
 * 至https://mailtrap.io/ 申請一個帳號
@@ -61,8 +83,7 @@ class DevelopmentConfig(Config):
     MAIL_USE_TLS = True
     MAIL_USE_SSL = False
 ```
-### 跑起來～
-* 安裝docker、docker-compose
+## 執行
 ```
 cd 專案根目錄/
 docker-compose rm -fs
@@ -70,8 +91,43 @@ docker-compose build
 docker-compose up
 ```
 ### 充填初始資料
+* 若為第一次使用且為開發環境，可執行充填資料
+* 進入flask_app container之中
+```
+cd 專案根目錄/
+docker exec -it flask_app bash
+```
+* 進入後執行充填資料
+```
+cd /app/sttapp
+python -m populate_data.py
+```
+### 僅加入第一位使用者
+* 若是不想在資料庫中塞入假資料，可手動新增第一位使用者
+* 必須先建立第一位使用者，才可使用邀請功能讓其他帳號註冊
+* 其實也是因為此網站不登入的話幾乎沒剩下什麼功能可以用@@  
+* 詳細登入功能請見下方的註冊與登入
+```
+# 進入flask_app contianer
+docker exec -it flask_app bash
 
-### 補充資料
+# 進入flask shell
+cd /app
+flask shell
+
+# 在flask shell之中
+from sttapp.users.models import SttUser
+user = SttUser()
+user.username = "<網站顯示名稱>"
+user.email = "<email>"
+user.password = "<輸入密碼>"  # 請直接輸入密碼，資料庫會hash後再儲存
+user.save()
+
+# 離開flask shell
+quit
+```
+
+## 補充資料
 * mongo container 建立使用者帳號密碼
 ([參考此](https://stackoverflow.com/questions/37450871/how-to-allow-remote-connections-from-mongo-docker-container))
 * 更多submodule設定使用[參考](https://blog.puckwang.com/post/2020/git-submodule-vs-subtree/)
