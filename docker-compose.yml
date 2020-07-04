@@ -42,6 +42,8 @@ services:
       - "80:80"
     depends_on:
       - flask_app
+    volumes:
+      - ./static/:/var/www/static/
     networks:
       - webserver
 
