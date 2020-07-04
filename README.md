@@ -1,100 +1,55 @@
 # 安裝步驟
-## 環境準備
-* 下載此repo與靜態檔案
+## 下載
+* clone with https
 ```
 git clone https://github.com/CTingy/sttmountain.git --recurse-submodules
 ```
-* python3 與建立虛擬環境
+* clone with SSH
 ```
-sudo apt-get install python3.7
-python3 -m venv <myenvname>
+git clone git@github.com:CTingy/sttmountain.git --recurse-submodules
 ```
-* 進入虛擬環境安裝套件
+* 若是一開始clone此專案時未下載到submodule靜態檔的話，請執行：
 ```
-source <myenvname>/bin/activate
-pip install -r requirements.txt
+git submodule update --init
 ```
-* 資料庫
+## 安裝與運行
+
+### 環境變數
+* 在專案跟目錄新增`.env`檔案如下，並填上空白處
+* `DEV_MAIL_USERNAME`與`DEV_MAIL_PASSWORD`使用方式可參考下方的：指定smtp server
 ```
-docker pull mongo:4.2.6
-docker pull redis
-```
-## run mongo
-* mongo 建立使用者帳號密碼
-([參考此](https://stackoverflow.com/questions/37450871/how-to-allow-remote-connections-from-mongo-docker-container))
-進入docker
-```
-docker run -d -p 27017:27017 -v ~/dataMongo:/data/db mongo
-docker ps
-docker exec -it <mongo_contianer_id> bash
-```
-進入後
-```
-mongo
-> use <your_db_name>
-> db.createUser({
-    user: '<mongo_user_name>',
-    pwd: '<secret_password>',
-    roles: [{ role: 'readWrite', db:'<your_db_name>'}]
-})
-```
-離開docker，使用密碼模式重新啟動
-```
-docker stop <mongo_container_id>
-docker run -d -p 27017:27017 -v ~/dataMongo:/data/db mongo mongod --auth
-```
-## run redis
-```
-docker run -d -p 6379:6379 -v ~/my_volume/dataRedis:/data redis redis-server
+SECRET_KEY=
+FLASK_APP=sttapp/app.py
+FLASK_ENV=development
+DB_NAME=
+DB_USERNAME=
+DB_PASSWORD=
+DB_PORT=27017
+DB_NAME=
+
+# google相關功能未使用可留白
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_DRIVE_FOLDER_ID=
+GOOGLE_DRIVE_API_CERD_PATH=
+
+DEV_MAIL_USERNAME=
+DEV_MAIL_PASSWORD=
+MAIL_DEFAULT_SENDER=
+ADMIN_EMAIL=
 ```
 
-## 所需環境變數
-* 可將此寫入虛擬環境啟動用的active之中，更多請參考檔案：`env_examples.sh`
-```shell
-# 專案設定
-export FLASK_APP=sttapp/app.py
-export SECRET_KEY=自己隨便打一個
-export FLASK_ENV=development
-export ADMIN_EMAIL=你的email
-export MAIL_DEFAULT_SENDER=預設網站的寄件者email
-
-# database config
-export DB_NAME=上面doker之中建立的your_db_name
-export DB_USERNAME=上面doker之中建立的mongo_user_name
-export DB_PASSWORD=上面doker之中建立的secret_password
-export DB_HOST=127.0.0.1
-export DB_PORT=27017
-export DB_NAME=上面doker之中建立的db_name
-
-# celery config
-export CELERY_BROKER_URL=redis://127.0.0.1:6379/
-export CELERY_RESULT_BACKEND=redis://127.0.0.1:6379/
-
-# google service
-# 此為goole第三方登入使用，不需要此功能的話這邊不用寫
-export GOOGLE_CLIENT_ID=自己申請一個
-export GOOGLE_CLIENT_SECRET=自己申請一個
-
-# mail server
-export DEV_MAIL_USERNAME=參見下方指定smtp server章節
-export DEV_MAIL_PASSWORD=參見下方指定smtp server章節
-
-# google drive api
-# 此為至goole drive產生人員名冊用，不需要此功能的話這邊不用寫
-export GOOGLE_DRIVE_FOLDER_ID=自己申請一個
-export GOOGLE_DRIVE_API_CERD_PATH=自己申請一個
-```
-## 指定smtp server
+### 指定smtp server
 下面示範使用mailtrap的步驟
 * 至https://mailtrap.io/ 申請一個帳號
 * 登入後至https://mailtrap.io/inboxes/ ，點選Action欄位的齒輪
 * 進入後下方Integrations選擇Flask-Mail
 * 複製訊息框中的`MAIL_USERNAME`與`MAIL_PASSWORD`
 
-至虛擬環境中，新增環境變數：
+至`.env`檔案中，新增環境變數：
 ```
-export DEV_MAIL_USERNAME=剛剛複製的username
-export DEV_MAIL_PASSWORD=剛剛複製的password
+DEV_MAIL_USERNAME=剛剛複製的username
+DEV_MAIL_PASSWORD=剛剛複製的password
 ```
 若不使用mailtrap，自行至`專案根目錄/config.py`中修改以下程式碼：
 ```python
@@ -106,69 +61,20 @@ class DevelopmentConfig(Config):
     MAIL_USE_TLS = True
     MAIL_USE_SSL = False
 ```
+### 跑起來～
+* 安裝docker、docker-compose
+```
+cd 專案根目錄/
+docker-compose rm -fs
+docker-compose build
+docker-compose up
+```
+### 充填初始資料
 
-## 加入靜態檔案
-* 若是一開始clone此專案時未下載到submodule靜態檔的話，請執行：
-```
-git submodule update --init
-```
-* 最後專案結構會變成像是這樣：
-```
-- 專案根目錄/
-    - static/
-    - sttapp/
-        - auth/
-        - users/
-        - proposals/
-        - events/ 
-        - ....
-    - README.md
-    - requirements.txt
-```
+### 補充資料
+* mongo container 建立使用者帳號密碼
+([參考此](https://stackoverflow.com/questions/37450871/how-to-allow-remote-connections-from-mongo-docker-container))
 * 更多submodule設定使用[參考](https://blog.puckwang.com/post/2020/git-submodule-vs-subtree/)
-
-# 啟動
-## run server
-```
-cd 專案根目錄/
-flask run
-```
-按 ctrl+c 離開
-
-## run script
-想要跑任何離線script請進入：
-```
-cd 專案根目錄/
-flask shell
-```
-離開請輸入`exit`或 `quit()`或`quit`
-
-## 建立第一個登入者
-* 請先建立第一位使用者，才使用邀請功能讓其他帳號註冊
-* 其實也是因為此網站不登入的話幾乎沒剩下什麼功能可以用@@  
-* 詳細登入功能請見下方的註冊與登入
-```
-cd 專案根目錄/sttapp/
-flask shell
-```
-在shell之中：
-```python
-from sttapp.users.models import SttUser
-user = SttUser()
-user.username = "<網站顯示名稱>"
-user.email = "<email>"
-user.password = "<輸入密碼>"  # 請直接輸入密碼，資料庫會hash後再儲存
-user.save()
-```
-
-## 啟動celery worker
-* 開啟另一個terminal視窗
-* 確定redis已啟動
-* 輸入以下
-```
-cd 專案根目錄/
-celery -A sttapp.celery_worker.celery worker -l info
-```
 
 # 功能說明
 ## 註冊與登入

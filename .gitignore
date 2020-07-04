@@ -6,4 +6,5 @@ static/*
 */credentials/*
 .env
 env.sh
-tmp/*
+.tmp/*
+.data/*
