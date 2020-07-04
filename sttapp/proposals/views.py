@@ -155,8 +155,7 @@ def update(prop_id):
         prop.save()
 
         flash("修改成功，請檢查", FlashCategory.SUCCESS)
-        return redirect(url_for('proposal.{}'.format(
-                "update_itinerary" if update_itinerary else "detail"), prop_id=prop_id))
+        return redirect(url_for('proposal.detail', prop_id=prop_id))
 
     errors = dict()
     for field, errs in form.errors.items():
@@ -177,12 +176,12 @@ def update(prop_id):
 def update_itinerary(prop_id):
 
     prop = Proposal.objects.get_or_404(id=prop_id)
-    if prop.start_date.date() < get_local_dt(datetime.datetime.utcnow()).date():
-        flash("已開始之隊伍企劃不可編輯", FlashCategory.WARNING)
-        return redirect(url_for('proposal.proposals'))
+    if prop.event_id and Event.objects.filter(id=prop.event_id, status__in=("BACK", "CANCEL")):
+        flash("已下山或倒隊之隊伍企劃不可編輯", FlashCategory.WARNING)
+        return redirect(url_for('proposal.detail', prop_id=prop_id))
     if current_user.id != prop.created_by.id:
         flash("僅隊伍企劃創建者可編輯", FlashCategory.WARNING)
-        return redirect(url_for('proposal.proposals'))
+        return redirect(url_for('proposal.detail', prop_id=prop_id))
 
     if request.method == "POST":
         updated_list = []
@@ -204,7 +203,7 @@ def update_itinerary(prop_id):
             itinerary_list=updated_list,
             updated_by=current_user.id
         )
-        return redirect(url_for('proposal.proposals'))
+        return redirect(url_for('proposal.detail', prop_id=prop_id))
 
     return render_template("proposals/itinerary.html", itinerary_list=prop.itinerary_list)
 

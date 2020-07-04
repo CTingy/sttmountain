@@ -22,7 +22,7 @@ class ProposalForm(FlaskForm):
     approach_way = TextAreaField("交通方式", validators=[validators.Optional()])
     radio = StringField("無線電頻率/台號", validators=[
         validators.Optional(),
-        validators.Regexp("^14[4-5].[0-9]{2}\/[.]+", message="格式錯誤")])
+        validators.Regexp("^14[3-5].[0-9]{2}", message="格式錯誤")])
     satellite_telephone = StringField("衛星電話", validators=[
         validators.Optional(), 
         validators.Regexp("\+882[0-9]{10}$", message="電話格式錯誤，需為+882開頭，加上10碼數字")])

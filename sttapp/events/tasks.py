@@ -20,6 +20,7 @@ def connect_to_user_history(attendees, event, link):
     for a in attendees:
         if not a.user_id:
             continue
+        last_history = MyHistory.objects(user_id=a.user_id).order_by('-order').first()
         h = MyHistory(
             user_id=a.user_id,
             created_at=datetime.datetime.utcnow(),
@@ -29,7 +30,7 @@ def connect_to_user_history(attendees, event, link):
             end_date=event.proposal.end_date,
             days=event.days,
             link=link,
-            order=MyHistory.objects(user_id=a.user_id).order_by('-order').first().order + 1
+            order=last_history.order + 1 if last_history else 1
         )
         h.save()
 
