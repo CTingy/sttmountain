@@ -21,7 +21,8 @@ extensions = [
     'sttapp.exts.mail:init_mail',
     'sttapp.exts.login:init_login',
     'sttapp.exts.csrf:init_csrf',
-    'sttapp.exts.celery:init_celery'
+    'sttapp.exts.celery:init_celery',
+    'sttapp.exts.static_url:init_static'
 ]
 
 

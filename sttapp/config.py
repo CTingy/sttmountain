@@ -50,10 +50,12 @@ class DevelopmentConfig(Config):
     MAIL_USE_TLS = True
     MAIL_USE_SSL = False
 
+    # STATIC_STORAGE_URL = "https://storage.googleapis.com/sttmountainstatic/static/"
+
 
 class ProductionConfig(Config):
     DEBUG = False
-    STATIC_DIR = ""
+    STATIC_STORAGE_URL = "https://storage.googleapis.com/sttmountainstatic/static/"
 
 
 app_config = {

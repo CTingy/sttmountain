@@ -1,0 +1,84 @@
+version: "3"
+
+services:
+  flask_app:
+    container_name: flask_app
+    restart: "unless-stopped"
+    build: ./sttapp
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=sttredis
+      - DB_HOST=sttmongo
+    command: gunicorn -w 1 -b 0.0.0.0:8000 sttapp.wsgi:app --log-level debug --reload
+    networks:
+      - backend_redis
+      - backend_mongo
+      - webserver
+    depends_on:
+      - redis
+      - mongo
+    volumes:
+      - ./:/app/
+
+  worker:
+    container_name: worker
+    restart: "unless-stopped"
+    build: ./sttapp
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=sttredis
+      - DB_HOST=sttmongo
+    networks:
+      - backend_redis
+      - backend_mongo
+    depends_on:
+      - redis
+      - mongo
+    command: celery -A sttapp.celery_worker.celery worker -l info
+    volumes:
+      - ./:/app/
+
+  nginx:
+    container_name: sttnginx
+    restart: "unless-stopped"
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - flask_app
+    volumes:
+      - ./static/:/var/www/static/
+    networks:
+      - webserver
+
+  redis:
+    container_name: sttredis
+    image: redis
+    restart: "unless-stopped"
+    ports:
+      - "6379:6379"
+    volumes:
+      - .data/dataRedis:/data/
+    # command: echo never > /sys/kernel/mm/transparent_hugepage/enabled
+    networks:
+      - backend_redis
+
+  mongo:
+    container_name: sttmongo
+    image: mongo:4.2.6
+    volumes:
+      - .data/dataMongo/:/data/db/
+      # - ~/my_volume/dataMongo/:/data/db/
+    ports:
+      - "27017:27017"
+    command: "mongod --auth"
+    restart: "unless-stopped"
+    networks:
+      - backend_mongo
+
+networks:
+  backend_redis:
+  backend_mongo:
+  webserver:
