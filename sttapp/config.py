@@ -22,7 +22,7 @@ class Config:
     CELERY_RESULT_BACKEND = "redis://{}:6379".format(os.environ.get("REDIS_HOST", None)) 
     BROKER_URL = "redis://{}:6379".format(os.environ.get("REDIS_HOST", None))
 
-    MAIL_DEFAULT_SENDER = os.environ.get("GOOGLE_CLIENT_ID", None)
+    MAIL_DEFAULT_SENDER = os.environ.get("ADMIN_EMAIL", None)
     SESSION_PROTECTION = 'strong'
 
     # crediential form Google
@@ -50,12 +50,18 @@ class DevelopmentConfig(Config):
     MAIL_USE_TLS = True
     MAIL_USE_SSL = False
 
-    # STATIC_STORAGE_URL = "https://storage.googleapis.com/sttmountainstatic/"
-
 
 class ProductionConfig(Config):
     DEBUG = False
     STATIC_STORAGE_URL = "https://storage.googleapis.com/sttmountainstatic/"
+    
+    # sendgrid smtp server
+    # ref: https://www.twilio.com/blog/using-twilio-sendgrid-to-send-emails-from-python-flask-applications
+    MAIL_SERVER = 'smtp.sendgrid.net'
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
+    MAIL_USERNAME = 'apikey'
+    MAIL_PASSWORD = os.environ.get("SENDGRID_API_KEY")
 
 
 app_config = {
