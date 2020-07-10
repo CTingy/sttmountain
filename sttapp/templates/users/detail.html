@@ -43,8 +43,8 @@
             <div id="basic" class="tab-pane fade active in dashboard-user-profile dashboard-wrapper">
               <div class="media">
                 <div class="pull-left text-center" href="#">
-                  <img class="media-object user-img"
-                    src="{{ user.profile_img or url_for('static', filename='images/avater.jpg') }}" alt="Image">
+                  <img class="media-object user-img" src="{{ user.profile_img or static_url('images/avater.jpg') }}"
+                    alt="Image">
                   {% if current_user.id == user.id %}
                   <a href="#x" class="btn btn-transparent mt-20">Change Image<br>(這張只是放好看的)</a>{% endif %}
                 </div>
