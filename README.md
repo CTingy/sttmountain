@@ -4,10 +4,6 @@
 ```
 git clone https://github.com/CTingy/sttmountain.git --recurse-submodules
 ```
-* clone with SSH
-```
-git clone git@github.com:CTingy/sttmountain.git --recurse-submodules
-```
 * 若是一開始clone此專案時未下載到submodule靜態檔的話，請執行：
 ```
 git submodule update --init
@@ -57,9 +53,10 @@ mongo
 > exit
 exit
 ```
-* 關閉container
+* 關閉&移除container
 ```
 docker stop <mongo_contianer_id>
+docker rm <mongo_contianer_id>
 ```
 ### 指定smtp server
 下面示範使用mailtrap的步驟
@@ -87,8 +84,8 @@ class DevelopmentConfig(Config):
 ```
 cd 專案根目錄/
 docker-compose rm -fs
-docker-compose build
-docker-compose up
+docker-compose -f docker-compose-dev.yml build
+docker-compose -f docker-compose-dev.yml up
 ```
 ### 匯入初始資料
 * 若為第一次使用且為開發環境，可執行充填資料
@@ -97,7 +94,7 @@ docker-compose up
 * 啟動無auth模式連線的mongodb
 ```
 cd 專案資料夾/
-docker-compose down
+docker-compose -f docker-compose-dev.yml down
 docker run -d -p 27017:27017 -v 專案資料夾/.data/dataMongo/:/data/db/ mongo
 
 # 安裝mongodb-clients後執行匯入資料
