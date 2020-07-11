@@ -2,24 +2,20 @@ version: "3"
 
 services:
   flask_app:
-    container_name: flask_app
+    container_name: sttapp
     image: sttapp:0.1.01
     build:
       context: ./sttapp
     env_file:
       - .env
-    ports:
-      - "8000:8000"
     command: gunicorn -w 1 -b 0.0.0.0:8000 sttapp.wsgi:app
     restart: "unless-stopped"
     volumes:
       - ./:/app/
     network_mode: "host"
-    # networks:
-    #   - flask_app
 
   worker:
-    container_name: worker
+    container_name: sttworker
     image: sttworker:0.1.01
     build:
       context: ./sttapp
@@ -32,9 +28,8 @@ services:
     network_mode: "host"
 
   nginx:
+    container_name: sttnginx
     image: nginx:1.15.8
     volumes:
       - ./conf.d/:/etc/nginx/conf.d/
     network_mode: "host"
-# networks:
-#   flask_app:
