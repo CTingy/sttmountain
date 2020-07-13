@@ -8,3 +8,4 @@ static/*
 env.sh
 .tmp/*
 .data/*
+ssl/*

@@ -52,7 +52,7 @@ SENDGRID_API_KEY=
 ### 建立資料庫帳密
 * 若是第一次執行，請建立資料庫使用者帳密
 ```
-docker run -d -p 27017:27017 -v .data/dataMongo:/data/db mongo
+docker run -d -p 27017:27017 -v ./.data/dataMongo:/data/db mongo
 docker ps
 docker exec -it <mongo_contianer_id> bash
 ```
@@ -110,7 +110,7 @@ docker-compose -f docker-compose-dev.yml up
 ```
 cd 專案資料夾/
 docker-compose -f docker-compose-dev.yml down
-docker run -d -p 27017:27017 -v 專案資料夾/.data/dataMongo/:/data/db/ mongo
+docker run -d -p 27017:27017 -v ./.data/dataMongo/:/data/db/ mongo
 
 # 安裝mongodb-clients後執行匯入資料
 mongoimport -d <db_name> -c stt_user --type=json --file init_data/stt_user.json
