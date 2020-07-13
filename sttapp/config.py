@@ -4,6 +4,9 @@ import os
 class Config:
 
     SECRET_KEY = os.environ.get('SECRET_KEY')
+    SESSION_PROTECTION = 'strong'
+    STATIC_DIR = os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__))) + '/static'
 
     # mongodb config
     MONGODB_SETTINGS = {
@@ -19,21 +22,20 @@ class Config:
     CELERY_ACCEPT_CONTENT = ['json']
     CELERY_TASK_SERIALIZER = 'json'
     CELERY_RESULT_SERIALIZER = 'json'
-    CELERY_RESULT_BACKEND = "redis://{}:6379".format(os.environ.get("REDIS_HOST", None)) 
-    BROKER_URL = "redis://{}:6379".format(os.environ.get("REDIS_HOST", None))
+    CELERY_RESULT_BACKEND = "redis://{}:{}".format(
+        os.environ.get("REDIS_HOST", None), os.environ.get("REDIS_PORT"), None) 
+    BROKER_URL = "redis://{}:{}".format(
+        os.environ.get("REDIS_HOST", None), os.environ.get("REDIS_PORT"), None)
 
-    MAIL_DEFAULT_SENDER = os.environ.get("ADMIN_EMAIL", None)
-    SESSION_PROTECTION = 'strong'
-
-    # crediential form Google
+    # crediential from Google
     GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
     GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
     GOOGLE_DISCOVERY_URL = (
         "https://accounts.google.com/.well-known/openid-configuration"
     )
-
-    STATIC_DIR = os.path.dirname(
-        os.path.dirname(os.path.abspath(__file__))) + '/static'
+    # google drive api
+    GOOGLE_DRIVE_FOLDER_ID = os.environ.get("GOOGLE_DRIVE_FOLDER_ID", None)
+    GOOGLE_DRIVE_API_CERD_PATH = os.environ.get("GOOGLE_DRIVE_API_CERD_PATH", None)
 
 
 class TestingConfig(Config):
@@ -49,6 +51,7 @@ class DevelopmentConfig(Config):
     MAIL_PASSWORD = os.environ.get('DEV_MAIL_PASSWORD', None)
     MAIL_USE_TLS = True
     MAIL_USE_SSL = False
+    MAIL_DEFAULT_SENDER = os.environ.get("ADMIN_EMAIL", None)
 
 
 class ProductionConfig(Config):
@@ -61,7 +64,8 @@ class ProductionConfig(Config):
     MAIL_PORT = 587
     MAIL_USE_TLS = True
     MAIL_USERNAME = 'apikey'
-    MAIL_PASSWORD = os.environ.get("SENDGRID_API_KEY")
+    MAIL_PASSWORD = os.environ.get("SENDGRID_API_KEY", None)
+    MAIL_DEFAULT_SENDER = os.environ.get("MAIL_DEFAULT_SENDER", None)
 
 
 app_config = {

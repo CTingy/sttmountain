@@ -11,28 +11,43 @@ git submodule update --init
 * 安裝docker & docker-compose
 ## 設定
 ### 環境變數
-* 在專案跟目錄新增`.env`檔案如下，並填上空白處
+* 將專案下的`ex.env`檔更名為`.env`，並填上空白處
 * `DEV_MAIL_USERNAME`與`DEV_MAIL_PASSWORD`使用方式可參考下方的：指定smtp server
 ```
+# environment variable for sttmt
 SECRET_KEY=
 FLASK_APP=sttapp/app.py
 FLASK_ENV=development
+
+# DB config
 DB_NAME=
 DB_USERNAME=
 DB_PASSWORD=
 DB_PORT=27017
-DB_NAME=
+DB_HOST=127.0.0.1
 
-# google相關功能未使用可留白
+# Redis config
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+
+# google service，可不填
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
+
+# google drive api，可不填
 GOOGLE_DRIVE_FOLDER_ID=
 GOOGLE_DRIVE_API_CERD_PATH=
 
-DEV_MAIL_USERNAME=
-DEV_MAIL_PASSWORD=
+# mail sender and admin mail
 MAIL_DEFAULT_SENDER=
 ADMIN_EMAIL=
+
+# dev mail server
+DEV_MAIL_USERNAME=
+DEV_MAIL_PASSWORD=
+
+# production mail server，dev環境可不填
+SENDGRID_API_KEY=
 ```
 ### 建立資料庫帳密
 * 若是第一次執行，請建立資料庫使用者帳密
