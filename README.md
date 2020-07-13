@@ -1,3 +1,11 @@
+# 試用期間展示
+* 網址：https://nckumountain.ml
+* 試用登入：
+    * 帳號：`111@co.com`
+    * 密碼：`123456`
+* 此階段上線功能請見下方[**功能說明**](https://github.com/CTingy/sttmountain/blob/master/README.md#功能說明)
+
+
 # 安裝步驟
 ## 下載
 * clone with https
@@ -12,7 +20,7 @@ git submodule update --init
 ## 設定
 ### 環境變數
 * 將專案下的`ex.env`檔更名為`.env`，並填上空白處
-* `DEV_MAIL_USERNAME`與`DEV_MAIL_PASSWORD`使用方式可參考下方的：指定smtp server
+* `DEV_MAIL_USERNAME`與`DEV_MAIL_PASSWORD`使用方式可參考下方的：[指定smtp server](https://github.com/CTingy/sttmountain#%E6%8C%87%E5%AE%9Asmtp-server)
 ```
 # environment variable for sttmt
 SECRET_KEY=
@@ -148,6 +156,7 @@ quit
 * mongo container 建立使用者帳號密碼
 ([參考此](https://stackoverflow.com/questions/37450871/how-to-allow-remote-connections-from-mongo-docker-container))
 * 更多submodule設定使用[參考](https://blog.puckwang.com/post/2020/git-submodule-vs-subtree/)
+* 更多關於此網站架構細節[參考](https://hackmd.io/g9St4YiNS-aCAW8WupQqfw?view)
 
 # 功能說明
 ## 註冊與登入
@@ -181,25 +190,25 @@ quit
 * 所有登入者皆可檢視所有企劃書
 * 所有登入者皆可將此企劃書發佈為出隊文（出隊文不須登入即可看見）
 * 建立者的個人頁面超連結
-* 出隊成員的個人頁面超連結（若該出隊用資料與使用者已連結的話，請見**使用者頁面**章節）
+* 出隊成員的個人頁面超連結（若該出隊用資料與使用者已連結的話，請見[**使用者頁面**](https://github.com/CTingy/sttmountain#使用者頁面)章節）
 
 ### 出隊文
 * 發佈時填寫集合時間、地點後產生出隊文
 * 出隊文在回報下山以前無法直接編輯，所有編輯行為皆為編輯該出隊文之企劃書（故此權限與企劃書編輯相同）
 * 發佈者回報該出隊文為：**已下山**，並且輸入實際行程與心得
-    * 回報已下山的同時，該隊伍下出隊成員若擁有網站帳號，系統會其出隊文資料寫入該帳號下的**個人出隊歷史**之中（詳見下方**使用者頁面**章節）
+    * 回報已下山的同時，該隊伍下出隊成員若擁有網站帳號，系統會其出隊文資料寫入該帳號下的**個人出隊歷史**之中（詳見下方[**使用者頁面**](https://github.com/CTingy/sttmountain#使用者頁面)章節）
 * 或是發佈者回報為**已撤退**
 * 回報已下山之出隊文，發佈者可編輯實際行程與出隊心得
     * 注意，此時若更改實際行程天數，將無法同步至上述個人出隊歷史之中
 * 該出隊文發佈者可在回報下山與撤退以前刪除此出隊文，並可重新使用企劃書發佈功能產生新的出隊文
 * 回報已下山或是撤退之出隊文不可刪除與編輯該出隊文之企劃書
 * 建立者的個人頁面超連結
-* 出隊成員的個人頁面超連結（若該出隊用資料與使用者已連結的話，請見**使用者頁面**章節）
+* 出隊成員的個人頁面超連結（若該出隊用資料與使用者已連結的話，請見[**使用者頁面**](https://github.com/CTingy/sttmountain#使用者頁面)章節）
 
 ### 邀請功能
-* 詳見上方**新帳號註冊流程**
+* 僅登入者能夠透過邀請功能，寄發邀請信至被邀請人信箱，被邀請人使用信箱中連結註冊新帳號，更多請參考[**註冊與登入**](https://github.com/CTingy/sttmountain#註冊與登入)章節
 ### 我要開隊功能
-* 詳見上方**企劃書**章節
+* 詳見上方[**企劃書**](https://github.com/CTingy/sttmountain#企劃書)章節
 
 ### 使用者頁面
 * 個人基本資料頁（所有登入者可檢視）
@@ -211,7 +220,7 @@ quit
 * 個人出隊歷史（所有登入者可檢視）
     * 所有者可新增/修改/刪除，也可隨意改動出隊歷史順序
     * 此為個人維護區塊，重點為紀錄自己的點滴，也歡迎填寫校外出隊經驗
-    * 若有連結出隊資料，站內出隊紀錄系統會於出隊文回報下山時（詳見上方**出隊文**一節）自動寫入至此
+    * 若有連結出隊資料，站內出隊紀錄系統會於出隊文回報下山時（詳見上方[**出隊文**](https://github.com/CTingy/sttmountain#出隊文)一節）自動寫入至此
     * 同上，但若之後出隊文內容有更動不會同步改動於此。
 * 個人PO文紀錄（目前僅囊括出隊文、企劃書）
 
