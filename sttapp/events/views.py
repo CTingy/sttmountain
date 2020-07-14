@@ -235,7 +235,6 @@ def user_posts():
 
 
 @bp.route('/member_history/<string:member_id>/')
-@login_required
 def member_history(member_id):
 
     member = Member.objects.get_or_404(id=member_id)
