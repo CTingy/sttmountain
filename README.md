@@ -115,11 +115,14 @@ docker-compose -f docker-compose-dev.yml up
 * 充填資料的所有使用者(stt_user)預設密碼都是`123456`
 
 * 啟動無auth模式連線的mongodb
+* 若是已經使用auth模式啟動，則不需要執行以下
 ```
 cd 專案資料夾/
 docker-compose -f docker-compose-dev.yml down
 docker run -d -p 27017:27017 -v ./.data/dataMongo/:/data/db/ mongo
-
+```
+* 若使用auth模式，下方指令需要額外加入`-u <username> -p <password>`
+```
 # 安裝mongodb-clients後執行匯入資料
 mongoimport -d <db_name> -c stt_user --type=json --file init_data/stt_user.json
 mongoimport -d <db_name> -c event --type=json --file init_data/event.json
