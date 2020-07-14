@@ -108,6 +108,8 @@ def update_as_back(event_id):
     
     if request.form.get("same_check") != "y":
         for i in range(max_itinerary_num+1):
+            if not form.get("content{}".format(i)):
+                continue
             itinerary = Itinerary(
                 day_number=i,
                 content=form.get("content{}".format(i)),
