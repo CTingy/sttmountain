@@ -24,26 +24,26 @@ services:
     networks:
       - mongo_network
 
-  worker:
-    container_name: sttworker
-    image: sttworker:0.1.01
-    build:
-      context: ./sttapp
-    env_file:
-      - .env
-    environment:
-      - REDIS_HOST=sttredis
-      - DB_HOST=sttmongo
-    command: celery -A sttapp.celery_worker.celery worker -l info
-    restart: "unless-stopped"
-    volumes:
-      - ./:/app/
-    depends_on:
-      - redis
-      - mongo
-    networks:
-      - redis_network
-      - mongo_network
+  # worker:
+  #   container_name: sttworker
+  #   image: sttworker:0.1.01
+  #   build:
+  #     context: ./sttapp
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     - REDIS_HOST=sttredis
+  #     - DB_HOST=sttmongo
+  #   command: celery -A sttapp.celery_worker.celery worker -l info
+  #   restart: "unless-stopped"
+  #   volumes:
+  #     - ./:/app/
+  #   depends_on:
+  #     - redis
+  #     - mongo
+  #   networks:
+  #     - redis_network
+  #     - mongo_network
 
 networks:
   redis_network:

@@ -21,3 +21,16 @@ services:
       - ./conf.d/:/etc/nginx/conf.d/
       - ./ssl/:/etc/nginx/ssl/
     network_mode: "host"
+
+  worker:
+    container_name: sttworker
+    image: sttworker:0.1.01
+    build:
+      context: ./sttapp
+    env_file:
+      - .env
+    command: celery -A sttapp.celery_worker.celery worker -l info
+    restart: "unless-stopped"
+    volumes:
+      - ./:/app/
+    network_mode: "host"
