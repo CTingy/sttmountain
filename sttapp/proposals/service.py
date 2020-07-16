@@ -18,8 +18,7 @@ class GoogleDriveService():
         # get information of proposal
         proposal = Proposal.objects.get(id=proposal_id)
         self.proposal = proposal
-        self.file_name = "{}_{}".format(
-            proposal.title, get_local_dt(datetime.datetime.utcnow()).strftime("%Y%m%d%H%M%s"))
+        self.create_time = get_local_dt(datetime.datetime.utcnow()).strftime("%Y%m%d%H%M%s")
 
     @staticmethod
     def validate_folder_url(google_folder_url):
@@ -35,7 +34,9 @@ class GoogleDriveService():
 
     def generate_sheets(self):
         
-        sheet = self.client.create(self.file_name + "_入山", folder=self.folder_id)
+        sheet = self.client.create(
+            "{}_入山_{}".format(self.proposal.title, self.create_time), 
+            folder=self.folder_id)
         base_worksheet = self.client.open("系統用_入山人員資料_範本_sttmt_attendees_mountain_policy_template")
         wks = base_worksheet.worksheet().copy_to(sheet.id)
 
@@ -51,7 +52,9 @@ class GoogleDriveService():
 
     def generate_doc(self):
 
-        sheet = self.client.create(self.file_name + "_直企人員資料", folder=self.folder_id)
+        sheet = self.client.create(
+            "{}_直企_{}".format(self.proposal.title, self.create_time), 
+            folder=self.folder_id)
         base_worksheet = self.client.open("系統用_直企人員資料_範本_sttmt_attendees_A4_template")
         wks = base_worksheet.worksheet().copy_to(sheet.id)
 
