@@ -8,7 +8,7 @@ services:
       context: ./sttapp
     env_file:
       - .env
-    command: gunicorn -w 1 -b 0.0.0.0:8000 sttapp.wsgi:app
+    command: gunicorn -w 2 -b 0.0.0.0:8000 -k gevent sttapp.wsgi:app
     restart: "unless-stopped"
     volumes:
       - ./:/app/
