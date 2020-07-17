@@ -3,7 +3,7 @@
 * 試用登入：
     * 帳號：`111@co.com`
     * 密碼：`123456`
-* 此階段上線功能請見下方[**功能說明**](https://github.com/CTingy/sttmountain/blob/master/README.md#功能說明)
+* 此階段上線功能請見下方[**功能說明**](https://github.com/CTingy/sttmountain#%E5%87%BA%E9%9A%8A%E6%96%87)
 
 
 # 安裝步驟
