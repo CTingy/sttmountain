@@ -1,29 +1,6 @@
 version: "3"
 
 services:
-  redis:
-    container_name: sttredis
-    image: redis
-    volumes:
-      - .data/dataRedis/:/data/
-    ports:
-      - "6379:6379"
-    restart: "unless-stopped"
-    networks:
-      - redis_network
-
-  mongo:
-    container_name: sttmongo
-    image: mongo:4.2.6
-    volumes:
-      - .data/dataMongo/:/data/db/
-    command: "mongod --auth"
-    ports:
-      - "27017:27017"
-    restart: "unless-stopped"
-    networks:
-      - mongo_network
-
   # worker:
   #   container_name: sttworker
   #   image: sttworker:0.1.01
@@ -45,6 +22,27 @@ services:
   #     - redis_network
   #     - mongo_network
 
-networks:
-  redis_network:
-  mongo_network:
+  redis:
+    container_name: sttredis
+    image: redis
+    volumes:
+      - ./.data/dataRedis/:/data/
+    # ports:
+    #   - "6379:6379"
+    # networks:
+    #   - redis_network
+    restart: "unless-stopped"
+    network_mode: "host"
+
+  mongo:
+    container_name: sttmongo
+    image: mongo:4.2.6
+    volumes:
+      - ./.data/dataMongo/:/data/db/
+    command: "mongod --auth"
+    restart: "unless-stopped"
+    # ports:
+    #   - "27017:27017"
+    # networks:
+    #   - mongo_network
+    network_mode: "host"
