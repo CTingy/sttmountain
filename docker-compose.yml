@@ -10,17 +10,22 @@ services:
       - .env
     command: gunicorn -w 2 -b 0.0.0.0:8000 -k gevent sttapp.wsgi:app
     restart: "unless-stopped"
+    networks:
+      - webserver
     volumes:
       - ./:/app/
-    network_mode: "host"
 
   nginx:
     container_name: sttnginx
     image: nginx:1.15.8
+    ports:
+      - "443:443"
+      - "80:80"
     volumes:
       - ./conf.d/:/etc/nginx/conf.d/
       - ./ssl/:/etc/nginx/ssl/
-    network_mode: "host"
+    networks:
+      - webserver
 
   worker:
     container_name: sttworker
@@ -33,4 +38,6 @@ services:
     restart: "unless-stopped"
     volumes:
       - ./:/app/
-    network_mode: "host"
+
+networks:
+  webserver:
