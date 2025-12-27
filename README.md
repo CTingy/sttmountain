@@ -14,9 +14,9 @@ This project centralizes the **entire trip workflow** into a single system, cove
 
 ---
 
-## Technical Highlights (For Interviewers)
+## Architecture
 
-### System Design & Architecture
+### System Design
 
 - **Full-stack architecture**
   - Backend: Flask (REST-style design)
@@ -29,7 +29,7 @@ This project centralizes the **entire trip workflow** into a single system, cove
   - User accounts vs. trip-specific member data are intentionally separated
   - Supports real-world cases where a participant may not have a site account
 
-### Domain Modeling (Non-trivial)
+### Domain Modeling
 
 - Designed **two parallel identity systems**:
   - `User` (authentication, login, personal site data)
