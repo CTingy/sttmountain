@@ -101,13 +101,13 @@ git submodule update --init
 
 - Rename `ex.env` to `.env` and fill in the required fields
 
-# environment variables for sttmt
+#### environment variables for sttmt
 
 SECRET_KEY=
 FLASK_APP=sttapp/app.py
 FLASK_ENV=development
 
-# DB config
+#### DB config
 
 DB_NAME=
 DB_USERNAME=
@@ -115,32 +115,32 @@ DB_PASSWORD=
 DB_PORT=27017
 DB_HOST=127.0.0.1
 
-# Redis config
+#### Redis config
 
 REDIS_HOST=127.0.0.1
 REDIS_PORT=6379
 
-# Google services (optional)
+#### Google services (optional)
 
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 
-# Google Drive API (optional)
+#### Google Drive API (optional)
 
 GOOGLE_DRIVE_FOLDER_ID=
 GOOGLE_DRIVE_API_CERD_PATH=
 
-# Mail sender and admin email
+#### Mail sender and admin email
 
 MAIL_DEFAULT_SENDER=
 ADMIN_EMAIL=
 
-# Development mail server
+#### Development mail server
 
 DEV_MAIL_USERNAME=
 DEV_MAIL_PASSWORD=
 
-# Production mail server (optional in dev)
+#### Production mail server (optional in dev)
 
 SENDGRID_API_KEY=
 
